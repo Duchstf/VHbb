@@ -23,8 +23,8 @@ def get_subfolders(parent):
 folders_to_index = [
     
     #ZH, WH, VBF, ttH, ggZH
-    #TODO: What's the difference between ZH and ggZH here? 
-    #TODO: Also difference between HToBB and GluGluHTOBB?
+    #Include both ZH and ggZH for completeness.
+    #HToBB has everything except for gluon fusion so need to add GluGluHTOBB.
     "/store/user/lpcpfnano/cmantill/v2_3/2016/HToBB/",
     "/store/user/lpcpfnano/cmantill/v2_3/2016APV/HToBB/",
     "/store/user/lpcpfnano/cmantill/v2_3/2017/HToBB/",
@@ -40,8 +40,6 @@ folders_to_index = [
     "/store/user/lpcpfnano/cmantill/v2_3/2016APV/QCD",
     "/store/user/lpcpfnano/cmantill/v2_3/2017/QCD",
     "/store/user/lpcpfnano/cmantill/v2_3/2018/QCD",
-    #
-    "/store/user/lpchbb/cmantill/v2_2/2017v1/QCDHerwig", #TODO: Do we need this?
     
     #bEnriched QCD
     "/store/user/lpcpfnano/duhoang/v2_3/2016/QCD_bEnriched/",
@@ -79,6 +77,8 @@ folders_to_index = [
     "/store/user/lpcpfnano/rkansal/v2_3/2017/WJetsToQQ",  # missing HT200-400
     "/store/user/lpcpfnano/cmantill/v2_3/2018/WJetsToQQ",
     
+    "/store/group/lpcpfnano/jdickins/v2_3/2017/WJetsToQQ", #Include HT200-400
+    
     #Zjets
     "/store/user/lpcpfnano/cmantill/v2_3/2016/ZJetsToQQ",
     "/store/user/lpcpfnano/cmantill/v2_3/2016APV/ZJetsToQQ",
@@ -86,20 +86,21 @@ folders_to_index = [
     "/store/user/lpcpfnano/rkansal/v2_3/2017/ZJetsToQQ",  # missing HT200-400
     "/store/user/lpcpfnano/cmantill/v2_3/2018/ZJetsToQQ",
     
-    #TODO: EWKV, singlet (not sure if I understand singlet)
+    "/eos/uscms/store/group/lpcpfnano/jdickins/v2_3/2017/ZJetsToQQ", #Include HT200-400
+    
     #TODO: DYJets
     
-    #TODO: Do we need this? was in previous infiles
+    # For muon control region. 
     # "/store/user/lpcpfnano/rkansal/v2_3/2016/SingleMu2016",
     # "/store/user/lpcpfnano/rkansal/v2_3/2017/SingleMu2017",
     "/store/user/lpcpfnano/rkansal/v2_3/2018/SingleMu2018",
     
-    #TODO: Do we need this? also was in previous infiles
-    "/store/user/lpcpfnano/cmantill/v2_3/2016/JetHT2016",
+    #Data
+    "/store/user/lpcpfnano/cmantill/v2_3/2016/JetHT2016", #Split into 2016 and 2016APV in filesets.ipynb,
     "/store/user/lpcpfnano/cmantill/v2_3/2017/JetHT2017",
     "/store/user/lpcpfnano/cmantill/v2_3/2018/JetHT2018",
     
-    #TODO: Why do we need this? 
+    #Singlet
     "/store/user/lpcpfnano/cmantill/v2_3/2016/SingleTop",
     "/store/user/lpcpfnano/cmantill/v2_3/2016APV/SingleTop",
     "/store/user/lpcpfnano/rkansal/v2_3/2017/SingleTop",
