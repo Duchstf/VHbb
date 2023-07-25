@@ -79,6 +79,11 @@ folders_to_index = [
     
     "/store/group/lpcpfnano/jdickins/v2_3/2017/WJetsToQQ", #Include HT200-400
     
+    "/store/group/lpcpfnano/jdickins/v2_3/2016/WJetsToLNu",
+    "/store/group/lpcpfnano/jdickins/v2_3/2016APV/WJetsToLNu",
+    "/store/group/lpcpfnano/jdickins/v2_3/2017/WJetsToLNu",
+    "/store/group/lpcpfnano/jdickins/v2_3/2018/WJetsToLNu",
+    
     #Zjets
     "/store/user/lpcpfnano/cmantill/v2_3/2016/ZJetsToQQ",
     "/store/user/lpcpfnano/cmantill/v2_3/2016APV/ZJetsToQQ",
@@ -88,7 +93,18 @@ folders_to_index = [
     
     "/eos/uscms/store/group/lpcpfnano/jdickins/v2_3/2017/ZJetsToQQ", #Include HT200-400
     
-    #TODO: DYJets
+    #DYJets
+    "/store/group/lpcpfnano/jdickins/v2_3/2016/DYJetsToLL",
+    "/store/group/lpcpfnano/jdickins/v2_3/2016APV/DYJetsToLL",
+    "/store/group/lpcpfnano/jdickins/v2_3/2017/DYJetsToLL",
+    "/store/group/lpcpfnano/jdickins/v2_3/2018/DYJetsToLL",
+    
+    #Singlet
+    "/store/user/lpcpfnano/cmantill/v2_3/2016/SingleTop",
+    "/store/user/lpcpfnano/cmantill/v2_3/2016APV/SingleTop",
+    "/store/user/lpcpfnano/rkansal/v2_3/2017/SingleTop",
+    "/store/user/lpcpfnano/cmantill/v2_3/2017/SingleTop",
+    "/store/user/lpcpfnano/cmantill/v2_3/2018/SingleTop"
     
     # For muon control region. 
     # "/store/user/lpcpfnano/rkansal/v2_3/2016/SingleMu2016",
@@ -99,19 +115,6 @@ folders_to_index = [
     "/store/user/lpcpfnano/cmantill/v2_3/2016/JetHT2016", #Split into 2016 and 2016APV in filesets.ipynb,
     "/store/user/lpcpfnano/cmantill/v2_3/2017/JetHT2017",
     "/store/user/lpcpfnano/cmantill/v2_3/2018/JetHT2018",
-    
-    #Singlet
-    "/store/user/lpcpfnano/cmantill/v2_3/2016/SingleTop",
-    "/store/user/lpcpfnano/cmantill/v2_3/2016APV/SingleTop",
-    "/store/user/lpcpfnano/rkansal/v2_3/2017/SingleTop",
-    "/store/user/lpcpfnano/cmantill/v2_3/2017/SingleTop",
-    "/store/user/lpcpfnano/cmantill/v2_3/2018/SingleTop",
-    
-    #TODO: Why do we need this? 
-    "/store/user/lpcpfnano/drankin/v2_2/2016/WJetsToLNu",
-    "/store/user/lpcpfnano/drankin/v2_2/2016APV/WJetsToLNu",
-    "/store/user/lpcpfnano/drankin/v2_2/2017/WJetsToLNu",
-    "/store/user/lpcpfnano/drankin/v2_2/2018/WJetsToLNu",
 ]
 
 index_APV = {}
