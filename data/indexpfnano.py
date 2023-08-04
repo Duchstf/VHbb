@@ -134,9 +134,9 @@ ignore_files = [
 ignore_subsamples = ["SingleMuon_Run2016B_ver1_HIPM"]
 
 for pyear in ["2016", "2016APV", "2017", "2018"]:
-    if pyear != "2018":
-        continue
-    print(pyear)
+    
+    print("Processing for year: ", pyear)
+    
     index = {}
     for f1 in folders_to_index:
         f1 = f1.rstrip("/")
