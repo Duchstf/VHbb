@@ -33,7 +33,7 @@ cluster = LPCCondorCluster(
 year = sys.argv[1]
 tag = "pnet_scan_msd_Aug4_2023" 
 
-out_path = "output/{}_{}/".format(tag,year)
+out_path = "output/{}/{}/".format(tag,year)
 os.system('mkdir -p  %s' %out_path)
 
 cluster.adapt(minimum=1, maximum=250)
@@ -47,41 +47,42 @@ with Client(cluster) as client:
     with performance_report(filename="dask-report.html"):
         
         #Input PF nano for the year
-        infile = subprocess.getoutput("ls data/infiles/pfnanoindex_{}.json".format(year)).split()
-    
-        #index = this_file.split("_")[1].split(".json")[0]
+        infiles = subprocess.getoutput("ls data/infiles/{}/{}_*.json".format(year, year)).split()
         
-        outfile = out_path + '{}_dask.coffea'.format(year)
+        for this_file in infiles:
+            index = this_file.split("_")[1].split(".json")[0]
+            outfile = out_path + '{}_dask_{}.coffea'.format(year, index)
                 
-        if os.path.isfile(outfile):
-            raise Exception("Sorry, file  already exists.") 
-        
-        else:
-            print("Begin running " + outfile)
-            print(datetime.now())
+            if os.path.isfile(outfile):
+                print("File " + outfile + " already exists. Skipping.")
+                continue 
+            
+            else:
+                print("Begin running " + outfile)
+                print(datetime.now())
 
-            uproot.open.defaults["xrootd_handler"] = uproot.source.xrootd.MultithreadedXRootDSource
+                uproot.open.defaults["xrootd_handler"] = uproot.source.xrootd.MultithreadedXRootDSource
 
-            #RUN MAIN PROCESSOR
-            p = ParticleNetMsdProcessor(year=year, jet_arbitration='pnet_cvb', systematics=False)
-            args = {'savemetrics':True, 'schema':NanoAODSchema}
+                #RUN MAIN PROCESSOR
+                p = ParticleNetMsdProcessor(year=year, jet_arbitration='T_cvb' , systematics=False)
+                args = {'savemetrics':True, 'schema':NanoAODSchema}
 
-            output = processor.run_uproot_job(
-                infile,
-                treename="Events",
-                processor_instance=p,
-                executor=processor.dask_executor,
-                executor_args={
-                    "client": client,
-                    "skipbadfiles": 1,
-                    "schema": processor.NanoAODSchema,
-                    "treereduction": 2,
-                },
-                chunksize=50000,
-                #        maxchunks=args.max,
-            )
+                output = processor.run_uproot_job(
+                    this_file,
+                    treename="Events",
+                    processor_instance=p,
+                    executor=processor.dask_executor,
+                    executor_args={
+                        "client": client,
+                        "skipbadfiles": 1,
+                        "schema": processor.NanoAODSchema,
+                        "treereduction": 2,
+                    },
+                    chunksize=50000,
+                    #        maxchunks=args.max,
+                )
 
-            #Save output files
-            util.save(output, outfile)
-            print("saved " + outfile)
-            print(datetime.now())
+                #Save output files
+                util.save(output, outfile)
+                print("saved " + outfile)
+                print(datetime.now())
