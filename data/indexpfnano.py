@@ -91,7 +91,7 @@ folders_to_index = [
     "/store/user/lpcpfnano/rkansal/v2_3/2017/ZJetsToQQ",  # missing HT200-400
     "/store/user/lpcpfnano/cmantill/v2_3/2018/ZJetsToQQ",
     
-    "/eos/uscms/store/group/lpcpfnano/jdickins/v2_3/2017/ZJetsToQQ", #Include HT200-400
+    "/store/group/lpcpfnano/jdickins/v2_3/2017/ZJetsToQQ", #Include HT200-400
     
     #DYJets
     "/store/group/lpcpfnano/jdickins/v2_3/2016/DYJetsToLL",
@@ -106,10 +106,12 @@ folders_to_index = [
     "/store/user/lpcpfnano/cmantill/v2_3/2017/SingleTop",
     "/store/user/lpcpfnano/cmantill/v2_3/2018/SingleTop"
     
-    # For muon control region. 
+    # For muon control region.
+    # TODO: Not really sure what's up with these samples, need to check with rahgav
+    # TODO: His original code commented out 2016 and 2017 
     # "/store/user/lpcpfnano/rkansal/v2_3/2016/SingleMu2016",
     # "/store/user/lpcpfnano/rkansal/v2_3/2017/SingleMu2017",
-    "/store/user/lpcpfnano/rkansal/v2_3/2018/SingleMu2018",
+    # "/store/user/lpcpfnano/rkansal/v2_3/2018/SingleMu2018",
     
     #Data
     "/store/user/lpcpfnano/cmantill/v2_3/2016/JetHT2016", #Split into 2016 and 2016APV in filesets.ipynb,
@@ -133,6 +135,8 @@ ignore_files = [
 
 ignore_subsamples = ["SingleMuon_Run2016B_ver1_HIPM"]
 
+#TODO: Need to check whether I need this whole framework.
+#TODO: Not exactly sure what this is doing here and whether the same thing should be done for VH
 for pyear in ["2016", "2016APV", "2017", "2018"]:
     
     print("Processing for year: ", pyear)

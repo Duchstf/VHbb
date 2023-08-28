@@ -52,7 +52,7 @@ class ParticleNetMsdProcessor(processor.ProcessorABC):
     
     def __init__(self,
                  year='2017',
-                 jet_arbitration='pnet_cvb',
+                 jet_arbitration='T_cvb',
                  nnlops_rew=False,
                  skipJER=False,
                  tightMatch=False,
@@ -81,18 +81,22 @@ class ParticleNetMsdProcessor(processor.ProcessorABC):
         self._btagSF = BTagCorrector('M', self._ak4tagger, year)
 
         #Open the trigger files
-        with open('muon_triggers.json') as f:
+        with open('files/muon_triggers.json') as f:
             self._muontriggers = json.load(f)
 
-        with open('triggers.json') as f:
+        with open('files/triggers.json') as f:
             self._triggers = json.load(f)
 
         # https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2
-        with open('metfilters.json') as f:
+        with open('files/metfilters.json') as f:
             self._met_filters = json.load(f)
         
         #TODO: NOT SURE WHAT THIS IS USED FOR. IT'S NOT USED IN THE FILE.
         optbins = np.r_[np.linspace(0, 0.15, 30, endpoint=False), np.linspace(0.15, 1, 86)]
+        
+        # Tagger scores binning
+        tagger_bins = [0.] + list(np.logspace(np.log10(0.001),np.log10(0.8), 100)) +\
+                            [round(x,2) for x in list(np.linspace(0.81,1.,20))]
         
         #Create the histogram.
         self.make_output = lambda: {
@@ -110,8 +114,8 @@ class ParticleNetMsdProcessor(processor.ProcessorABC):
                 hist.Cat('dataset', 'Dataset'),
                 hist.Cat('region', 'Region'),
                 hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
-                hist.Bin('ddb1', r'Jet 1 Paticle Net B Score', 100, 0, 1),
-                hist.Bin('ddc2', r'Jet 2 Particle Net C Score', 100, 0, 1),
+                hist.Bin('ddb1', r'Jet 1 Paticle Net B Score', tagger_bins),
+                hist.Bin('ddc2', r'Jet 2 Particle Net C Score', tagger_bins),
             )
         }
 
@@ -235,7 +239,7 @@ class ParticleNetMsdProcessor(processor.ProcessorABC):
             # second jet is more charm-like                                                                                                              
             secondjet = ak.firsts(leadingjets[indices[:, 1:2]])
             
-        elif self._jet_arbitration == 'pnet_cvb':
+        elif self._jet_arbitration == 'T_cvb':
             #Order the jets based on particle net scores
             leadingjets = candidatejet[:, 0:2]
             
@@ -254,27 +258,11 @@ class ParticleNetMsdProcessor(processor.ProcessorABC):
             raise RuntimeError("Unknown candidate jet arbitration")
 
         
-        #Exact the scores for Higgs candidate
-        bvl1 = candidatejet.particleNetMD_Xbb / (candidatejet.particleNetMD_Xbb +\
-                                                candidatejet.particleNetMD_QCD +\
-                                                candidatejet.particleNetMD_Xcc +\
-                                                candidatejet.particleNetMD_Xqq)
-        
-        cvl1 = candidatejet.particleNetMD_Xcc / (candidatejet.particleNetMD_Xbb +\
-                                                candidatejet.particleNetMD_QCD +\
-                                                candidatejet.particleNetMD_Xcc +\
-                                                candidatejet.particleNetMD_Xqq)
+        #Exact B scores for Higgs candidate
+        bvl1 = candidatejet.particleNetMD_Xbb / (1- candidatejet.particleNetMD_Xcc - candidatejet.particleNetMD_Xqq)
 
-        #Exact scores for V candidate
-        bvl2 = secondjet.particleNetMD_Xbb / (secondjet.particleNetMD_Xbb +\
-                                                secondjet.particleNetMD_QCD +\
-                                                secondjet.particleNetMD_Xcc +\
-                                                secondjet.particleNetMD_Xqq)
-        
-        cvl2 = secondjet.particleNetMD_Xcc / (secondjet.particleNetMD_Xbb +\
-                                                secondjet.particleNetMD_QCD +\
-                                                secondjet.particleNetMD_Xcc +\
-                                                secondjet.particleNetMD_Xqq)
+        #Exact C scores for V candidate
+        cvl2 = secondjet.particleNetMD_Xcc / (1 - secondjet.particleNetMD_Xbb - secondjet.particleNetMD_Xqq)
 
         #!Add selections------------------>
         #There is a list at the end which specifies the selections being used 
