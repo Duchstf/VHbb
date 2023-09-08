@@ -72,7 +72,7 @@ xs['ST_tW_top_5f_inclusiveDecays'] = 3.245e+01
 xs['ST_tW_top_5f_NoFullyHadronicDecays'] = 3.245e+01 * BR_TLeptonic
 
 # W+jets W(qq)
-xs['WJetsToQQ_HT-200to400'] = 0
+xs['WJetsToQQ_HT-200to400'] = 2549.0
 xs['WJetsToQQ_HT-400to600'] = 2.770e+02 
 xs['WJetsToQQ_HT-600to800'] = 5.906e+01 
 xs['WJetsToQQ_HT-800toInf'] = 2.875e+01 
@@ -88,7 +88,7 @@ xs['WJetsToLNu_HT-1200To2500'] = 1.155e+00
 xs['WJetsToLNu_HT-2500ToInf'] = 2.625e-02 
 
 # Z+jets Z(qq)
-xs['ZJetsToQQ_HT-200to400'] = 0
+xs['ZJetsToQQ_HT-200to400'] = 1012.0
 xs['ZJetsToQQ_HT-400to600'] = 1.145e+02
 xs['ZJetsToQQ_HT-600to800'] = 2.541e+01
 xs['ZJetsToQQ_HT-800toInf'] = 1.291e+01
