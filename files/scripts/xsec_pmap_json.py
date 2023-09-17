@@ -15,15 +15,25 @@ BR_HBB = 0.5809
 xs = {}
 
 # QCD
-xs["QCD_HT50to100"] =  0
-xs["QCD_HT100to200"] = 0
-xs["QCD_HT200to300"] = 0
-xs["QCD_HT300to500"] = 0
+xs["QCD_HT50to100"] =  1.863e+08
+xs["QCD_HT100to200"] = 2.361e+07
+xs["QCD_HT200to300"] = 1.552e+06
+xs["QCD_HT300to500"] = 3.245e+05
 xs['QCD_HT500to700'] = 3.033e+04
 xs['QCD_HT700to1000'] = 6.412e+03
 xs['QCD_HT1000to1500'] = 1.118e+03
 xs['QCD_HT1500to2000'] = 1.085e+02
 xs['QCD_HT2000toInf'] = 2.194e+01
+
+xs["QCD_bEnriched_HT50to100"] =  0
+xs["QCD_bEnriched_HT100to200"] = 0
+xs["QCD_bEnriched_HT200to300"] = 8.021e+04
+xs["QCD_bEnriched_HT300to500"] = 1.674e+04
+xs['QCD_bEnriched_HT500to700'] = 1.500e+03
+xs['QCD_bEnriched_HT700to1000'] = 2.997e+02
+xs['QCD_bEnriched_HT1000to1500'] = 4.761e+01
+xs['QCD_bEnriched_HT1500to2000'] = 4.022e+00
+xs['QCD_bEnriched_HT2000toInf'] = 6.973e-01
 
 xs['QCD_Pt_120to170'] = 4.074e+05
 xs['QCD_Pt_170to300'] = 1.035e+05
@@ -62,7 +72,7 @@ xs['ST_tW_top_5f_inclusiveDecays'] = 3.245e+01
 xs['ST_tW_top_5f_NoFullyHadronicDecays'] = 3.245e+01 * BR_TLeptonic
 
 # W+jets W(qq)
-xs['WJetsToQQ_HT-200to400'] = 0
+xs['WJetsToQQ_HT-200to400'] = 2549.0
 xs['WJetsToQQ_HT-400to600'] = 2.770e+02 
 xs['WJetsToQQ_HT-600to800'] = 5.906e+01 
 xs['WJetsToQQ_HT-800toInf'] = 2.875e+01 
@@ -78,7 +88,7 @@ xs['WJetsToLNu_HT-1200To2500'] = 1.155e+00
 xs['WJetsToLNu_HT-2500ToInf'] = 2.625e-02 
 
 # Z+jets Z(qq)
-xs['ZJetsToQQ_HT-200to400'] = 0
+xs['ZJetsToQQ_HT-200to400'] = 1012.0
 xs['ZJetsToQQ_HT-400to600'] = 1.145e+02
 xs['ZJetsToQQ_HT-600to800'] = 2.541e+01
 xs['ZJetsToQQ_HT-800toInf'] = 1.291e+01
