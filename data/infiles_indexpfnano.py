@@ -3,7 +3,7 @@ import os
 import json
 
 #Leaving out '2016APV','2016' to check with Jennet on how to split the data.
-for year in ['2017','2018']:
+for year in ['2016', '2016APV', '2017','2018']:
     
     os.system('mkdir -p infiles/{}'.format(year))
     
@@ -30,10 +30,21 @@ for year in ['2017','2018']:
         print("Ouput path: ", out_path)
         
         for dataset, files in filelist[year][k].items():
-            print(dataset)
-            filelist_redirector[dataset] = ["root://cmsxrootd.fnal.gov/" + f for f in files]
+            
+            # HIMP ending signifies the 2016APV data. 
+            if k == 'JetHT2016' or k == 'SingleMu2016':
+                
+                # Write HIMP to 2016APV files
+                if 'HIPM' in dataset and year == "2016APV":
+                    filelist_redirector[dataset] = ["root://cmsxrootd.fnal.gov/" + f for f in files]
+                
+                # Non HIMP goes 20 2016    
+                elif 'HIPM' not in dataset and year == "2016":
+                    filelist_redirector[dataset] = ["root://cmsxrootd.fnal.gov/" + f for f in files]
+                
+            else:
+                filelist_redirector[dataset] = ["root://cmsxrootd.fnal.gov/" + f for f in files]
             
         with open(out_path, 'w') as outfile:
             json.dump(filelist_redirector, outfile)
-
-#! Process 2016 and 2016APV separately
+    
