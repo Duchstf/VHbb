@@ -38,7 +38,7 @@ for year in ['2016', '2016APV', '2017','2018']:
                 if 'HIPM' in dataset and year == "2016APV":
                     filelist_redirector[dataset] = ["root://cmsxrootd.fnal.gov/" + f for f in files]
                 
-                # Non HIMP goes 20 2016    
+                # Non HIMP goes to 2016    
                 elif 'HIPM' not in dataset and year == "2016":
                     filelist_redirector[dataset] = ["root://cmsxrootd.fnal.gov/" + f for f in files]
                 
