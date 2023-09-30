@@ -3,6 +3,8 @@
 # Create a list of ddb and ddc score
 declare -a pairs=(THRES_LIST)
 
+echo "Running pre-scan script ..."
+
 for thres in "${pairs[@]}"
 do
    IFS=" " read -r -a arr <<< "${thres}"

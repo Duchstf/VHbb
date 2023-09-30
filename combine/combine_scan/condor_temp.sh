@@ -15,16 +15,17 @@ echo $CMSSW_BASE "is the CMSSW we have on the local worker node"
 mv ../../tar_ball.tar.gz .
 mv ../../PRE_SCAN_FILE .
 mv ../../MAIN_SCAN_FILE .
-mv ../../make_cards_script.sh .
 
 #Untar the package
-tar -xzvf tar_ball.tar.gz
+tar -xzvf tar_ball.tar.gz --strip-components=1
+echo "HERE 1"
+ls -alrth
 
 #Run pre-scan
 chmod +x PRE_SCAN_FILE
 singularity exec -B ${PWD}:/srv --pwd /srv /cvmfs/unpacked.cern.ch/registry.hub.docker.com/coffeateam/coffea-dask:latest /srv/./PRE_SCAN_FILE
 
-echo "HERERERERERER"
+echo "HERE 2"
 pwd
 ls -alrth
 

@@ -17,6 +17,14 @@ rl.ParametericSample.PreferRooParametricHist = False
 eps=0.0000001
 do_muon_CR = False
 
+'''
+python make_cards.py [year]
+
+Example: 
+
+python make_cards.py 2017
+'''
+
 ######----------------HELPER FUNCTIONS-----------------#######
 # Tell me if my sample is too small to care about
 def badtemp_ma(hvalues, mask=None):
@@ -49,18 +57,10 @@ def get_template(sName, passed, ptbin, cat, obs, syst, muon=False):
     if muon:
         f = ROOT.TFile.Open('{}/muonCR.root'.format(year))
 
-    #Determind the right branch
-    name = 'fail_'
-
-    if passed:
-        name = 'pass_'
-
-    if cat == "charm":
-        name = 'c_' + name
-    elif cat == 'light':
-        name = 'l_' + name
-
-    name += sName+'_'+syst
+    #Jet 1 b pass/failing region
+    name = 'pass_' if passed else 'fail_' 
+    name = '{}_'.format(cat) + name #Charm/Light Category
+    name += sName+'_'+syst #sytematic name
 
     print("Extracting ... ", name)
     h = f.Get(name)
@@ -117,7 +117,7 @@ def vh_rhalphabet(tmpdir, throwPoisson = True, fast=0):
     npt['charm'] = len(ptbins['charm']) - 1
     npt['light'] = len(ptbins['light']) - 1
 
-    msdbins = np.linspace(47, 201, 22)
+    msdbins = np.linspace(40, 201, 23)
     msd = rl.Observable('msd', msdbins)
 
     validbins = {}
@@ -282,7 +282,14 @@ def vh_rhalphabet(tmpdir, throwPoisson = True, fast=0):
     model = rl.Model('testModel_'+year)
 
     # exclude QCD from MC samps
-    samps = ['ggF','VBF','WH','ZH','ttH','ttbar','singlet','Zjets','EWKW', 'EWKZ','Wjets','VV'] #Excluded 'Zjetsbb'
+    samps = ['WH','ZH',
+            'WW', 'WZ', 'ZZ',
+            'Wjets', 'Zjets',
+            'ggF', 
+            'singlet',
+            'ttH',
+            'ttbar']
+    
     sigs = ['ZH','WH']
 
     #Fill actual fit model with the expected fit value for every process except for QCD
