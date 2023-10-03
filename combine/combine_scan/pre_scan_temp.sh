@@ -7,35 +7,33 @@ echo "Running pre-scan script ..."
 
 for thres in "${pairs[@]}"
 do
-   IFS=" " read -r -a arr <<< "${thres}"
+    IFS=" " read -r -a arr <<< "${thres}"
 
-   i="${arr[0]}"
-   j="${arr[1]}"
+    i="${arr[0]}"
+    j="${arr[1]}"
 
-   echo "DDB: $i; DDC: $j"
+    echo "DDB: $i; DDC: $j"
    
     #Make the workspace directory
     mkdir -p DDB-$i-DDC-$j/2017/
 
     #Copy all the stuff needed over
     cd DDB-$i-DDC-$j/2017/
-    ln -sf ../../templates.pkl .
+    ln -sf ../../ParticleNet_msd.pkl .
     cd ../../
 
-    cp make-hists-1mv-charm.py DDB-$i-DDC-$j/
-    cp make-hists-1mv-light.py DDB-$i-DDC-$j/
+    cp make_hists.py DDB-$i-DDC-$j/
 
     cd DDB-$i-DDC-$j/
 
     cp ../*.json .
-    
-    #Replace the threshold in make-hist
-    sed -i "s/ddbthr =.*/ddbthr = $i/g" make-hists-1mv-*.py
-    sed -i "s/ddcthr =.*/ddcthr = $j/g" make-hists-1mv-*.py
+
+    #Replace the threshold in make_hist
+    sed -i "s/ddbthr =.*/ddbthr = $i/g" make_hists.py
+    sed -i "s/ddcthr =.*/ddcthr = $j/g" make_hists.py
 
     #Run make-hist
-    python make-hists-1mv-charm.py 2017
-    python make-hists-1mv-light.py 2017
+    python make_hists.py 2017
 
     cd ../
 

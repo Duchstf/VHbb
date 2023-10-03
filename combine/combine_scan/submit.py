@@ -13,9 +13,10 @@ NO NEED TO ENABLE SINGULARITY
 
 #Define the list of threshold
 tagger_bins_temp = [0.] + list(np.logspace(np.log10(0.001),np.log10(0.8), 100)) +\
-              [round(x,2) for x in list(np.linspace(0.81,1.,20))]
+              [round(x,5) for x in list(np.linspace(0.81,1.,20))]
               
-tagger_bins = [round(x,2) for x in tagger_bins_temp]
+# tagger_bins = [round(x,5) for x in tagger_bins_temp]
+tagger_bins = [0.8, 0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.0]
               
 ddb1_thresholds = ddc2_thresholds = tagger_bins
 
@@ -27,6 +28,9 @@ os.system('rm -rf {}/'.format(log_dir)) #Remove if it's there
 #Create the logs directory
 os.system("mkdir -p {}".format(log_dir))
 
+#Copy scripts from combine_single
+os.system("cp ../combine_single/*.py tar_ball") 
+
 #Make the tarball
 os.system("rm tar_ball.tar.gz")
 os.system("tar -czvf tar_ball.tar.gz tar_ball")
@@ -35,8 +39,6 @@ os.system("cp tar_ball.tar.gz {}/".format(log_dir))
 # Copy the CMSSW Environment over
 os.system("cp CMSSW_10_2_13.tar.gz {}/".format(log_dir))
 current_path =  os.environ['PWD']
-
-
 
 n_chunk = 10 #Process 10 points at a time
 chunk_index = 0 #Chunk counter to keep index of the chunks
@@ -123,3 +125,4 @@ try:
 
 except Found:
        print("BREAKING")
+       

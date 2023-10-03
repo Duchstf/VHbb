@@ -23,6 +23,7 @@ ls -alrth
 
 #Run pre-scan
 chmod +x PRE_SCAN_FILE
+#export SINGULARITY_CACHEDIR="/tmp/$(whoami)/singularity"
 singularity exec -B ${PWD}:/srv --pwd /srv /cvmfs/unpacked.cern.ch/registry.hub.docker.com/coffeateam/coffea-dask:latest /srv/./PRE_SCAN_FILE
 
 echo "HERE 2"

@@ -16,13 +16,6 @@ do
 
     cd DDB-$i-DDC-$j/2017
 
-    SignalRootFile=signalregion.root
-    if [ -f "$SignalRootFile" ]; then
-    echo "$SignalRootFile exists."
-    else 
-    hadd signalregion.root 1mvc-signalregion.root 1mvl-signalregion.root
-    fi
-
     cd ..
 
     cp ../make_cards.py .
