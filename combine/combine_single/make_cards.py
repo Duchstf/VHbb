@@ -285,10 +285,11 @@ def vh_rhalphabet(tmpdir, throwPoisson = True, fast=0):
     samps = ['WH','ZH',
             'WW', 'WZ', 'ZZ',
             'Wjets', 'Zjets',
+            'VBFDipoleRecoilOff', #Double checking this with Jennet
             'ggF', 
             'singlet',
             'ttH',
-            'ttbar']
+            'ttbarBoosted']
     
     sigs = ['ZH','WH']
 

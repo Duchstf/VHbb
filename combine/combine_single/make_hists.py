@@ -20,8 +20,8 @@ with open('lumi.json') as f:
     lumis = json.load(f)
 
 #Define the score threshold
-ddbthr = 0.87
-ddcthr = 0.02
+ddbthr = 0.72
+ddcthr = 0.15
 
 # Main method
 def main():
@@ -50,22 +50,24 @@ def main():
         print("You need to create the pickle")
         return
     
-    #TODO: NEED TO CHECK WITH JENNET WITH THE RIGHT SAMPLES 
     #TODO: Full sample is ['QCD', 'VBFDipoleRecoilOff', 'WH', 'WW', 'WZ', 'Wjets', 'ZH', 'ZZ', 'Zjets', 'ZjetsHT', 'data', 'ggF', 'singlet', 'ttH', 'ttbar', 'ttbarBoosted']
     
-    #TODO: DO WE NEED  ZjetsHT? ttbarboosted (I think we discussed switching at some point)
-    #TODO: What about EWK V??
-    #TODO: I really need to double check all the samples
+    #TODO: Current VBF sample is with DipoleRecoil Off, Jennet is generating a new sample with Dipole Recoil On. 
+    #TODO: Doesn't matter if using Zjets or ZjetsHT (only the DY samples are different). 
+    #TODO: ttbarboosted for higher statistics.
+    #TODO: Don't need EWK V
 
+    #! USE THE EXACT SAME SAMPLE IN make_cards.py
     samples = ['data',
             'QCD',
             'WH','ZH',
             'WW', 'WZ', 'ZZ',
             'Wjets', 'Zjets',
+            'VBFDipoleRecoilOff', #Double checking this.
             'ggF', 
             'singlet',
             'ttH',
-            'ttbar']
+            'ttbarBoosted']
     
     #Process each region
     for region in regions:

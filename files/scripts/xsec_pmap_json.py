@@ -246,7 +246,6 @@ pmap['EWKW'] = ['EWKWminus_WToQQ','EWKWplus_WToQQ', 'EWKWminus_WToLNu', 'EWKWplu
 pmap['ggF'] = ['GluGluHToBB']
 
 pmap['VBFDipoleRecoilOff'] = ['VBFHToBB']
-pmap['VBF'] = ['VBFHToBBDipoleRecoilOn']
 
 pmap['WH'] = ['WminusH_HToBB_WToQQ',
               'WplusH_HToBB_WToQQ',
