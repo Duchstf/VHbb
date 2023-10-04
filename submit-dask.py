@@ -31,9 +31,9 @@ cluster = LPCCondorCluster(
 )
 
 year = sys.argv[1]
-tag = "pnet_scan_msd_Aug4_2023" 
+tag = "pnet_scan_msd_Oct4_2023" 
 
-out_path = "output/{}/{}/".format(tag,year)
+out_path = "output/coffea/{}/{}/".format(tag,year)
 os.system('mkdir -p  %s' %out_path)
 
 cluster.adapt(minimum=1, maximum=250)

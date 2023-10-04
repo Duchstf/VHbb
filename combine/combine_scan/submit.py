@@ -15,8 +15,8 @@ NO NEED TO ENABLE SINGULARITY
 tagger_bins_temp = [0.] + list(np.logspace(np.log10(0.001),np.log10(0.8), 100)) +\
               [round(x,5) for x in list(np.linspace(0.81,1.,20))]
               
-# tagger_bins = [round(x,5) for x in tagger_bins_temp]
-tagger_bins = [0.8, 0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.0]
+tagger_bins = [round(x,5) for x in tagger_bins_temp]
+#tagger_bins = [0.8, 0.81, 0.82, 0.83, 0.84, 0.85, 0.86, 0.87, 0.88, 0.89, 0.9, 0.91, 0.92, 0.93, 0.94, 0.95, 0.96, 0.97, 0.98, 0.99, 1.0]
               
 ddb1_thresholds = ddc2_thresholds = tagger_bins
 
@@ -120,8 +120,8 @@ try:
 
                             os.system('condor_submit {}'.format(condor_local))
 
-                     if chunk_index == n_test:
-                            raise Found
+                     # if chunk_index == n_test:
+                     #        raise Found
 
 except Found:
        print("BREAKING")

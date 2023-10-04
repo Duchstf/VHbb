@@ -52,12 +52,10 @@ def main():
     
     #TODO: Full sample is ['QCD', 'VBFDipoleRecoilOff', 'WH', 'WW', 'WZ', 'Wjets', 'ZH', 'ZZ', 'Zjets', 'ZjetsHT', 'data', 'ggF', 'singlet', 'ttH', 'ttbar', 'ttbarBoosted']
     
-    #TODO: Checking with Cristina about her VBF sample, have to make sure using reoil dipole on. 
-    #TODO: DO WE NEED  ZjetsHT? ttbarboosted (I think we discussed switching at some point)
-    #TODO: Doesn't matter if using Zjets or ZjetsHT. 
+    #TODO: Current VBF sample is with DipoleRecoil Off, Jennet is generating a new sample with Dipole Recoil On. 
+    #TODO: Doesn't matter if using Zjets or ZjetsHT (only the DY samples are different). 
     #TODO: ttbarboosted for higher statistics.
-    #TODO: What about EWK V?? Don't need
-    #TODO: I really need to double check all the samples
+    #TODO: Don't need EWK V
 
     #! USE THE EXACT SAME SAMPLE IN make_cards.py
     samples = ['data',
@@ -75,9 +73,6 @@ def main():
     for region in regions:
         
         print('Running for {} in {} region'.format(year, region))
-        #bins = [40,201]
-    
-
     
         # Jet 2 charm score integral range
         c_int_range = slice(ddcthr,1) if region == 'charm' else slice(0,ddcthr)

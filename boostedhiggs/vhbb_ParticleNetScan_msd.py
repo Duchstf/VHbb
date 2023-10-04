@@ -95,8 +95,7 @@ class ParticleNetMsdProcessor(processor.ProcessorABC):
         optbins = np.r_[np.linspace(0, 0.15, 30, endpoint=False), np.linspace(0.15, 1, 86)]
         
         # Tagger scores binning
-        tagger_bins = [0.] + list(np.logspace(np.log10(0.001),np.log10(0.8), 100)) +\
-                            [round(x,2) for x in list(np.linspace(0.81,1.,20))]
+        tagger_bins = [round(x,2) for x in list(np.linspace(0.,0.98,50))] + [round(x,5) for x in list(np.linspace(0.99,1.,50))] 
         
         #Create the histogram.
         self.make_output = lambda: {

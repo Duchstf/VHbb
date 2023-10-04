@@ -20,8 +20,8 @@ with open('lumi.json') as f:
     lumis = json.load(f)
 
 #Define the score threshold
-ddbthr = 0.72
-ddcthr = 0.15
+ddbthr = 0.99
+ddcthr = 0.84
 
 # Main method
 def main():
@@ -73,9 +73,6 @@ def main():
     for region in regions:
         
         print('Running for {} in {} region'.format(year, region))
-        #bins = [40,201]
-    
-
     
         # Jet 2 charm score integral range
         c_int_range = slice(ddcthr,1) if region == 'charm' else slice(0,ddcthr)
