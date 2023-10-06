@@ -40,3 +40,5 @@ python submit-dask.py 2017 > dask.out 2>&1
 * [Di-Higgs -> 4b approval talk.](https://indico.cern.ch/event/1078870/contributions/4537934/attachments/2313106/3947040/Preapproval_HH4bggF_280921.pdf)https://indico.cern.ch/event/1078870/contributions/4537934/attachments/2313106/3947040/Preapproval_HH4bggF_280921.pdf 
 
 ## Papers
+
+* ParticleNet Performance Paper: https://cds.cern.ch/record/2866276/files/BTV-22-001-pas.pdf 
