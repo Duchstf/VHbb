@@ -20,6 +20,12 @@ Renew your grid certificate:
 grid-proxy-init -valid 1000:00
 ```
 
+Run the `./shell` script as setup above:
+
+```
+./shell coffeateam/coffea-dask:0.7.21-fastjet-3.4.0.1-g6238ea8
+```
+
 Run the job submssion script:
 
 ```
