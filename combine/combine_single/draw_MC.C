@@ -1,5 +1,5 @@
 /************************************************
- * Jennet Dickinson 
+ * Duc Hoang, adapted from Jennet Dickinson
  * Nov 19, 2020
  * Draw Roofit plots
  ************************************************/
@@ -59,7 +59,7 @@ void draw(int index, bool pass, bool charm, bool log=true){
   //TPad *pad2 = new TPad("pad2","pad2",0,0,1,.33);
 
   // pad1->SetBottomMargin(0.00001);
-  pad1->SetTopMargin(0.1);
+  pad1->SetTopMargin(5);
   pad1->SetBorderMode(0);
   // pad2->SetTopMargin(0.00001);
   // pad2->SetBottomMargin(0.3);
@@ -169,16 +169,6 @@ void draw(int index, bool pass, bool charm, bool log=true){
   TH1D* Wjets = (TH1D*)f->Get((leading_name+"Wjets"+"_nominal").c_str());
   Wjets->SetLineColor(kBlack);
   Wjets->SetFillColor(kGray);
-
-  /* EWK */
-  // TH1D* EWK = (TH1D*)WH->Clone("VV");
-  // EWK->Reset();
-  // EWK->Add((TH1D*)f->Get((leading_name+"EWKW"+"_nominal").c_str()));
-  // EWK->Add((TH1D*)f->Get((leading_name+"EWKZ"+"_nominal").c_str()));
-  // EWK->SetLineWidth(1);
-  // EWK->SetLineColor(kBlack);
-  // EWK->SetFillColor(kPink-5);
-  
   
   /* QCD */
   TH1D* qcd = (TH1D*)f->Get((leading_name+"QCD"+"_nominal").c_str());
@@ -193,8 +183,6 @@ void draw(int index, bool pass, bool charm, bool log=true){
     bkg->Add(singlet);
     bkg->Add(ttbar);
     bkg->Add(Zjets);
-    // bkg->Add(EWK);
-    // bkg->Add(Zjetsbb);
     bkg->Add(Wjets);
     bkg->Add(qcd);
   }
@@ -202,8 +190,6 @@ void draw(int index, bool pass, bool charm, bool log=true){
     bkg->Add(qcd);
     bkg->Add(ttbar);
     bkg->Add(Wjets);
-    // bkg->Add(EWK);
-    // bkg->Add(Zjetsbb);
     bkg->Add(Zjets);
     bkg->Add(singlet);
     bkg->Add(WW);
@@ -230,8 +216,12 @@ void draw(int index, bool pass, bool charm, bool log=true){
   data_obs->Draw("pesame");
   data_obs->Draw("axissame");
 
-  bkg->GetYaxis()->SetTitle("Events");
-  bkg->GetXaxis()->SetTitle("m_{sd} [GeV]");
+  if (pass & charm){
+    bkg->SetMaximum(6);
+  }
+
+  data_obs->GetYaxis()->SetTitle("Events");
+  data_obs->GetXaxis()->SetTitle("m_{sd} [GeV]");
   
   double x1=.6, y1=.88;
   TLegend* leg = new TLegend(x1,y1,x1+.3,y1-.3);
@@ -244,8 +234,6 @@ void draw(int index, bool pass, bool charm, bool log=true){
   leg->AddEntry(qcd,"QCD","f");
   leg->AddEntry(Wjets,"W","f");
   leg->AddEntry(Zjets,"Z","f");
-  // leg->AddEntry(EWK,"EWK V","f");
-  // leg->AddEntry(Zjetsbb,"Z(bb)","f");
   leg->AddEntry(ttbar,"t#bar{t}","f");
   leg->AddEntry(singlet,"Single t","f");
   leg->AddEntry(WW,"WW","f");
@@ -254,7 +242,6 @@ void draw(int index, bool pass, bool charm, bool log=true){
   leg->AddEntry(bkgHiggs,"Bkg. H","f");
   leg->AddEntry(ZH,"ZH","l");
   leg->AddEntry(WH,"WH","l");
-
 
   leg->Draw();
 
@@ -292,7 +279,6 @@ void draw(int index, bool pass, bool charm, bool log=true){
   //l4.DrawLatex(0.2,.75,text2.c_str());
   
   // pad2->cd();
-
   TH1D* WH_sub = (TH1D*)WH->Clone("WH_sub");
   WH_sub->Reset();
   TH1D* ZH_sub = (TH1D*)ZH->Clone("ZH_sub");

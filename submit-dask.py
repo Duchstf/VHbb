@@ -1,8 +1,6 @@
 import os, sys
 import subprocess
-import json
 import uproot
-import awkward as ak
 
 from coffea import processor, util, hist
 from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
@@ -31,7 +29,8 @@ cluster = LPCCondorCluster(
 )
 
 year = sys.argv[1]
-tag = "pnet_scan_msd_Oct4_2023" 
+tag = "pnet_scan_msd_Oct4_2023"
+ignore_list = ['QCDbEnriched', 'QCDBGenFilter'] #Sample to ignore processing for now
 
 out_path = "output/coffea/{}/{}/".format(tag,year)
 os.system('mkdir -p  %s' %out_path)
@@ -48,11 +47,15 @@ with Client(cluster) as client:
         
         #Input PF nano for the year
         infiles = subprocess.getoutput("ls data/infiles/{}/{}_*.json".format(year, year)).split()
-        
+    
         for this_file in infiles:
-            index = this_file.split("_")[1].split(".json")[0]
+            index = ''.join(this_file.split("_")[1:]).split(".json")[0]
             outfile = out_path + '{}_dask_{}.coffea'.format(year, index)
-                
+            
+            if index in ignore_list:
+                print("{} is in ingore list, skipping ...".format(index))
+                continue
+    
             if os.path.isfile(outfile):
                 print("File " + outfile + " already exists. Skipping.")
                 continue 

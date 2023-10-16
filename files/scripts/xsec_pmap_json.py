@@ -136,7 +136,7 @@ xs['ZZTo4Q_NLO'] = 3.295e+00
 # Higgs
 xs['GluGluHToBB'] = 4.716e-01 * BR_HBB
 xs['VBFHToBB'] = 3.873e+00 * BR_HBB
-xs['VBFHToBBDipoleRecoilOn'] = xs['VBFHToBB']
+xs['VBFHToBB_DipoleRecoilOn'] = xs['VBFHToBB']
 
 xs['WminusH_HToBB_WToQQ'] = 3.675e-01 * BR_HBB
 xs['WplusH_HToBB_WToQQ'] = 5.890e-01 * BR_HBB
@@ -160,7 +160,7 @@ with open('../xsec.json', 'w') as outfile:
 #Make the pmap.json file
 pmap = {}
     
-pmap['QCD'] = ['QCD_Pt_120to170',                 
+pmap['QCDPt'] = ['QCD_Pt_120to170',                 
                'QCD_Pt_170to300', 
                'QCD_Pt_300to470', 
                'QCD_Pt_470to600', 
@@ -172,7 +172,7 @@ pmap['QCD'] = ['QCD_Pt_120to170',
                'QCD_Pt_2400to3200', 
                'QCD_Pt_3200toInf']
 
-pmap['QCDHT'] = ['QCD_HT500to700',
+pmap['QCD'] = ['QCD_HT500to700',
                  'QCD_HT700to1000',
                  'QCD_HT1000to1500',
                  'QCD_HT1500to2000',
@@ -246,6 +246,7 @@ pmap['EWKW'] = ['EWKWminus_WToQQ','EWKWplus_WToQQ', 'EWKWminus_WToLNu', 'EWKWplu
 pmap['ggF'] = ['GluGluHToBB']
 
 pmap['VBFDipoleRecoilOff'] = ['VBFHToBB']
+pmap['VBFDipoleRecoilOn'] = ['VBFHToBB_DipoleRecoilOn']
 
 pmap['WH'] = ['WminusH_HToBB_WToQQ',
               'WplusH_HToBB_WToQQ',

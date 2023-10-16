@@ -20,8 +20,8 @@ with open('lumi.json') as f:
     lumis = json.load(f)
 
 #Define the score threshold
-ddbthr = 0.99
-ddcthr = 0.84
+ddbthr = 0.99816
+ddcthr = 0.96
 
 # Main method
 def main():
@@ -69,6 +69,10 @@ def main():
             'ttH',
             'ttbarBoosted']
     
+    #Save the sample here and then load it in make_cards.py
+    with open("samples.json", "w") as f:   #Pickling
+        json.dump(samples, f)
+    
     #Process each region
     for region in regions:
         
@@ -81,8 +85,8 @@ def main():
         # Integrate over signal region and Jet 2 charm score
         sig = pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('ddc2',int_range=c_int_range)
 
-        # print(dir(sig.integrate('ddb1',int_range=slice(ddbthr,1)).sum('msd1').identifiers('process')))
-        # print([x.name for x in sig.integrate('ddb1',int_range=slice(ddbthr,1)).sum('msd1').identifiers('process')])
+        #Print sample names
+        print([x.name for x in sig.integrate('ddb1',int_range=slice(ddbthr,1)).sum('msd1').identifiers('process')])
     
         #Split into Jet 1 score b-tag passing/failing region. 
         for p in samples:

@@ -30,6 +30,12 @@ folders_to_index = [
     "/store/user/lpcpfnano/cmantill/v2_3/2017/HToBB/",
     "/store/user/lpcpfnano/cmantill/v2_3/2018/HToBB/",
     
+    #Add VBF Recoil On, Cristina's VBF samples are recoil off
+    "store/group/lpcpfnano/jdickins/v2_3/2016/VBFHToBB_DipoleRecoilOn/",
+    "store/group/lpcpfnano/jdickins/v2_3/2016APV/VBFHToBB_DipoleRecoilOn/",
+    "store/group/lpcpfnano/jdickins/v2_3/2017/VBFHToBB_DipoleRecoilOn/",
+    "store/group/lpcpfnano/jdickins/v2_3/2018/VBFHToBB_DipoleRecoilOn/",
+    
     "/store/user/lpcpfnano/rkansal/v2_3/2016/GluGluHToBB/",
     "/store/user/lpcpfnano/rkansal/v2_3/2016APV/GluGluHToBB/",
     "/store/user/lpcpfnano/rkansal/v2_3/2017/GluGluHToBB/",
