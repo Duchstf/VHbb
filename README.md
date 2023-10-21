@@ -32,6 +32,16 @@ Run the job submssion script:
 python submit-dask.py 2017 > dask.out 2>&1
 ```
 
+## Run Jupyter Notebooks
+
+```
+ssh -L 127.0.0.1:8703:127.0.0.1:8703 dhoang@cmslpc153.fnal.gov
+```
+
+```
+jupyter nbclassic --no-browser --port 8703 --ip 127.0.0.1
+```
+
 # References
 
 ## Talks
