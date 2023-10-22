@@ -42,6 +42,30 @@ ssh -L 127.0.0.1:8703:127.0.0.1:8703 dhoang@cmslpc153.fnal.gov
 jupyter nbclassic --no-browser --port 8703 --ip 127.0.0.1
 ```
 
+## Conda environment
+
+```
+conda-env create -f environment.yml
+```
+
+Activate the environment:
+
+```
+conda activate vhbb
+```
+
+And then do whatever you want in this environment (edit files, open notebooks, etc.). To deactivate the environment:
+
+```
+conda deactivate
+```
+
+If you make any update for the environment, please edit the `environment.yml` file and run:
+
+```
+conda env update --file environment.yml  --prune
+```
+
 # References
 
 ## Talks
