@@ -29,8 +29,8 @@ cluster = LPCCondorCluster(
 )
 
 year = sys.argv[1]
-tag = "pnet_scan_msd_Oct4_2023"
-ignore_list = ['QCDbEnriched', 'QCDBGenFilter'] #Sample to ignore processing for now
+tag = "pnet_scan_msd_QCD_Oct22_2023"
+ignore_list = ['QCDbEnriched', 'QCDBGenFilter', 'VBFHToBBDipoleRecoilOn'] #Sample to ignore processing for now
 
 out_path = "output/coffea/{}/{}/".format(tag,year)
 os.system('mkdir -p  %s' %out_path)
@@ -67,7 +67,7 @@ with Client(cluster) as client:
                 uproot.open.defaults["xrootd_handler"] = uproot.source.xrootd.MultithreadedXRootDSource
 
                 #RUN MAIN PROCESSOR
-                p = ParticleNetMsdProcessor(year=year, jet_arbitration='T_cvb' , systematics=False)
+                p = ParticleNetMsdProcessor(year=year, jet_arbitration='T_bvc' , systematics=False)
                 args = {'savemetrics':True, 'schema':NanoAODSchema}
 
                 output = processor.run_uproot_job(

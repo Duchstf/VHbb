@@ -20,8 +20,8 @@ with open('lumi.json') as f:
     lumis = json.load(f)
 
 #Define the score threshold
-ddbthr = 0.99816
-ddcthr = 0.96
+ddbthr = 0.99776
+ddcthr = 0.58
 
 # Main method
 def main():
@@ -61,7 +61,7 @@ def main():
     samples = ['data',
             'QCD',
             'WH','ZH',
-            'WW', 'WZ', 'ZZ',
+            'VV',
             'Wjets', 'Zjets',
             'VBFDipoleRecoilOff', #Double checking this.
             'ggF', 

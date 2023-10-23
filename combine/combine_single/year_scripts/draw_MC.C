@@ -56,28 +56,19 @@ void draw(int index, bool pass, bool charm, bool log=true){
 
   TCanvas* c = new TCanvas(name.c_str(),name.c_str(),600,600);
   TPad *pad1 = new TPad("pad1","pad1",0,0,1,1); //pad = python subplot
-  //TPad *pad2 = new TPad("pad2","pad2",0,0,1,.33);
 
-  // pad1->SetBottomMargin(0.00001);
   pad1->SetTopMargin(5);
   pad1->SetBorderMode(0);
-  // pad2->SetTopMargin(0.00001);
-  // pad2->SetBottomMargin(0.3);
-  // pad2->SetBorderMode(0);
 
   pad1->SetLeftMargin(0.15);
-  // pad2->SetLeftMargin(0.15);
   pad1->Draw();
-  // pad2->Draw();
 
   float textsize1 = 16/(pad1->GetWh()*pad1->GetAbsHNDC());
-  // float textsize2 = 16/(pad2->GetWh()*pad2->GetAbsHNDC());
 
   pad1->cd();
   if( log ) pad1->SetLogy();
 
   /*DATA*/
-  //TFile* dataf = new TFile(filename.c_str());
   TH1D* data_obs;
   data_obs = (TH1D*)f->Get((leading_name+"data_nominal").c_str());
 
@@ -123,29 +114,13 @@ void draw(int index, bool pass, bool charm, bool log=true){
 
   THStack *bkg = new THStack("bkg",""); //Histogram stack, order add -> stack
 
-  /* WW */
-  TH1D* WW = (TH1D*)WH->Clone("WW");
-  WW->Reset();
-  WW->Add((TH1D*)f->Get((leading_name+"WW"+"_nominal").c_str())); 
-  WW->SetLineWidth(1);
-  WW->SetLineColor(kBlack);
-  WW->SetFillColor(kOrange-3);
-
-  /* WZ */
-  TH1D* WZ = (TH1D*)WH->Clone("WZ");
-  WZ->Reset();
-  WZ->Add((TH1D*)f->Get((leading_name+"WZ"+"_nominal").c_str())); 
-  WZ->SetLineWidth(1);
-  WZ->SetLineColor(kBlack);
-  WZ->SetFillColor(kOrange-3);
-
-  /* ZZ */
-  TH1D* ZZ = (TH1D*)WH->Clone("ZZ");
-  ZZ->Reset();
-  ZZ->Add((TH1D*)f->Get((leading_name+"ZZ"+"_nominal").c_str())); 
-  ZZ->SetLineWidth(1);
-  ZZ->SetLineColor(kBlack);
-  ZZ->SetFillColor(kOrange-3);
+  /* VV */
+  TH1D*  VV= (TH1D*)WH->Clone("VV");
+  VV->Reset();
+  VV->Add((TH1D*)f->Get((leading_name+"VV"+"_nominal").c_str())); 
+  VV->SetLineWidth(1);
+  VV->SetLineColor(kBlack);
+  VV->SetFillColor(kOrange-3);
 
   /* single t */
   TH1D* singlet = (TH1D*)WH->Clone("singlet");
@@ -173,13 +148,11 @@ void draw(int index, bool pass, bool charm, bool log=true){
   /* QCD */
   TH1D* qcd = (TH1D*)f->Get((leading_name+"QCD"+"_nominal").c_str());
   qcd->SetLineColor(kBlack);
-  qcd->SetFillColor(kWhite);
+  qcd->SetFillColor(kYellow-9);
 
   if( log ){
     bkg->Add(bkgHiggs);
-    bkg->Add(WW);
-    bkg->Add(WZ);
-    bkg->Add(ZZ);
+    bkg->Add(VV);
     bkg->Add(singlet);
     bkg->Add(ttbar);
     bkg->Add(Zjets);
@@ -192,9 +165,7 @@ void draw(int index, bool pass, bool charm, bool log=true){
     bkg->Add(Wjets);
     bkg->Add(Zjets);
     bkg->Add(singlet);
-    bkg->Add(WW);
-    bkg->Add(WZ);
-    bkg->Add(ZZ);
+    bkg->Add(VV);
     bkg->Add(bkgHiggs);
   }
 
@@ -203,9 +174,7 @@ void draw(int index, bool pass, bool charm, bool log=true){
   cout << "Zjets: "   << Zjets->Integral()   << endl;
   cout << "ttbar: "   << ttbar->Integral()   << endl;
   cout << "singlet: " << singlet->Integral() << endl;
-  cout << "WW: "      << WW->Integral()      << endl;
-  cout << "WZ: "      << WZ->Integral()      << endl;
-  cout << "ZZ: "      << ZZ->Integral()      << endl;
+  cout << "VV: "      << VV->Integral()      << endl;
   cout << "bkgHiggs: " << bkgHiggs->Integral() << endl;
   cout << "ZH: " << ZH->Integral() << endl;
   cout << "WH: " << WH->Integral() << endl;
@@ -216,13 +185,9 @@ void draw(int index, bool pass, bool charm, bool log=true){
   data_obs->Draw("pesame");
   data_obs->Draw("axissame");
 
-  if (pass & charm){
-    bkg->SetMaximum(6);
-  }
-
-  data_obs->GetYaxis()->SetTitle("Events");
+  data_obs->GetYaxis()->SetTitle("Events / 7 GeV");
   data_obs->GetXaxis()->SetTitle("m_{sd} [GeV]");
-  
+
   double x1=.6, y1=.88;
   TLegend* leg = new TLegend(x1,y1,x1+.3,y1-.3);
   leg->SetBorderSize(0);
@@ -236,9 +201,7 @@ void draw(int index, bool pass, bool charm, bool log=true){
   leg->AddEntry(Zjets,"Z","f");
   leg->AddEntry(ttbar,"t#bar{t}","f");
   leg->AddEntry(singlet,"Single t","f");
-  leg->AddEntry(WW,"WW","f");
-  leg->AddEntry(WZ,"WZ","f");
-  leg->AddEntry(ZZ,"ZZ","f");
+  leg->AddEntry(VV,"VV","f");
   leg->AddEntry(bkgHiggs,"Bkg. H","f");
   leg->AddEntry(ZH,"ZH","l");
   leg->AddEntry(WH,"WH","l");
@@ -262,33 +225,22 @@ void draw(int index, bool pass, bool charm, bool log=true){
   l3.SetTextFont(42);
   l3.SetTextSize(textsize1);
 
-  string text = "DDB fail; ";
-  if( pass )
-    text = "DDB pass; ";
-
-  if(charm) text += "DDC pass";
-  else text += "DDC fail";
-
-  l3.DrawLatex(0.2,.82,text.c_str());
-
   TLatex l4;
   l4.SetNDC();
   l4.SetTextFont(42);
   l4.SetTextSize(textsize1);
-  //string text2 = "p_{T}^{H} bin "+to_string(index+1);  
-  //l4.DrawLatex(0.2,.75,text2.c_str());
-  
-  // pad2->cd();
-  TH1D* WH_sub = (TH1D*)WH->Clone("WH_sub");
-  WH_sub->Reset();
-  TH1D* ZH_sub = (TH1D*)ZH->Clone("ZH_sub");
-  ZH_sub->Reset();
 
-  WH_sub->Draw("histsame");                                                                                                
-  ZH_sub->Draw("histsame");                                                                                                
+  string text = "Jet 1 B Fail, ";
+  if( pass )
+    text = "Jet 1 B Pass, ";
 
-  c->SaveAs(("plots/"+name+".png").c_str());
-  c->SaveAs(("plots/"+name+".pdf").c_str());
+  if(charm) text += "Jet 2 Charm";
+  else text += "Jet 2 Light";
+
+  l3.DrawLatex(0.2,.82,text.c_str());                                                              
+
+  c->SaveAs(("plots/"+name+ "_MC" + ".png").c_str());
+  c->SaveAs(("plots/"+name+ "_MC" + ".pdf").c_str());
 
   return;
 
