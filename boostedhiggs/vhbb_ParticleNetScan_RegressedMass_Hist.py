@@ -89,8 +89,8 @@ class ParticleNetMsdProcessor(processor.ProcessorABC):
             self._met_filters = json.load(f)
         
         ParticleNet_WorkingPoints = {
-                '2017_bb': [0.0, 0.9105, 0.9714, 0.9870],
-                '2017_cc':[0.0, 0.9347, 0.9765, 0.9909]
+                '2017_bb': [0.0, 0.9105, 0.9714, 0.9870, 1.0],
+                '2017_cc':[0.0, 0.9347, 0.9765, 0.9909, 1.0]
         }
         
         #Create the histogram.
