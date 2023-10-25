@@ -342,7 +342,7 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
 
 }
 
-void draw_datafit_fitD_v2(){
+void draw_DataFit(){
 
   //Loop over pt bins
   for(int i=0; i<1; i++){

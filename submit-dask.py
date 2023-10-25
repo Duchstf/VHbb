@@ -29,7 +29,7 @@ cluster = LPCCondorCluster(
 )
 
 year = sys.argv[1]
-tag = "pnet_scan_msd_QCD_Oct24_2023"
+tag = "PNetScan_RMass_QCD_Oct25_2023"
 ignore_list = ['QCDbEnriched', 'QCDBGenFilter', 'VBFHToBBDipoleRecoilOn'] #Sample to ignore processing for now
 
 out_path = "output/coffea/{}/{}/".format(tag,year)

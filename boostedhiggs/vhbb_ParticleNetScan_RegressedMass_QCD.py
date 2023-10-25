@@ -109,7 +109,7 @@ class ParticleNetMsdProcessor(processor.ProcessorABC):
                 hist.Cat('dataset', 'Dataset'),
                 hist.Cat('region', 'Region'),
                 hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
-                hist.Bin('genflavor2', 'Gen. jet 2 flavor', [1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
+                hist.Bin('genflavor2', 'Gen. jet 2 flavor', [0, 1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
                 hist.Bin('bb1', r'Jet 1 Paticle Net BB Score', ParticleNet_WorkingPoints['{}_bb'.format(self._year)]), # b working points
                 hist.Bin('cc2', r'Jet 2 Particle Net CC Score', ParticleNet_WorkingPoints['{}_cc'.format(self._year)]), # c working points
                 hist.Bin('bb2', r'Jet 2 BB Score', ParticleNet_WorkingPoints['{}_bb'.format(self._year)]), # b working points
@@ -406,6 +406,7 @@ class ParticleNetMsdProcessor(processor.ProcessorABC):
             logger.debug("Weight statistics: %r" % weights.weightStatistics)
 
         msd1_matched = candidatejet.msdcorr * (genflavor1 > 0) + candidatejet.msdcorr * (genflavor1 == 0)
+        ParticleNetM_matched = candidatejet.particleNet_mass * (genflavor1 > 0) + candidatejet.particleNet_mass * (genflavor1 == 0)
         msd2_matched = secondjet.msdcorr * (genflavor2 > 0) + secondjet.msdcorr * (genflavor2 == 0)
         
         def normalize(val, cut):
@@ -462,7 +463,7 @@ class ParticleNetMsdProcessor(processor.ProcessorABC):
             output['ParticleNet_msd'].fill(
                 dataset=dataset,
                 region=region,
-                msd1=normalize(msd1_matched, cut),
+                msd1=normalize(ParticleNetM_matched, cut),
                 genflavor2=normalize(genflavor2,cut),
                 bb1=normalize(bb1, cut),
                 cc2=normalize(cc2, cut),
