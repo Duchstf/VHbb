@@ -20,7 +20,7 @@ with open('lumi.json') as f:
     lumis = json.load(f)
 
 #Define the score threshold
-ddbthr = 0.99776
+ddbthr = 0.99592
 ddcthr = 0.58
 
 # Main method

@@ -168,7 +168,7 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   /* W + jets */
   TH1D* Wjets = (TH1D*)f->Get((hist_dir+"Wjets").c_str());
   Wjets->SetLineColor(kBlack);
-  Wjets->SetFillColor(kGray);
+  Wjets->SetFillColor(kRed+1);
 
   /* ttbar */
   TH1D* ttbar = (TH1D*)f->Get((hist_dir+"ttbarBoosted").c_str());
@@ -178,14 +178,14 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   /* QCD */
   TH1D* qcd = (TH1D*)f->Get((hist_dir+"qcd").c_str());
   qcd->SetLineColor(kBlack);
-  qcd->SetFillColor(kYellow-9);
+  qcd->SetFillColor(kGray);
 
   /* total background */
   TH1D* TotalBkg = (TH1D*)f->Get((hist_dir+"/total_background").c_str());
-  TotalBkg->SetMarkerColor(kRed);
-  TotalBkg->SetLineColor(kRed);
-  TotalBkg->SetFillColor(kRed);
-  TotalBkg->SetFillStyle(3003);
+  TotalBkg->SetMarkerColor(kGray+3);
+  TotalBkg->SetLineColor(kGray+3);
+  TotalBkg->SetFillColor(kGray+3);
+  TotalBkg->SetFillStyle(3004);
 
   double max = TotalBkg->GetMaximum();
   TotalBkg->GetYaxis()->SetRangeUser(0.1,1000*max);
@@ -223,7 +223,9 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   cout << "bkgHiggs: " << bkgHiggs->Integral() << endl;
 
   // PLot the fitted MC
-  bkg->Draw("hist");
+  TotalBkg->Draw("e2");
+  bkg->Draw("histsame");
+  TotalBkg->Draw("e2same");
   WH->Draw("histsame");
   ZH->Draw("histsame");
   bkg->GetYaxis()->SetTitle("Events / 7.3 GeV");
