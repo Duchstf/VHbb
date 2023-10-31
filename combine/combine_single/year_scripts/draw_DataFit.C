@@ -115,9 +115,11 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   data_obs->SetMarkerColor(kBlack);
   data_obs->SetMarkerStyle(20);    
 
+  float mc_scale = 7.0; //FitDiagnostics scale every MC by the bin width
   // >>>>>>>>>>>Signal<<<<<<<<<<<<
   /* WH */
-  TH1D* WH = (TH1D*)f->Get((hist_dir+"WH").c_str()); // Reformat to get from the right file. 
+  TH1D* WH = (TH1D*)f->Get((hist_dir+"WH").c_str()); // Reformat to get from the right file.
+  WH->Scale(mc_scale);
   WH->SetLineColor(kGreen+1);
   WH->SetMarkerColor(kGreen+1);
   WH->SetLineWidth(3);
@@ -126,6 +128,7 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   TH1D* ZH = (TH1D*)WH->Clone("ZH"); // Copy WH and give it ZH name and empty it. 
   ZH->Reset();
   ZH->Add((TH1D*)f->Get((hist_dir+"ZH").c_str()));
+  ZH->Scale(mc_scale);
   ZH->SetLineColor(kRed+1);
   ZH->SetMarkerColor(kRed+1);
   ZH->SetLineStyle(2);
@@ -138,6 +141,7 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   bkgHiggs->Add((TH1D*)f->Get((hist_dir+"ggF").c_str())); // Is this right?
   bkgHiggs->Add((TH1D*)f->Get((hist_dir+"VBF").c_str()));
   bkgHiggs->Add((TH1D*)f->Get((hist_dir+"ttH").c_str()));
+  bkgHiggs->Scale(mc_scale);
   bkgHiggs->SetLineWidth(1);
   bkgHiggs->SetLineColor(kBlack);
   bkgHiggs->SetFillColor(kOrange);
@@ -148,6 +152,7 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   TH1D* VV = (TH1D*)WH->Clone("VV");
   VV->Reset();
   VV->Add((TH1D*)f->Get((hist_dir+"VV").c_str())); 
+  VV->Scale(mc_scale);
   VV->SetLineWidth(1);
   VV->SetLineColor(kBlack);
   VV->SetFillColor(kOrange-3);
@@ -156,32 +161,38 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   TH1D* singlet = (TH1D*)WH->Clone("singlet");
   singlet->Reset();
   singlet->Add((TH1D*)f->Get((hist_dir+"singlet").c_str()));
+  singlet->Scale(mc_scale);
   singlet->SetLineWidth(1);
   singlet->SetLineColor(kBlack);
   singlet->SetFillColor(kPink+6);
 
   /* Z + jets */
   TH1D* Zjets = (TH1D*)f->Get((hist_dir+"Zjets").c_str());
+  Zjets->Scale(mc_scale);
   Zjets->SetLineColor(kBlack);
   Zjets->SetFillColor(kAzure+8);
 
   /* W + jets */
   TH1D* Wjets = (TH1D*)f->Get((hist_dir+"Wjets").c_str());
+  Wjets->Scale(mc_scale);
   Wjets->SetLineColor(kBlack);
   Wjets->SetFillColor(kRed+1);
 
   /* ttbar */
   TH1D* ttbar = (TH1D*)f->Get((hist_dir+"ttbarBoosted").c_str());
+  ttbar->Scale(mc_scale);
   ttbar->SetLineColor(kBlack);
   ttbar->SetFillColor(kViolet-5);
   
   /* QCD */
   TH1D* qcd = (TH1D*)f->Get((hist_dir+"qcd").c_str());
+  qcd->Scale(mc_scale);
   qcd->SetLineColor(kBlack);
   qcd->SetFillColor(kGray);
 
   /* total background */
   TH1D* TotalBkg = (TH1D*)f->Get((hist_dir+"/total_background").c_str());
+  TotalBkg->Scale(mc_scale);
   TotalBkg->SetMarkerColor(kGray+3);
   TotalBkg->SetLineColor(kGray+3);
   TotalBkg->SetFillColor(kGray+3);
@@ -190,7 +201,7 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   double max = TotalBkg->GetMaximum();
   TotalBkg->GetYaxis()->SetRangeUser(0.1,1000*max);
   if( !log ) TotalBkg->GetYaxis()->SetRangeUser(0,1.3*max);
-  TotalBkg->GetYaxis()->SetTitle("Events / 7.3 GeV");
+  TotalBkg->GetYaxis()->SetTitle("Events / 7 GeV");
   TotalBkg->GetXaxis()->SetTitle("m_{sd} [GeV]");
   TotalBkg->GetYaxis()->SetTitleSize(textsize1);
   TotalBkg->GetYaxis()->SetLabelSize(textsize1);
@@ -228,7 +239,7 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   TotalBkg->Draw("e2same");
   WH->Draw("histsame");
   ZH->Draw("histsame");
-  bkg->GetYaxis()->SetTitle("Events / 7.3 GeV");
+  bkg->GetYaxis()->SetTitle("Events / 7 GeV");
   bkg->GetXaxis()->SetTitle("m_{sd} [GeV]");
   bkg->GetYaxis()->SetTitleSize(textsize1);
   bkg->GetYaxis()->SetLabelSize(textsize1);
@@ -274,12 +285,12 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   l3.SetTextFont(42);
   l3.SetTextSize(textsize1);
 
-  string text = "DDB fail; ";
+  string text = "Jet 1 B Fail, ";
   if( pass )
-    text = "DDB pass; ";
+    text = "Jet 1 B Pass, ";
 
-  if(charm) text += "DDC pass";
-  else text += "DDC fail";
+  if(charm) text += "Jet 2 Charm";
+  else text += "Jet 2 Light";
 
   l3.DrawLatex(0.2,.82,text.c_str());
 

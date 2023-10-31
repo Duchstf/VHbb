@@ -89,8 +89,8 @@ class ParticleNetMsdProcessor(processor.ProcessorABC):
             self._met_filters = json.load(f)
         
         ParticleNet_WorkingPoints = {
-                '2017_bb': [0.0, 0.9105, 0.9714, 0.9870, 1.0],
-                '2017_cc':[0.0, 0.9347, 0.9765, 0.9909, 1.0]
+                '2017_bb': [0.0, 0.9105, 0.9714, 0.9870],
+                '2017_cc':[0.0, 0.9347, 0.9765, 0.9909]
         }
         
         #Create the histogram.
@@ -109,7 +109,7 @@ class ParticleNetMsdProcessor(processor.ProcessorABC):
                 hist.Cat('dataset', 'Dataset'),
                 hist.Cat('region', 'Region'),
                 hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
-                hist.Bin('genflavor2', 'Gen. jet 2 flavor', [0, 1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
+                hist.Bin('genflavor2', 'Gen. jet 2 flavor', [1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
                 hist.Bin('bb1', r'Jet 1 Paticle Net BB Score', ParticleNet_WorkingPoints['{}_bb'.format(self._year)]), # b working points
                 hist.Bin('cc2', r'Jet 2 Particle Net CC Score', ParticleNet_WorkingPoints['{}_cc'.format(self._year)]), # c working points
                 hist.Bin('bb2', r'Jet 2 BB Score', ParticleNet_WorkingPoints['{}_bb'.format(self._year)]), # b working points

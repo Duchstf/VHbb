@@ -143,12 +143,12 @@ void draw(int index, bool pass, bool charm, bool log=true){
   /* W + jets */
   TH1D* Wjets = (TH1D*)f->Get((leading_name+"Wjets"+"_nominal").c_str());
   Wjets->SetLineColor(kBlack);
-  Wjets->SetFillColor(kGray);
+  Wjets->SetFillColor(kRed+1);
   
   /* QCD */
   TH1D* qcd = (TH1D*)f->Get((leading_name+"QCD"+"_nominal").c_str());
   qcd->SetLineColor(kBlack);
-  qcd->SetFillColor(kYellow-9);
+  qcd->SetFillColor(kGray);
 
   if( log ){
     bkg->Add(bkgHiggs);

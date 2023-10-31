@@ -24,12 +24,12 @@ cluster = LPCCondorCluster(
     shared_temp_directory="/tmp",
     transfer_input_files=["boostedhiggs"],
     ship_env=True,
-    memory="16GB"
+    memory="12GB"
 #    image="coffeateam/coffea-dask:0.7.11-fastjet-3.3.4.0rc9-ga05a1f8",
 )
 
 year = sys.argv[1]
-tag = "PNetScan_RMass_QCD_Oct25_2023"
+tag = "PNetScan_RMass_QCD_Oct31_2023"
 ignore_list = ['QCDbEnriched', 'QCDBGenFilter', 'VBFHToBBDipoleRecoilOn'] #Sample to ignore processing for now
 
 out_path = "output/coffea/{}/{}/".format(tag,year)

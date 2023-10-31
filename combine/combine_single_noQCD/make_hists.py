@@ -89,13 +89,6 @@ def main():
         
         #Print sample names
         #print([x.name for x in sig.integrate('bb1',int_range=slice(ddbthr,1)).sum('msd1').identifiers('process')])
-        
-        print("Arrays with under/overflow bins:" , sig.sum('msd1').integrate('process','QCD').values(overflow='all'))
-        print("over ", sig.integrate('bb1',int_range=slice(ddbthr,None), overflow="over").integrate('process','QCD').sum('msd1').values(overflow='all'))
-        print("under ", sig.integrate('bb1',int_range=slice(ddbthr,None), overflow="under").integrate('process','QCD').sum('msd1').values(overflow='all'))
-        print("allnan ", sig.integrate('bb1',int_range=slice(ddbthr,None), overflow="allnan").integrate('process','QCD').sum('msd1').values(overflow='all'))
-        print("none ", sig.integrate('bb1',int_range=slice(ddbthr,None)).integrate('process','QCD').sum('msd1').values(overflow='all'))
-        print(sig.sum('msd1').integrate('process','data').values(overflow='all')[()])
     
         #Split into Jet 1 score b-tag passing/failing region. 
         for p in samples:

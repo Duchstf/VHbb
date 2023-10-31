@@ -27,8 +27,10 @@ cd ..
 
 echo "finish cleaning"
 
+pickle_dir="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output"
+
 #Make the histograms
-singularity exec -B ${PWD}:/srv --pwd /srv /cvmfs/unpacked.cern.ch/registry.hub.docker.com/coffeateam/coffea-dask:latest python make_hists.py $1
+singularity exec -B ${PWD}:/srv -B $pickle_dir --pwd /srv /cvmfs/unpacked.cern.ch/registry.hub.docker.com/coffeateam/coffea-dask:latest python make_hists.py $1
 
 #Activate the environment
 cmsenv
