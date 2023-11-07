@@ -234,7 +234,7 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   cout << "bkgHiggs: " << bkgHiggs->Integral() << endl;
 
   // PLot the fitted MC
-  TotalBkg->Draw("e2");
+  TotalBkg->Draw("e");
   bkg->Draw("histsame");
   TotalBkg->Draw("e2same");
   WH->Draw("histsame");
@@ -360,9 +360,9 @@ void draw_DataFit(){
   //Loop over pt bins
   for(int i=0; i<1; i++){
     draw(i,1,0,0); //charm fail
-    draw(i,0,1,0); //charm pass
+    draw(i,0,1,0); //light pass
     draw(i,0,0,0); //light fail 
-    draw(i,1,1,0); //light pass
+    draw(i,1,1,0); //charm pass
   }
 
   return 0;
