@@ -29,8 +29,8 @@ cluster = LPCCondorCluster(
 )
 
 year = sys.argv[1]
-tag = "None"
-ignore_list = ['QCDbEnriched', 'QCDBGenFilter'] #Sample to ignore processing for now
+tag = "jennet_Nov92023"
+run_list = ['QCD'] #Sample to ignore processing for now
 
 out_path = "output/coffea/{}/{}/".format(tag,year)
 os.system('mkdir -p  %s' %out_path)
@@ -51,16 +51,12 @@ with Client(cluster) as client:
         for this_file in infiles:
             index = ''.join(this_file.split("_")[1:]).split(".json")[0]
             outfile = out_path + '{}_dask_{}.coffea'.format(year, index)
-            
-            if index in ignore_list:
-                print("{} is in ingore list, skipping ...".format(index))
-                continue
     
             if os.path.isfile(outfile):
                 print("File " + outfile + " already exists. Skipping.")
                 continue 
             
-            else:
+            if index in run_list:
                 print("Begin running " + outfile)
                 print(datetime.now())
 

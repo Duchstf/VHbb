@@ -1,5 +1,5 @@
 from .version import __version__
-from .vhbb_ParticleNetScan_RegressedMass_QCD import ParticleNetMsdProcessor
+from .jennet_Nov92023 import ParticleNetMsdProcessor
 
 __all__ = [
     '__version__',

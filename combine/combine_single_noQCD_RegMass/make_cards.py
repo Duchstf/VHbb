@@ -71,7 +71,7 @@ def get_template(sName, passed, ptbin, cat, obs, syst, muon=False):
         sumw += [h.GetBinContent(i)]
         sumw2 += [h.GetBinError(i)*h.GetBinError(i)]
 
-    return (np.array(sumw)[1:], obs.binning, obs.name, np.array(sumw2)[1:])
+    return (np.array(sumw), obs.binning, obs.name, np.array(sumw2))
 
 def vh_rhalphabet(tmpdir):
     """ 
