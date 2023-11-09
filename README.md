@@ -32,6 +32,12 @@ Run the job submssion script:
 python submit-dask.py 2017 > dask.out 2>&1
 ```
 
+or to run a selected sample (define the selected sample in the script):
+
+```
+python submit-dask-selected.py 2017 > dask.out 2>&1
+```
+
 ## Run Jupyter Notebooks
 
 ```
