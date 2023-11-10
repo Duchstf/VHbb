@@ -73,7 +73,7 @@ def main():
     with open("samples.json", "w") as f:   #Pickling
         json.dump(samples, f)
         
-    QCD_CUT = 0.0
+    QCD_CUT = 0.05
     
     #Process each region
     for region in regions:

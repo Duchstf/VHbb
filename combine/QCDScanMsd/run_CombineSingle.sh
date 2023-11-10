@@ -30,7 +30,7 @@ echo "finish cleaning"
 pickle_dir="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output"
 
 #Inject the QCD cut to make_hists.py
-sed -i "s/QCD_CUT = 0.0/QCDcut = $2/g" make_hists.py
+sed -i "s/QCD_CUT = .*/QCD_CUT = $2/g" make_hists.py
 
 #Make the histograms
 singularity exec -B ${PWD}:/srv -B $pickle_dir --pwd /srv /cvmfs/unpacked.cern.ch/registry.hub.docker.com/coffeateam/coffea-dask:latest python make_hists.py $1
@@ -48,13 +48,13 @@ ln -s -f ../year_scripts/*.C .
 ( GLOBIGNORE="*_VV.sh"; ln -s -f ../year_scripts/*.sh . )
 
 ./make_workspace.sh
-# ./exp_shapes.sh 
+./exp_shapes.sh 
 
 #Produce the relevant plots
-# mkdir -p plots
-# root -b -q draw_MC.C
-# root -b -q draw_DataFit.C
-#root -b draw_PFratio_QCDMC.C
+mkdir -p plots
+root -b -q draw_MC.C
+root -b -q draw_DataFit.C
+# root -b draw_PFratio_QCDMC.C
 
 ./exp_significance.sh
 
