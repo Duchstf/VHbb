@@ -91,9 +91,6 @@ class ParticleNetMsdProcessor(processor.ProcessorABC):
         with open('files/metfilters.json') as f:
             self._met_filters = json.load(f)
         
-        #TODO: NOT SURE WHAT THIS IS USED FOR. IT'S NOT USED IN THE FILE.
-        optbins = np.r_[np.linspace(0, 0.15, 30, endpoint=False), np.linspace(0.15, 1, 86)]
-        
         # Tagger scores binning
         tagger_bins = [round(x,2) for x in list(np.linspace(0.,0.98,50))] + [round(x,5) for x in list(np.linspace(0.99,1.,50))] 
         
