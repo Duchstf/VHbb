@@ -81,4 +81,7 @@ conda env update --file environment.yml  --prune
 
 ## Papers
 
-* ParticleNet Performance Paper: https://cds.cern.ch/record/2866276/files/BTV-22-001-pas.pdf 
+* ParticleNet Performance Paper: https://cds.cern.ch/record/2866276/files/BTV-22-001-pas.pdf
+
+## Other relevant links
+* [NanoAOD attributes](https://cms-nanoaod-integration.web.cern.ch/integration/master-cmsswmaster/mc102X_doc.html)
