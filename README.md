@@ -85,3 +85,4 @@ conda env update --file environment.yml  --prune
 
 ## Other relevant links
 * [NanoAOD attributes](https://cms-nanoaod-integration.web.cern.ch/integration/master-cmsswmaster/mc102X_doc.html)
+* [Save data array to ParQuet](https://awkward-array.org/doc/main/reference/generated/ak.to_parquet.html)
