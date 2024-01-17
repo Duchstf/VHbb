@@ -73,7 +73,7 @@ def main():
     with open("samples.json", "w") as f:   #Pickling
         json.dump(samples, f)
         
-    QCD_CUT = 0.05
+    QCD_CUT = 0.01
     
     #Process each region
     for region in regions:
@@ -86,7 +86,7 @@ def main():
         
         # Read the histogram from the pickle file
         # Integrate over signal region and Jet 2 charm score
-        sig_0 = pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('qcd2', slice(0.,QCD_CUT)).integrate('qcd1', slice(0.,QCD_CUT))
+        sig_0 = pickle.load(open(pickle_path,'rb')).integrate('region','signal').sum('qcd1', overflow='all').integrate('qcd2', slice(0.,QCD_CUT))
         sig = sig_0.integrate('cc2', c_int_range, overflow=c_overflow)
         
         #Print sample names

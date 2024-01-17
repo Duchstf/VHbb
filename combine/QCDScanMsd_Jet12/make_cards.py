@@ -102,6 +102,8 @@ def vh_rhalphabet(tmpdir):
     sys_lumi_uncor = rl.NuisanceParameter('CMS_lumi_13TeV_{}'.format(year), 'lnN') #lnN: Log Normal
     sys_lumi_cor_161718 = rl.NuisanceParameter('CMS_lumi_13TeV_correlated_', 'lnN')
     sys_lumi_cor_1718 = rl.NuisanceParameter('CMS_lumi_13TeV_correlated_20172018', 'lnN')
+    
+    # Add JES and JER systematics
 
     # define bins TODO: REDEFINE BINS??
     # In VH
