@@ -418,8 +418,6 @@ class ParQuetProc(processor.ProcessorABC):
                 save_to_parquet(region, None)
      
         return
-
-        
     
     def postprocess(self, accumulator):
         return accumulator

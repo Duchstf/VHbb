@@ -3,8 +3,8 @@ import subprocess
 import uproot
 import awkward as ak
 
-from coffea import processor, util, hist
-from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
+from coffea import processor, util
+from coffea.nanoevents import NanoAODSchema
 
 #Import processor
 from boostedhiggs import ParQuetProc
@@ -13,25 +13,22 @@ from distributed import Client
 from lpcjobqueue import LPCCondorCluster
 
 from dask.distributed import performance_report
-from dask_jobqueue import HTCondorCluster, SLURMCluster
 
+#See how long this script takes
 from datetime import datetime
-
-env_extra = [
-    f"export PYTHONPATH=$PYTHONPATH:{os.getcwd()}",
-]
+import time
+tstart = time.time()
 
 cluster = LPCCondorCluster(
     shared_temp_directory="/tmp",
     transfer_input_files=["boostedhiggs"],
     ship_env=True,
-    memory="12GB"
-#    image="coffeateam/coffea-dask:0.7.11-fastjet-3.3.4.0rc9-ga05a1f8",
+    memory="2GB"
 )
 
 year = sys.argv[1]
 tag = "None"
-ignore_list = ['QCDbEnriched', 'QCDBGenFilter'] #Sample to ignore processing for now
+process_list = ['HtoBB'] #,'HToBB'] #Sample to ignore processing for now
 
 out_path = "output/parquet/{}/{}/".format(tag,year)
 os.system('mkdir -p  %s' %out_path)
@@ -51,27 +48,19 @@ with Client(cluster) as client:
     
         for this_file in infiles:
             index = ''.join(this_file.split("_")[1:]).split(".json")[0]
-            outfile = out_path + '{}_dask_{}.coffea'.format(year, index)
             
-            if index in ignore_list:
-                print("{} is in ingore list, skipping ...".format(index))
-                continue
-    
-            if os.path.isfile(outfile):
-                print("File " + outfile + " already exists. Skipping.")
-                continue 
-            
-            else:
-                print("Begin running " + outfile)
+            if index in process_list:
+                print("Start processing: {}.".format(index))
                 print(datetime.now())
 
                 uproot.open.defaults["xrootd_handler"] = uproot.source.xrootd.MultithreadedXRootDSource
-
                 #RUN MAIN PROCESSOR
-                p = ParQuetProc(year=year, jet_arbitration='T_bvc' , systematics=False)
-                args = {'savemetrics':True, 'schema':NanoAODSchema}
+                p = ParQuetProc(year='2017',
+                                jet_arbitration='T_bvc',
+                                systematics=False,
+                                output_location='./output/parquet/')
 
-                ak_array = processor.run_uproot_job(
+                count_total = processor.run_uproot_job(
                     this_file,
                     treename="Events",
                     processor_instance=p,
@@ -83,12 +72,14 @@ with Client(cluster) as client:
                         "treereduction": 2,
                     },
                     chunksize=50000,
-                    #        maxchunks=args.max,
+                    maxchunks=1,
                 )
-
+            
                 #Save output files
-                ak.to_parquet(ak_array, outfile)
-                print("Saved " + outfile)
+                util.save(count_total, outfile)
+                print("saved " + outfile)
                 print(datetime.now())
+            else: pass
 
-    
+elapsed = time.time() - tstart
+print("Total time: %.1f seconds"%elapsed)

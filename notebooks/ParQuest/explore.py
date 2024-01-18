@@ -20,7 +20,6 @@ def main():
     current_path = os.getcwd()
     print("Current Working Directory:", current_path)
     
-    
     file_path = "../../output/test/QCD_HT1000to1500_jet1msd_0.parquet"
     read_parquet_file(file_path)
     
