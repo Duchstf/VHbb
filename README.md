@@ -80,7 +80,8 @@ conda env update --file environment.yml  --prune
 * [Di-Higgs -> 4b approval talk.](https://indico.cern.ch/event/1078870/contributions/4537934/attachments/2313106/3947040/Preapproval_HH4bggF_280921.pdf)
 
 ## Papers
-
+* **[Electroweak Restoration at the LHC and Beyond: The Vh Channel](https://arxiv.org/abs/2012.00774)**
+* A portrait of the Higgs boson by the CMS experiment ten years after the discovery: https://www.nature.com/articles/s41586-022-04892-x
 * ParticleNet Performance Paper: https://cds.cern.ch/record/2866276/files/BTV-22-001-pas.pdf
 
 ## Other relevant links
