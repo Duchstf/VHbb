@@ -63,7 +63,7 @@ with Client(cluster) as client:
                 uproot.open.defaults["xrootd_handler"] = uproot.source.xrootd.MultithreadedXRootDSource
 
                 #RUN MAIN PROCESSOR
-                p = ParticleNetMsdProcessor(year=year, jet_arbitration='T_cvb' , systematics=False)
+                p = ParticleNetMsdProcessor(year=year, jet_arbitration='T_cvb' , systematics=True)
                 args = {'savemetrics':True, 'schema':NanoAODSchema}
 
                 output = processor.run_uproot_job(

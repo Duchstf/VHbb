@@ -1,5 +1,5 @@
 from .version import __version__
-from .vhbb_msd_QCD_NoN2 import ParticleNetMsdProcessor
+from .vhbb_official_v1 import ParticleNetMsdProcessor
 from .vhbb_SaveAtrr import ParQuetProc
 
 __all__ = [
