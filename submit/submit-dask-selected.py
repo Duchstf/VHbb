@@ -8,6 +8,9 @@ from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
 #Import processor
 from boostedhiggs import ParticleNetMsdProcessor
 
+# Add path so the script sees the modules in parent directory
+sys.path.append('/srv')
+
 from distributed import Client
 from lpcjobqueue import LPCCondorCluster
 

@@ -22,7 +22,6 @@ from boostedhiggs import ParticleNetMsdProcessor
 
 from distributed import Client
 from lpcjobqueue import LPCCondorCluster
-
 from dask.distributed import performance_report
 from dask_jobqueue import HTCondorCluster, SLURMCluster
 
