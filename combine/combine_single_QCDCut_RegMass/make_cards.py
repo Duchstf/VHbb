@@ -11,7 +11,7 @@ import rhalphalib as rl
 from rhalphalib import AffineMorphTemplate, MorphHistW2
 
 rl.util.install_roofit_helpers()
-rl.ParametericSample.PreferRooParametricHist = False
+
 
 eps=0.0000001
 do_muon_CR = False

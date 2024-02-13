@@ -1,3 +1,13 @@
+'''
+To submit processing jobs, do:
+
+./shell coffeateam/coffea-dask:0.7.21-fastjet-3.4.0.1-g6238ea8
+
+And then (define the selected sample in the script):
+
+python submit/submit-dask-selected.py 2017 > dask.out 2>&1
+'''
+
 import os, sys
 import subprocess
 import uproot
@@ -62,6 +72,8 @@ with Client(cluster) as client:
             if index in run_list:
                 print("Begin running " + outfile)
                 print(datetime.now())
+                
+                print(this_file)
 
                 uproot.open.defaults["xrootd_handler"] = uproot.source.xrootd.MultithreadedXRootDSource
 

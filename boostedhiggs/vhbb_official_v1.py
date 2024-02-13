@@ -46,7 +46,7 @@ def update(events, collections):
     return out
 
 
-class ParticleNetMsdProcessor(processor.ProcessorABC):
+class VHbbProcessorV1(processor.ProcessorABC):
     
     def __init__(self,
                  year='2017',
@@ -108,7 +108,7 @@ class ParticleNetMsdProcessor(processor.ProcessorABC):
             
             'sumw': processor.defaultdict_accumulator(float),
             
-            #TODO: WHAT IS THIS USED FOR?
+            #Might be adding a systematic
             'btagWeight': hist2.Hist(
                 hist2.axis.Regular(50, 0, 3, name='val', label='BTag correction'),
                 hist2.storage.Weight(),
@@ -118,6 +118,7 @@ class ParticleNetMsdProcessor(processor.ProcessorABC):
                 'Events',
                 hist.Cat('dataset', 'Dataset'),
                 hist.Cat('region', 'Region'),
+                hist.Cat('systematic', 'Systematic'),
                 hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
                 hist.Bin('pt1', r'Jet 1 pt', [0, 250, 450, 650]), #20 bins
                 hist.Bin('bb1', r'Jet 1 Paticle Net BB Score', ParticleNet_WorkingPoints['{}_bb'.format(self._year)]), # b working points
@@ -462,9 +463,13 @@ class ParticleNetMsdProcessor(processor.ProcessorABC):
                 weight = weights.weight()[cut] * wmod[cut]
 
             #! FILL THE HISTOGRAM
+            print("msd:", msd1_matched)
+            print("higgs pt: ", candidatejet.pt)
+            
             output['ParticleNet_msd'].fill(
                 dataset=dataset,
                 region=region,
+                systematic=sname,
                 msd1=normalize(msd1_matched, cut),
                 pt1=normalize(candidatejet.pt, cut),
                 bb1=normalize(bb1, cut),
