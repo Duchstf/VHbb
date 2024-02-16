@@ -3,6 +3,8 @@
 """
 Make a pickle file out of the coffea histograms. Like this:
 
+./shell
+
 python make_pkl.py 2017 pnet_scan_msd_Aug4_2023
 """
 
