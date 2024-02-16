@@ -463,9 +463,6 @@ class VHbbProcessorV1(processor.ProcessorABC):
                 weight = weights.weight()[cut] * wmod[cut]
 
             #! FILL THE HISTOGRAM
-            print("msd:", msd1_matched)
-            print("higgs pt: ", candidatejet.pt)
-            
             output['ParticleNet_msd'].fill(
                 dataset=dataset,
                 region=region,

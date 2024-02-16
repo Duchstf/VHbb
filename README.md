@@ -11,7 +11,7 @@ After setting it up you could do `./shell` to set up the environment.
 Log in with ssh tunneling:
 
 ```
-ssh -L 8787:localhost:8787 dhoang@cmslpc173.fnal.gov
+ssh -L 8787:localhost:8787 dhoang@cmslpc172.fnal.gov
 ```
 
 Renew your grid certificate:
@@ -23,7 +23,7 @@ grid-proxy-init -valid 1000:00
 Run the `./shell` script as setup above:
 
 ```
-./shell coffeateam/coffea-dask:0.7.21-fastjet-3.4.0.1-g6238ea8
+./shell
 ```
 
 Run the job submssion script:
