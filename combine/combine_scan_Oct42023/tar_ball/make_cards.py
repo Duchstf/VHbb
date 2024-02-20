@@ -11,7 +11,6 @@ import rhalphalib as rl
 from rhalphalib import AffineMorphTemplate, MorphHistW2
 
 rl.util.install_roofit_helpers()
-rl.ParametericSample.PreferRooParametricHist = False
 
 eps=0.0000001
 do_muon_CR = False
@@ -71,7 +70,7 @@ def get_template(sName, passed, ptbin, cat, obs, syst, muon=False):
         sumw += [h.GetBinContent(i)]
         sumw2 += [h.GetBinError(i)*h.GetBinError(i)]
 
-    return (np.array(sumw)[1:], obs.binning, obs.name, np.array(sumw2)[1:])
+    return (np.array(sumw), obs.binning, obs.name, np.array(sumw2))
 
 def vh_rhalphabet(tmpdir):
     """ 
@@ -116,7 +115,7 @@ def vh_rhalphabet(tmpdir):
     npt['charm'] = len(ptbins['charm']) - 1
     npt['light'] = len(ptbins['light']) - 1
 
-    msdbins = np.linspace(40, 201, 23)
+    msdbins = np.linspace(40, 201, 24) #linspace counting the bin edges instead of number of bins
     msd = rl.Observable('msd', msdbins)
 
     validbins = {}

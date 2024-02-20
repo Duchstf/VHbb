@@ -80,7 +80,7 @@ def vh_rhalphabet(tmpdir):
     2. Fill in actual fit model to every thing except for QCD
     3. Fill QCD in the actual fit model
     """
-    with open('lumi.json') as f:
+    with open('files/lumi.json') as f:
         lumi = json.load(f)
 
     ###>>>>>> TODO: DIFFERENT NUMBERS FOR VH???
@@ -173,7 +173,7 @@ def vh_rhalphabet(tmpdir):
             # Want to make an zeroth order in pt
             # {"initial_vals":[[1,1]]} in json file (0th pt and 1st in rho)                                                               
             print('Initial fit values read from file initial_vals*')
-            with open('initial_vals_'+cat+'.json') as f:
+            with open('files/initial_vals_'+cat+'.json') as f:
                 initial_vals = np.array(json.load(f)['initial_vals'])
             print(initial_vals)
 
@@ -238,7 +238,7 @@ def vh_rhalphabet(tmpdir):
                 fitfailed_qcd += 1
 
                 new_values = np.array(pvalues).reshape(tf_MCtempl.parameters.shape)
-                with open("initial_vals_"+cat+".json", "w") as outfile:
+                with open("files/initial_vals_"+cat+".json", "w") as outfile:
                     json.dump({"initial_vals":new_values.tolist()},outfile)
 
             else:
@@ -259,7 +259,7 @@ def vh_rhalphabet(tmpdir):
 
         # initial values                                                                                                            # for a different tf, can just copy the other ones in a
         # different file                        
-        with open('initial_vals_data_'+cat+'.json') as f:
+        with open('files/initial_vals_data_'+cat+'.json') as f:
             initial_vals_data = np.array(json.load(f)['initial_vals'])
 
         # Fitting ratio of the data and the MC prediction
@@ -280,7 +280,7 @@ def vh_rhalphabet(tmpdir):
 
     # Exclude QCD from MC samps
     # Use the same samples from make hists
-    with open("samples.json", "r") as f:   # Unpickling
+    with open("files/samples.json", "r") as f:   # Unpickling
         samps = json.load(f)
     
     samps = [str(x) for x in samps if str(x) not in ['QCD','data']] 

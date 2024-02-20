@@ -120,6 +120,8 @@ class VHbbProcessorV1(processor.ProcessorABC):
                 hist.Cat('region', 'Region'),
                 hist.Cat('systematic', 'Systematic'),
                 hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
+                hist.Bin('genflavor1', 'Gen. jet 1 flavor', [1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
+                hist.Bin('genflavor2', 'Gen. jet 2 flavor', [1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
                 hist.Bin('pt1', r'Jet 1 pt', [0, 250, 450, 650]), #20 bins
                 hist.Bin('bb1', r'Jet 1 Paticle Net BB Score', ParticleNet_WorkingPoints['{}_bb'.format(self._year)]), # b working points
                 hist.Bin('cc2', r'Jet 2 Particle Net CC Score', ParticleNet_WorkingPoints['{}_cc'.format(self._year)]), # c working points
@@ -468,6 +470,8 @@ class VHbbProcessorV1(processor.ProcessorABC):
                 region=region,
                 systematic=sname,
                 msd1=normalize(msd1_matched, cut),
+                genflavor1=normalize(genflavor1,cut),
+                genflavor2=normalize(genflavor2,cut),
                 pt1=normalize(candidatejet.pt, cut),
                 bb1=normalize(bb1, cut),
                 cc2=normalize(cc2, cut),

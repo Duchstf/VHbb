@@ -16,12 +16,12 @@ import uproot3
 from coffea import hist
 import pickle
 
-with open('lumi.json') as f:
+with open('files/lumi.json') as f:
     lumis = json.load(f)
     
 #Define the score threshold
-ddbthr = 0.99408
-ddcthr = 0.64
+ddbthr = 0.99265
+ddcthr = 0.66
 
 # Main method
 def main():
@@ -70,7 +70,7 @@ def main():
             'ttbarBoosted']
     
     #Save the sample here and then load it in make_cards.py
-    with open("samples.json", "w") as f:   #Pickling
+    with open("files/samples.json", "w") as f:   #Pickling
         json.dump(samples, f)
     
     #Process each region
