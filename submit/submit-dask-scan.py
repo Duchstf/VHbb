@@ -19,7 +19,7 @@ from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
 sys.path.append('/srv')
 
 #Import processor
-from boostedhiggs import VHbbProcessorV1
+from boostedhiggs import VHbbProcessorV1Scan
 
 from distributed import Client
 from lpcjobqueue import LPCCondorCluster
@@ -79,7 +79,7 @@ with Client(cluster) as client:
                 uproot.open.defaults["xrootd_handler"] = uproot.source.xrootd.MultithreadedXRootDSource
 
                 #RUN MAIN PROCESSOR
-                p = VHbbProcessorV1(year=year, jet_arbitration='T_bvc' , systematics=False)
+                p = VHbbProcessorV1Scan(year=year, jet_arbitration='T_bvc' , systematics=False)
                 args = {'savemetrics':True, 'schema':NanoAODSchema}
 
                 output = processor.run_uproot_job(

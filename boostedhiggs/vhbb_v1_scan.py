@@ -129,8 +129,8 @@ class VHbbProcessorV1Scan(processor.ProcessorABC):
                 hist.Cat('region', 'Region'),
                 hist.Cat('systematic', 'Systematic'),
                 hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
-                hist.Bin('ddb1', r'Jet 1 Paticle Net B Score', bb_bins),
-                hist.Bin('ddc2', r'Jet 2 Particle Net C Score', cc_bins),
+                hist.Bin('bb1', r'Jet 1 Paticle Net B Score', bb_bins),
+                hist.Bin('cc2', r'Jet 2 Particle Net C Score', cc_bins),
             )
         }
 
@@ -476,9 +476,6 @@ class VHbbProcessorV1Scan(processor.ProcessorABC):
                 region=region,
                 systematic=sname,
                 msd1=normalize(msd1_matched, cut),
-                genflavor1=normalize(genflavor1,cut),
-                genflavor2=normalize(genflavor2,cut),
-                pt1=normalize(candidatejet.pt, cut),
                 bb1=normalize(bb1, cut),
                 cc2=normalize(cc2, cut),
                 weight=weight,
