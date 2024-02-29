@@ -19,19 +19,19 @@ import pickle
 with open('files/lumi.json') as f:
     lumis = json.load(f)
     
-ParticleNet_WorkingPoints = {
+WPs = {
     
-    '2016APV_bb':    [0.0, 0.9088, 0.9737, 0.9883],
-    '2016APV_cc':    [0.0, 0.9252, 0.9751, 0.9909],
+    '2016APV_bb1': 0.9883,
+    '2016APV_cc2': 0.9909,
     
-    '2016_bb': [0.0, 0.9137, 0.9735, 0.9883],
-    '2016_cc': [0.0, 0.9252, 0.9743, 0.9905],
+    '2016_bb1': 0.9883,
+    '2016_cc2': 0.9883,
     
-    '2017_bb':    [0.0, 0.9105, 0.9714, 0.9870],
-    '2017_cc':    [0.0, 0.9347, 0.9765, 0.9909],
+    '2017_bb1': 0.9967,
+    '2017_cc2': 0.7755,
     
-    '2018_bb':    [0.0, 0.9172, 0.9734, 0.9880],
-    '2018_cc':    [0.0, 0.9368, 0.9777, 0.9917]
+    '2018_bb1':  0.9880,
+    '2018_cc2':  0.9917
 }
 
 # Main method
@@ -49,11 +49,11 @@ def main():
     regions = ['charm', 'light']
     
     #Define the score threshold
-    ddbthr = ParticleNet_WorkingPoints['{}_bb'.format(year)][3]
-    ddcthr = ParticleNet_WorkingPoints['{}_cc'.format(year)][1]
+    bbthr = WPs[f'{year}_bb1']
+    ccthr = WPs[f'{year}_cc2']
     
-    print('BB1 Threshold: ', ddbthr)
-    print('CC2 Threshold: ', ddcthr)
+    print(f'BB1 {year} Threshold: ', bbthr)
+    print(f'CC2 {year} Threshold: ', ccthr)
     
     pickle_path = '{}/{}.pkl'.format(year, 'ParticleNet_msd') #Need to be defined manually
     out_path = '{}/signalregion.root'.format(year)
@@ -63,9 +63,9 @@ def main():
         os.remove(out_path)
     fout = uproot3.create(out_path)
     
-     # Check if pickle exists     
+    #Check if pickle exists     
     if not os.path.isfile(pickle_path):
-        print("You need to create the pickle")
+        print("You need to link the pickle file (using absolute paths)")
         return
     
     #TODO: Full sample is ['QCD', 'VBFDipoleRecoilOff', 'WH', 'WW', 'WZ', 'Wjets', 'ZH', 'ZZ', 'Zjets', 'ZjetsHT', 'data', 'ggF', 'singlet', 'ttH', 'ttbar', 'ttbarBoosted']
@@ -93,34 +93,30 @@ def main():
     
     #Process each region
     for region in regions:
-        
+    
         print('Running for {} in {} region'.format(year, region))
-        systematic = 'nomial'
     
         # Jet 2 charm score integral range
-        c_int_range = slice(ddcthr, None) if region == 'charm' else slice(0,ddcthr)
-        c_overflow = 'over' if region == 'charm' else 'none'
+        c_int_range = slice(ccthr,1) if region == 'charm' else slice(0,ccthr)
         
         # Read the histogram from the pickle file
         # Integrate over signal region and Jet 2 charm score
-        sig = pickle.load(open(pickle_path,'rb')).integrate('region','signal')
-        sig = sig.sum('pt1', overflow='all')
-        sig = sig.integrate('cc2', c_int_range, overflow=c_overflow)
+        sig = pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('systematic', 'nominal').integrate('cc2',int_range=c_int_range)
 
-        #Print names
-        # print([x.name for x in sig.integrate('bb1',int_range=slice(ddbthr,1)).sum('msd1').identifiers('process')])
-        # print([x.name for x in sig.sum('bb1','msd1','process').identifiers('systematic')])
+        #Print sample names
+        hist_samples = [x.name for x in sig.integrate('bb1',int_range=slice(bbthr,1)).sum('msd1').identifiers('process')]
+        print("Available samples: ", hist_samples)
+        assert(all(item in hist_samples for item in samples))
     
         #Split into Jet 1 score b-tag passing/failing region. 
         for p in samples:
             print('Processing sample: ', p)
 
-            hpass = sig.integrate('bb1',int_range=slice(ddbthr,None), overflow='over').integrate('process',p)
-            hfail = sig.integrate('bb1',int_range=slice(0,ddbthr)).integrate('process',p)
-        
-            for s in hfail.identifiers('systematic'):
-                fout["{}_pass_{}_{}".format(region, p, s)] = hist.export1d(hpass.integrate('systematic', s))
-                fout["{}_fail_{}_{}".format(region, p, s)] = hist.export1d(hfail.integrate('systematic', s))
+            hpass = sig.integrate('bb1',int_range=slice(bbthr,1)).integrate('process',p)
+            hfail = sig.integrate('bb1',int_range=slice(0,bbthr)).integrate('process',p)
+
+            fout["{}_pass_{}_nominal".format(region, p)] = hist.export1d(hpass)
+            fout["{}_fail_{}_nominal".format(region, p)] = hist.export1d(hfail)
 
     return
 

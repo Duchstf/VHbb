@@ -11,7 +11,7 @@ After setting it up you could do `./shell` to set up the environment.
 Log in with ssh tunneling:
 
 ```
-ssh -L 8787:localhost:8787 dhoang@cmslpc172.fnal.gov
+ssh -L 8787:localhost:8787 dhoang@cmslpc138.fnal.gov
 ```
 
 Renew your grid certificate:

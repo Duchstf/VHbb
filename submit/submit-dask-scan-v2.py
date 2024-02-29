@@ -1,11 +1,14 @@
 '''
-To submit processing jobs, do:
+To submit processing jobs, do something like this:
 
-./shell coffeateam/coffea-dask:0.7.21-fastjet-3.4.0.1-g6238ea8
+ssh -L 8787:localhost:8787 dhoang@cmslpc146.fnal.gov
+grid-proxy-init -valid 1000:00
+<move to vhbb directory>
+./shell
 
 And then
 
-python submit/submit-dask-scan.py 2017 > dask.out 2>&1
+python submit/submit-dask-scan-v2.py 2018 > dask.out 2>&1
 '''
 
 import os, sys
@@ -19,7 +22,7 @@ from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
 sys.path.append('/srv')
 
 #Import processor
-from boostedhiggs import VHbbProcessorV1Scan
+from boostedhiggs import VHbbProcessorV2Scan
 
 from distributed import Client
 from lpcjobqueue import LPCCondorCluster
@@ -36,12 +39,12 @@ cluster = LPCCondorCluster(
     shared_temp_directory="/tmp",
     transfer_input_files=["boostedhiggs"],
     ship_env=True,
-    memory="8GB"
+    memory="10GB"
 #    image="coffeateam/coffea-dask:0.7.11-fastjet-3.3.4.0rc9-ga05a1f8",
 )
 
 year = sys.argv[1]
-tag = "vhbb_v1_scan"
+tag = "vhbb_v2_scan"
 ignore_list = ['QCDbEnriched', 'QCDBGenFilter'] #Sample to ignore processing for now
 
 out_path = "output/coffea/{}/{}/".format(tag,year)
@@ -79,7 +82,7 @@ with Client(cluster) as client:
                 uproot.open.defaults["xrootd_handler"] = uproot.source.xrootd.MultithreadedXRootDSource
 
                 #RUN MAIN PROCESSOR
-                p = VHbbProcessorV1Scan(year=year, jet_arbitration='T_bvc' , systematics=False)
+                p = VHbbProcessorV2Scan(year=year, jet_arbitration='T_bvc' , systematics=True)
                 args = {'savemetrics':True, 'schema':NanoAODSchema}
 
                 output = processor.run_uproot_job(

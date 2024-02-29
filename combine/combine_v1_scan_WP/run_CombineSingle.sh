@@ -45,7 +45,7 @@ cd $1
 mkdir -p plots
 
 ln -s -f ../year_scripts/*.C .
-( GLOBIGNORE="*_VV.sh"; ln -s -f ../year_scripts/*.sh . )
+ln -s -f ../year_scripts/*.sh .
 
 ./make_workspace.sh
 ./exp_shapes.sh 
@@ -55,6 +55,11 @@ root -b -q draw_MC.C
 root -b -q draw_DataFit.C
 #root -b draw_PFratio_QCDMC.C
 
-./exp_significance.sh
+./exp_significance.sh > significance.txt
+
+#Run for VV
+./make_workspace_VV.sh
+./exp_shapes_VV.sh 
+./exp_significance_VV.sh > significance_VV.txt
 
 cd ../
