@@ -46,7 +46,7 @@ def update(events, collections):
     return out
 
 
-class VHbbProcessorV1Scan(processor.ProcessorABC):
+class VHbbProcessorV4(processor.ProcessorABC):
     
     def __init__(self,
                  year='2017',
@@ -87,29 +87,25 @@ class VHbbProcessorV1Scan(processor.ProcessorABC):
         # https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2
         with open('files/metfilters.json') as f:
             self._met_filters = json.load(f)
-        
-        
+            
         ParticleNet_WorkingPoints = {
-                '2016APV_bb':    [0.0, 0.9088, 0.9737, 0.9883],
-                '2016APV_cc':    [0.0, 0.9252, 0.9751, 0.9909],
-                
-                '2016_bb': [0.0, 0.9137, 0.9735, 0.9883],
-                '2016_cc': [0.0, 0.9252, 0.9743, 0.9905],
-                
-                '2017_bb':    [0.0, 0.9105, 0.9714, 0.9870],
-                '2017_cc':    [0.0, 0.9347, 0.9765, 0.9909],
-                
-                '2018_bb':    [0.0, 0.9172, 0.9734, 0.9880],
-                '2018_cc':    [0.0, 0.9368, 0.9777, 0.9917]
+            '2016APV_bb':    [0.0, 0.9088, 0.9737, 0.9883],
+            '2016APV_cc':    [0.0, 0.9252, 0.9751, 0.9909],
+            
+            '2016_bb': [0.0, 0.9137, 0.9735, 0.9883],
+            '2016_cc': [0.0, 0.9252, 0.9743, 0.9905],
+            
+            '2017_bb':    [0.0, 0.9105, 0.9714, 0.9870],
+            '2017_cc':    [0.0, 0.9347, 0.9765, 0.9909],
+            
+            '2018_bb':    [0.0, 0.9172, 0.9734, 0.9880],
+            '2018_cc':    [0.0, 0.9368, 0.9777, 0.9917]
         }
         
-        #Scan thresholds for bb
-        bb_bins = [0.0, 0.97] + [round(x,4) for x in list(np.linspace(0.98,1.,50))] + ParticleNet_WorkingPoints['{}_bb'.format(self._year)][1:]
-        bb_bins.sort()
         
-        #Scan thresholds for cc
-        cc_bins = [round(x,4) for x in list(np.linspace(0.,1.,50))]  + ParticleNet_WorkingPoints['{}_cc'.format(self._year)][1:]
-        cc_bins.sort()
+        #Scan thresholds for bb
+        bb_bins = [0.0, 0.97, 0.9918] + [round(x,4) for x in list(np.linspace(0.98,1.,20))] + ParticleNet_WorkingPoints['{}_bb'.format(self._year)][1:]
+        bb_bins.sort()
         
         #Create the histogram.
         self.make_output = lambda: {
@@ -128,8 +124,10 @@ class VHbbProcessorV1Scan(processor.ProcessorABC):
                 hist.Cat('region', 'Region'),
                 hist.Cat('systematic', 'Systematic'),
                 hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
+                hist.Bin('msd2', r'Jet 2 $m_{sd}$', [40., 68.,  75.,  82.,  89.,  96., 103., 110., 201.]),
                 hist.Bin('bb1', r'Jet 1 Paticle Net B Score', bb_bins),
-                hist.Bin('cc2', r'Jet 2 Particle Net C Score', cc_bins),
+                hist.Bin('genflavor1', 'Gen. jet 1 flavor', [1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
+                hist.Bin('pt1', r'Jet 1 pt', [0, 250, 450, 650]),
             )
         }
 
@@ -282,14 +280,11 @@ class VHbbProcessorV1Scan(processor.ProcessorABC):
         #!Add selections------------------>
         #There is a list at the end which specifies the selections being used 
         selection.add('jet1kin',
-            (candidatejet.pt >= 450)
-            & (abs(candidatejet.eta) < 2.5)
+            abs(candidatejet.eta) < 2.5
         )
         selection.add('jet2kin',
             (secondjet.pt >= 200)
             & (abs(secondjet.eta) < 2.5)
-            & (secondjet.msdcorr < 100)
-            & (secondjet.msdcorr > 70) 
         )
 
         selection.add('jetacceptance',
@@ -330,6 +325,7 @@ class VHbbProcessorV1Scan(processor.ProcessorABC):
         # Only consider first 4 jets to be consistent with old framework  
         jets = jets[:, :4]
         dR = abs(jets.delta_r(candidatejet))
+        second_jet_dR = abs(secondjet.delta_r(candidatejet))
         ak4_away = jets[dR > 0.8]
 
         met = events.MET
@@ -476,8 +472,10 @@ class VHbbProcessorV1Scan(processor.ProcessorABC):
                 region=region,
                 systematic=sname,
                 msd1=normalize(msd1_matched, cut),
+                msd2=normalize(msd2_matched, cut),
                 bb1=normalize(bb1, cut),
-                cc2=normalize(cc2, cut),
+                genflavor1=normalize(genflavor1, cut),
+                pt1=normalize(candidatejet.pt, cut),
                 weight=weight,
             )
 

@@ -46,7 +46,7 @@ def update(events, collections):
     return out
 
 
-class VHbbProcessorV1Scan(processor.ProcessorABC):
+class VHbbProcessorV3Scan(processor.ProcessorABC):
     
     def __init__(self,
                  year='2017',
@@ -89,26 +89,13 @@ class VHbbProcessorV1Scan(processor.ProcessorABC):
             self._met_filters = json.load(f)
         
         
-        ParticleNet_WorkingPoints = {
-                '2016APV_bb':    [0.0, 0.9088, 0.9737, 0.9883],
-                '2016APV_cc':    [0.0, 0.9252, 0.9751, 0.9909],
-                
-                '2016_bb': [0.0, 0.9137, 0.9735, 0.9883],
-                '2016_cc': [0.0, 0.9252, 0.9743, 0.9905],
-                
-                '2017_bb':    [0.0, 0.9105, 0.9714, 0.9870],
-                '2017_cc':    [0.0, 0.9347, 0.9765, 0.9909],
-                
-                '2018_bb':    [0.0, 0.9172, 0.9734, 0.9880],
-                '2018_cc':    [0.0, 0.9368, 0.9777, 0.9917]
-        }
-        
         #Scan thresholds for bb
-        bb_bins = [0.0, 0.97] + [round(x,4) for x in list(np.linspace(0.98,1.,50))] + ParticleNet_WorkingPoints['{}_bb'.format(self._year)][1:]
+        bb_bins = [0.0, 0.9918, 1.0]
         bb_bins.sort()
         
+        
         #Scan thresholds for cc
-        cc_bins = [round(x,4) for x in list(np.linspace(0.,1.,50))]  + ParticleNet_WorkingPoints['{}_cc'.format(self._year)][1:]
+        cc_bins = [0.0, 0.2245, 1.0]
         cc_bins.sort()
         
         #Create the histogram.
@@ -128,6 +115,8 @@ class VHbbProcessorV1Scan(processor.ProcessorABC):
                 hist.Cat('region', 'Region'),
                 hist.Cat('systematic', 'Systematic'),
                 hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
+                hist.Bin('msd2', r'Jet 2 $m_{sd}$', 23, 40, 201),
+                #hist.Bin('dr', r'Jet dR', 20, 0, 8),
                 hist.Bin('bb1', r'Jet 1 Paticle Net B Score', bb_bins),
                 hist.Bin('cc2', r'Jet 2 Particle Net C Score', cc_bins),
             )
@@ -330,6 +319,7 @@ class VHbbProcessorV1Scan(processor.ProcessorABC):
         # Only consider first 4 jets to be consistent with old framework  
         jets = jets[:, :4]
         dR = abs(jets.delta_r(candidatejet))
+        second_jet_dR = abs(secondjet.delta_r(candidatejet))
         ak4_away = jets[dR > 0.8]
 
         met = events.MET
@@ -476,6 +466,8 @@ class VHbbProcessorV1Scan(processor.ProcessorABC):
                 region=region,
                 systematic=sname,
                 msd1=normalize(msd1_matched, cut),
+                msd2=normalize(msd2_matched, cut),
+                dr=normalize(second_jet_dR, cut),
                 bb1=normalize(bb1, cut),
                 cc2=normalize(cc2, cut),
                 weight=weight,
