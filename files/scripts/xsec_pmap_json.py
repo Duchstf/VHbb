@@ -200,7 +200,7 @@ pmap['Wjets'] = ['WJetsToQQ_HT-400to600',
                  'WJetsToLNu_HT-200To400', 
                  'WJetsToLNu_HT-400To600', 
                  'WJetsToLNu_HT-600To800', 
-                 'WJetsToLNu_HT-800To1200'
+                 'WJetsToLNu_HT-800To1200',
                  'WJetsToLNu_HT-1200To2500', 
                  'WJetsToLNu_HT-2500ToInf']
 

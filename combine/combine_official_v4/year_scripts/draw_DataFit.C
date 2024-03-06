@@ -287,10 +287,7 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
 
   string text = "Jet 1 B Fail, ";
   if( pass )
-    text = "Jet 1 B Pass, ";
-
-  if(charm) text += "Jet 2 Charm";
-  else text += "Jet 2 Light";
+    text = "Jet 1 B Pass";
 
   l3.DrawLatex(0.2,.82,text.c_str());
 

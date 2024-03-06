@@ -1,25 +1,7 @@
-import json
-import matplotlib.pyplot as plt
-from matplotlib.pyplot import cm
-import mplhep as hep
-plt.style.use(hep.style.ROOT)
 
-import matplotlib.pylab as pylab
-params = {'legend.fontsize': 'medium',
-         'axes.labelsize': 'x-large',
-         'axes.titlesize':'x-large',
-         'xtick.labelsize':'medium',
-         'ytick.labelsize':'medium'}
-pylab.rcParams.update(params)
-
-#line thickness
-import matplotlib as mpl
-mpl.rcParams['lines.linewidth'] = 5
-
-from coffea import hist
-import pickle
-    
 # Main method
+from imports import *
+
 def main():
     
     pickle_path = '../output/pickle/vhbb_v3_msd2/2017/ParticleNet_msd.pkl' #Need to be defined manually
@@ -42,11 +24,12 @@ def main():
             'singlet',
             'ttH',
             'ttbarBoosted']
-    p = ['QCD']
+    
+    p = ['singlet']
     h = pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('systematic', 'nominal').sum( 'bb1', 'cc2', 'dr')
     hp = h.integrate('process',p)
-    #print(hp.sum('msd1', 'msd2').values())
-    hist.plot2d(hp, xaxis="msd1", patch_opts={'norm': plt.Normalize(vmin=0, vmax=1000)})
+
+    hist.plot2d(hp, xaxis="msd1", patch_opts={'norm': plt.Normalize(vmin=0, vmax=10)})
     plt.xlabel(r'Jet 1 $m_{sd}$ [GeV] ')
     plt.ylabel(r'Jet 2 $m_{sd}$ [GeV] ')
     plt.savefig(f'plots/mass2D_{p[0]}.pdf', bbox_inches='tight')
