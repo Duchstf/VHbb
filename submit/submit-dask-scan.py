@@ -1,14 +1,14 @@
 '''
 To submit processing jobs, do:
 
-ssh -L 8787:localhost:8787 dhoang@cmslpc125.fnal.gov
+ssh -L 8787:localhost:8787 dhoang@cmslpc129.fnal.gov
 grid-proxy-init -valid 1000:00
 
 ./shell
 
 And then
 
-python submit/submit-dask-scan.py 2017 > dask.out 2>&1
+python submit/submit-dask-scan.py 2018 > dask.out 2>&1
 '''
 
 import os, sys
