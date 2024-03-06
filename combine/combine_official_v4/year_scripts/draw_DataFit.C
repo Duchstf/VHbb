@@ -43,7 +43,6 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
 
   //Category
   if (charm) name = name + "charm";
-  else name = name + "light";
 
   //Pass fail
   if (pass) name = name + "pass" + year;
@@ -88,7 +87,6 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
 
   string leading_name  = (pass) ? "_pass_": "_fail_";
   if (charm) leading_name =  "charm" + leading_name;
-  else leading_name =  "light" + leading_name;
 
   TFile *dataf = new TFile(data_file.c_str());
   TH1D* data_obs = (TH1D*)dataf->Get((leading_name+"data_nominal").c_str());
@@ -358,8 +356,6 @@ void draw_DataFit(){
   for(int i=0; i<1; i++){
     draw(i,1,0,0); //charm fail
     draw(i,0,1,0); //charm pass
-    draw(i,0,0,0); //light fail 
-    draw(i,1,1,0); //light pass
   }
 
   return 0;

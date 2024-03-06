@@ -225,9 +225,7 @@ pmap['ZjetsHT'] = ['ZJetsToQQ_HT-400to600',
                    'DYJetsToLL_M-50_HT-1200to2500',
                    'DYJetsToLL_M-50_HT-2500toInf']
 
-pmap['WW'] = ['WW']
-pmap['ZZ'] = ['ZZ']
-pmap['WZ'] = ['WZ']
+pmap['VV'] = ['WZ', 'ZZ', 'WW']
 
 pmap['WW_NLO'] = ['WWTo1L1Nu2Q_NLO',
                   'WWTo4Q_NLO']

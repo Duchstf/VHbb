@@ -42,7 +42,7 @@ def main():
         return
 
     year = sys.argv[1]
-    regions = ['charm', 'light']
+    regions = ['charm']
     
     #Define the score threshold
     bbthr = WPs[f'{year}_bb1']
@@ -86,6 +86,8 @@ def main():
         # Integrate over signal region and Jet 2 charm score
         sig_0 =  pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('systematic', 'nominal').sum('genflavor1', overflow='all')
         sig = sig_0.integrate('pt1', int_range=slice(450., None), overflow='over').integrate('msd2',int_range=slice(68.,103.))
+        # sig = sig_0.integrate('pt1', int_range=slice(450., None), overflow='over').integrate('msd2',int_range=slice(40.,68.))
+        # sig = sig_0.integrate('pt1', int_range=slice(450., None), overflow='over').integrate('msd2',int_range=slice(103.,201.))
         
         #Print sample names
         hist_samples = [x.name for x in sig.integrate('bb1',int_range=slice(bbthr,1)).sum('msd1').identifiers('process')]

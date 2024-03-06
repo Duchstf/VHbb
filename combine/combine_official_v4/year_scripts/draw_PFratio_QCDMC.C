@@ -34,7 +34,7 @@ void draw_PFratio_QCDMC(){
 	}
 
 
-  vector<string> procs = {"charm","light"};
+  vector<string> procs = {"charm"};
   vector<int> nptbins = {1,1};
 
   for(int j=0; j<procs.size(); j++){
