@@ -110,18 +110,16 @@ def vh_rhalphabet(tmpdir):
     # Start with two category and no differential bins.
     ptbins = {}
     ptbins['charm'] = np.array([450,1200])
-    ptbins['light'] = np.array([450,1200])
 
     npt = {}
     npt['charm'] = len(ptbins['charm']) - 1
-    npt['light'] = len(ptbins['light']) - 1
 
     msdbins = np.linspace(40, 201, 24)
     msd = rl.Observable('msd', msdbins)
 
     validbins = {}
 
-    cats = ['light', 'charm'] #TODO: Split by Jet 2 C score.
+    cats = ['charm'] #TODO: Split by Jet 2 C score.
 
     # Build qcd MC pass+fail model and fit to polynomial
     # QCD MC only fit
@@ -340,7 +338,7 @@ def vh_rhalphabet(tmpdir):
 
                         ch.addSample(sample)
 
-                    data_obs = get_template('data', isPass, binindex+1, cat, obs=msd, syst='nominal')
+                    data_obs = get_template('QCD', isPass, binindex+1, cat, obs=msd, syst='nominal') #TODO: TO CHANGE BACK
 
                     ch.setObservation(data_obs, read_sumw2=True)
 

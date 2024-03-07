@@ -41,11 +41,9 @@ void draw(int index, bool pass, bool charm, bool log=true){
   // Dummy variable to select the data branch
   string leading_name  = (pass) ? "_pass_": "_fail_";
   if (charm) leading_name =  "charm" + leading_name;
-  else leading_name =  "light" + leading_name;
 
   string name  = (pass) ? "_pass": "_fail";
   if (charm) name =  "charm" + name;
-  else name =  "light" + name;
 
   string filename = "signalregion.root";
   TFile *f = new TFile(filename.c_str()); // Can use dataf and read all the distributions from there
@@ -248,8 +246,6 @@ void draw(int index, bool pass, bool charm, bool log=true){
 
 void draw_MC(){
 
-  draw(0,0,0,0); //ddb fail light
-  draw(0,1,0,0); //ddb pass light
   draw(0,0,1,0); //ddb fail charm
   draw(0,1,1,0); //ddb pass charm
 

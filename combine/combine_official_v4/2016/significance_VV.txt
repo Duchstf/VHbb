@@ -1,0 +1,510 @@
+VH SIGNIFICANCE
+
+>>> method used is Significance
+>>> random number generator seed is 123456
+Adding /uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src to include path
+Adding /cvmfs/cms.cern.ch/slc7_amd64_gcc700/lcg/root/6.12.07-gnimlf5//include to include path
+Input workspace 'w': 
+
+RooWorkspace(w) w contents
+
+variables
+---------
+(CMS_channel,CMS_lumi_13TeV_2016,CMS_lumi_13TeV_2016_In,CMS_lumi_13TeV_correlated_,CMS_lumi_13TeV_correlated__In,MH,msd,n_exp_binptbin0charmfail2016_proc_qcd,n_exp_binptbin0charmpass2016_proc_qcd,qcdparam_charm_ptbin0,rVV,shapeBkg_VBFDipoleRecoilOn_ptbin0charmfail2016__norm,shapeBkg_VBFDipoleRecoilOn_ptbin0charmpass2016__norm,shapeBkg_VV_ptbin0charmfail2016__norm,shapeBkg_VV_ptbin0charmpass2016__norm,shapeBkg_Wjets_ptbin0charmfail2016__norm,shapeBkg_Wjets_ptbin0charmpass2016__norm,shapeBkg_Zjets_ptbin0charmfail2016__norm,shapeBkg_Zjets_ptbin0charmpass2016__norm,shapeBkg_ggF_ptbin0charmfail2016__norm,shapeBkg_ggF_ptbin0charmpass2016__norm,shapeBkg_singlet_ptbin0charmfail2016__norm,shapeBkg_singlet_ptbin0charmpass2016__norm,shapeBkg_ttH_ptbin0charmfail2016__norm,shapeBkg_ttH_ptbin0charmpass2016__norm,shapeBkg_ttbarBoosted_ptbin0charmfail2016__norm,shapeBkg_ttbarBoosted_ptbin0charmpass2016__norm,shapeSig_WH_ptbin0charmfail2016__norm,shapeSig_WH_ptbin0charmpass2016__norm,shapeSig_ZH_ptbin0charmfail2016__norm,shapeSig_ZH_ptbin0charmpass2016__norm,tf_MCtempl_charm2016_deco0,tf_MCtempl_charm2016_deco0_In,tf_MCtempl_charm2016_deco1,tf_MCtempl_charm2016_deco1_In,tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1)
+
+p.d.f.s
+-------
+SimpleGaussianConstraint::CMS_lumi_13TeV_2016_Pdf[ x=CMS_lumi_13TeV_2016 mean=CMS_lumi_13TeV_2016_In sigma=1 ] = 1
+SimpleGaussianConstraint::CMS_lumi_13TeV_correlated__Pdf[ x=CMS_lumi_13TeV_correlated_ mean=CMS_lumi_13TeV_correlated__In sigma=1 ] = 1
+RooSimultaneousOpt::model_b[ indexCat=CMS_channel ptbin0charmpass2016=pdf_binptbin0charmpass2016_bonly ptbin0charmfail2016=pdf_binptbin0charmfail2016_bonly extraConstraints=() channelMasks=() ] = 0.0066736
+RooSimultaneousOpt::model_s[ indexCat=CMS_channel ptbin0charmpass2016=pdf_binptbin0charmpass2016 ptbin0charmfail2016=pdf_binptbin0charmfail2016 extraConstraints=() channelMasks=() ] = 0.00667207
+RooProdPdf::nuisancePdf[ CMS_lumi_13TeV_2016_Pdf * CMS_lumi_13TeV_correlated__Pdf * tf_MCtempl_charm2016_deco0_Pdf * tf_MCtempl_charm2016_deco1_Pdf ] = 1
+RooProdPdf::pdf_binptbin0charmfail2016[ CMS_lumi_13TeV_2016_Pdf * CMS_lumi_13TeV_correlated__Pdf * tf_MCtempl_charm2016_deco0_Pdf * tf_MCtempl_charm2016_deco1_Pdf * pdf_binptbin0charmfail2016_nuis * pdfbins_binptbin0charmfail2016 ] = 40.354
+RooProdPdf::pdf_binptbin0charmfail2016_bonly[ CMS_lumi_13TeV_2016_Pdf * CMS_lumi_13TeV_correlated__Pdf * tf_MCtempl_charm2016_deco0_Pdf * tf_MCtempl_charm2016_deco1_Pdf * pdf_binptbin0charmfail2016_bonly_nuis * pdfbins_binptbin0charmfail2016 ] = 40.3578
+RooAddPdf::pdf_binptbin0charmfail2016_bonly_nuis[ n_exp_binptbin0charmfail2016_proc_Zjets * shapeBkg_Zjets_ptbin0charmfail2016Pdf + n_exp_binptbin0charmfail2016_proc_ggF * shapeBkg_ggF_ptbin0charmfail2016Pdf + n_exp_binptbin0charmfail2016_proc_VBFDipoleRecoilOn * shapeBkg_VBFDipoleRecoilOn_ptbin0charmfail2016Pdf + n_exp_binptbin0charmfail2016_proc_singlet * shapeBkg_singlet_ptbin0charmfail2016Pdf + n_exp_binptbin0charmfail2016_proc_Wjets * shapeBkg_Wjets_ptbin0charmfail2016Pdf + n_exp_binptbin0charmfail2016_proc_ttH * shapeBkg_ttH_ptbin0charmfail2016Pdf + n_exp_binptbin0charmfail2016_proc_VV * shapeBkg_VV_ptbin0charmfail2016Pdf + n_exp_final_binptbin0charmfail2016_proc_qcd * shapeBkg_qcd_ptbin0charmfail2016 + n_exp_binptbin0charmfail2016_proc_ttbarBoosted * shapeBkg_ttbarBoosted_ptbin0charmfail2016Pdf ] = 40.3578
+RooAddPdf::pdf_binptbin0charmfail2016_nuis[ n_exp_binptbin0charmfail2016_proc_Zjets * shapeBkg_Zjets_ptbin0charmfail2016Pdf + n_exp_binptbin0charmfail2016_proc_ZH * shapeSig_ZH_ptbin0charmfail2016Pdf + n_exp_binptbin0charmfail2016_proc_ggF * shapeBkg_ggF_ptbin0charmfail2016Pdf + n_exp_binptbin0charmfail2016_proc_WH * shapeSig_WH_ptbin0charmfail2016Pdf + n_exp_binptbin0charmfail2016_proc_VBFDipoleRecoilOn * shapeBkg_VBFDipoleRecoilOn_ptbin0charmfail2016Pdf + n_exp_binptbin0charmfail2016_proc_singlet * shapeBkg_singlet_ptbin0charmfail2016Pdf + n_exp_binptbin0charmfail2016_proc_Wjets * shapeBkg_Wjets_ptbin0charmfail2016Pdf + n_exp_binptbin0charmfail2016_proc_ttH * shapeBkg_ttH_ptbin0charmfail2016Pdf + n_exp_binptbin0charmfail2016_proc_VV * shapeBkg_VV_ptbin0charmfail2016Pdf + n_exp_final_binptbin0charmfail2016_proc_qcd * shapeBkg_qcd_ptbin0charmfail2016 + n_exp_binptbin0charmfail2016_proc_ttbarBoosted * shapeBkg_ttbarBoosted_ptbin0charmfail2016Pdf ] = 40.354
+RooProdPdf::pdf_binptbin0charmpass2016[ CMS_lumi_13TeV_2016_Pdf * CMS_lumi_13TeV_correlated__Pdf * tf_MCtempl_charm2016_deco0_Pdf * tf_MCtempl_charm2016_deco1_Pdf * pdf_binptbin0charmpass2016_nuis * pdfbins_binptbin0charmpass2016 ] = 0.55125
+RooProdPdf::pdf_binptbin0charmpass2016_bonly[ CMS_lumi_13TeV_2016_Pdf * CMS_lumi_13TeV_correlated__Pdf * tf_MCtempl_charm2016_deco0_Pdf * tf_MCtempl_charm2016_deco1_Pdf * pdf_binptbin0charmpass2016_bonly_nuis * pdfbins_binptbin0charmpass2016 ] = 0.557639
+RooAddPdf::pdf_binptbin0charmpass2016_bonly_nuis[ n_exp_binptbin0charmpass2016_proc_Zjets * shapeBkg_Zjets_ptbin0charmpass2016Pdf + n_exp_binptbin0charmpass2016_proc_ggF * shapeBkg_ggF_ptbin0charmpass2016Pdf + n_exp_binptbin0charmpass2016_proc_VBFDipoleRecoilOn * shapeBkg_VBFDipoleRecoilOn_ptbin0charmpass2016Pdf + n_exp_binptbin0charmpass2016_proc_singlet * shapeBkg_singlet_ptbin0charmpass2016Pdf + n_exp_binptbin0charmpass2016_proc_Wjets * shapeBkg_Wjets_ptbin0charmpass2016Pdf + n_exp_binptbin0charmpass2016_proc_ttH * shapeBkg_ttH_ptbin0charmpass2016Pdf + n_exp_binptbin0charmpass2016_proc_VV * shapeBkg_VV_ptbin0charmpass2016Pdf + n_exp_final_binptbin0charmpass2016_proc_qcd * shapeBkg_qcd_ptbin0charmpass2016 + n_exp_binptbin0charmpass2016_proc_ttbarBoosted * shapeBkg_ttbarBoosted_ptbin0charmpass2016Pdf ] = 0.557639
+RooAddPdf::pdf_binptbin0charmpass2016_nuis[ n_exp_binptbin0charmpass2016_proc_Zjets * shapeBkg_Zjets_ptbin0charmpass2016Pdf + n_exp_binptbin0charmpass2016_proc_ZH * shapeSig_ZH_ptbin0charmpass2016Pdf + n_exp_binptbin0charmpass2016_proc_ggF * shapeBkg_ggF_ptbin0charmpass2016Pdf + n_exp_binptbin0charmpass2016_proc_WH * shapeSig_WH_ptbin0charmpass2016Pdf + n_exp_binptbin0charmpass2016_proc_VBFDipoleRecoilOn * shapeBkg_VBFDipoleRecoilOn_ptbin0charmpass2016Pdf + n_exp_binptbin0charmpass2016_proc_singlet * shapeBkg_singlet_ptbin0charmpass2016Pdf + n_exp_binptbin0charmpass2016_proc_Wjets * shapeBkg_Wjets_ptbin0charmpass2016Pdf + n_exp_binptbin0charmpass2016_proc_ttH * shapeBkg_ttH_ptbin0charmpass2016Pdf + n_exp_binptbin0charmpass2016_proc_VV * shapeBkg_VV_ptbin0charmpass2016Pdf + n_exp_final_binptbin0charmpass2016_proc_qcd * shapeBkg_qcd_ptbin0charmpass2016 + n_exp_binptbin0charmpass2016_proc_ttbarBoosted * shapeBkg_ttbarBoosted_ptbin0charmpass2016Pdf ] = 0.55125
+RooProdPdf::pdfbins_binptbin0charmfail2016[  ] = 1
+RooProdPdf::pdfbins_binptbin0charmpass2016[  ] = 1
+RooHistPdf::shapeBkg_VBFDipoleRecoilOn_ptbin0charmfail2016Pdf[ pdfObs=(msd) ] = 0
+RooHistPdf::shapeBkg_VBFDipoleRecoilOn_ptbin0charmpass2016Pdf[ pdfObs=(msd) ] = 0
+RooHistPdf::shapeBkg_VV_ptbin0charmfail2016Pdf[ pdfObs=(msd) ] = 0.0577781
+RooHistPdf::shapeBkg_VV_ptbin0charmpass2016Pdf[ pdfObs=(msd) ] = 0
+RooHistPdf::shapeBkg_Wjets_ptbin0charmfail2016Pdf[ pdfObs=(msd) ] = 3.90232
+RooHistPdf::shapeBkg_Wjets_ptbin0charmpass2016Pdf[ pdfObs=(msd) ] = 0.0241686
+RooHistPdf::shapeBkg_Zjets_ptbin0charmfail2016Pdf[ pdfObs=(msd) ] = 1.19739
+RooHistPdf::shapeBkg_Zjets_ptbin0charmpass2016Pdf[ pdfObs=(msd) ] = 0.0211322
+RooHistPdf::shapeBkg_ggF_ptbin0charmfail2016Pdf[ pdfObs=(msd) ] = 0
+RooHistPdf::shapeBkg_ggF_ptbin0charmpass2016Pdf[ pdfObs=(msd) ] = 0
+RooParametricHist::shapeBkg_qcd_ptbin0charmfail2016[ observable=msd _pars=(ptbin0charmfail2016_qcd_bin0,ptbin0charmfail2016_qcd_bin1,ptbin0charmfail2016_qcd_bin2,ptbin0charmfail2016_qcd_bin3,ptbin0charmfail2016_qcd_bin4,ptbin0charmfail2016_qcd_bin5,ptbin0charmfail2016_qcd_bin6,ptbin0charmfail2016_qcd_bin7,ptbin0charmfail2016_qcd_bin8,ptbin0charmfail2016_qcd_bin9,ptbin0charmfail2016_qcd_bin10,ptbin0charmfail2016_qcd_bin11,ptbin0charmfail2016_qcd_bin12,ptbin0charmfail2016_qcd_bin13,ptbin0charmfail2016_qcd_bin14,ptbin0charmfail2016_qcd_bin15,ptbin0charmfail2016_qcd_bin16,ptbin0charmfail2016_qcd_bin17,ptbin0charmfail2016_qcd_bin18,ptbin0charmfail2016_qcd_bin19,ptbin0charmfail2016_qcd_bin20,ptbin0charmfail2016_qcd_bin21,ptbin0charmfail2016_qcd_bin22) ] = 46.0731
+RooParametricHist::shapeBkg_qcd_ptbin0charmpass2016[ observable=msd _pars=(ptbin0charmpass2016_qcd_bin0,ptbin0charmpass2016_qcd_bin1,ptbin0charmpass2016_qcd_bin2,ptbin0charmpass2016_qcd_bin3,ptbin0charmpass2016_qcd_bin4,ptbin0charmpass2016_qcd_bin5,ptbin0charmpass2016_qcd_bin6,ptbin0charmpass2016_qcd_bin7,ptbin0charmpass2016_qcd_bin8,ptbin0charmpass2016_qcd_bin9,ptbin0charmpass2016_qcd_bin10,ptbin0charmpass2016_qcd_bin11,ptbin0charmpass2016_qcd_bin12,ptbin0charmpass2016_qcd_bin13,ptbin0charmpass2016_qcd_bin14,ptbin0charmpass2016_qcd_bin15,ptbin0charmpass2016_qcd_bin16,ptbin0charmpass2016_qcd_bin17,ptbin0charmpass2016_qcd_bin18,ptbin0charmpass2016_qcd_bin19,ptbin0charmpass2016_qcd_bin20,ptbin0charmpass2016_qcd_bin21,ptbin0charmpass2016_qcd_bin22) ] = 0.766004
+RooHistPdf::shapeBkg_singlet_ptbin0charmfail2016Pdf[ pdfObs=(msd) ] = 0.152553
+RooHistPdf::shapeBkg_singlet_ptbin0charmpass2016Pdf[ pdfObs=(msd) ] = 0.0873693
+RooHistPdf::shapeBkg_ttH_ptbin0charmfail2016Pdf[ pdfObs=(msd) ] = 0.000369607
+RooHistPdf::shapeBkg_ttH_ptbin0charmpass2016Pdf[ pdfObs=(msd) ] = 0.00042146
+RooHistPdf::shapeBkg_ttbarBoosted_ptbin0charmfail2016Pdf[ pdfObs=(msd) ] = 0.724141
+RooHistPdf::shapeBkg_ttbarBoosted_ptbin0charmpass2016Pdf[ pdfObs=(msd) ] = 0.0859922
+RooHistPdf::shapeSig_WH_ptbin0charmfail2016Pdf[ pdfObs=(msd) ] = 0.00154799
+RooHistPdf::shapeSig_WH_ptbin0charmpass2016Pdf[ pdfObs=(msd) ] = 0
+RooHistPdf::shapeSig_ZH_ptbin0charmfail2016Pdf[ pdfObs=(msd) ] = 0.000293076
+RooHistPdf::shapeSig_ZH_ptbin0charmpass2016Pdf[ pdfObs=(msd) ] = 0
+SimpleGaussianConstraint::tf_MCtempl_charm2016_deco0_Pdf[ x=tf_MCtempl_charm2016_deco0 mean=tf_MCtempl_charm2016_deco0_In sigma=1 ] = 1
+SimpleGaussianConstraint::tf_MCtempl_charm2016_deco1_Pdf[ x=tf_MCtempl_charm2016_deco1 mean=tf_MCtempl_charm2016_deco1_In sigma=1 ] = 1
+
+functions
+--------
+ProcessNormalization::n_exp_binptbin0charmfail2016_proc_VBFDipoleRecoilOn[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=() ] = 0.17
+ProcessNormalization::n_exp_binptbin0charmfail2016_proc_VV[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=(rVV) ] = 110.618
+ProcessNormalization::n_exp_binptbin0charmfail2016_proc_WH[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=() ] = 1.87
+ProcessNormalization::n_exp_binptbin0charmfail2016_proc_Wjets[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=() ] = 2154.11
+ProcessNormalization::n_exp_binptbin0charmfail2016_proc_ZH[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=() ] = 0.914
+ProcessNormalization::n_exp_binptbin0charmfail2016_proc_Zjets[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=() ] = 678.15
+ProcessNormalization::n_exp_binptbin0charmfail2016_proc_ggF[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=() ] = 0.344
+ProcessNormalization::n_exp_binptbin0charmfail2016_proc_singlet[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=() ] = 200.439
+ProcessNormalization::n_exp_binptbin0charmfail2016_proc_ttH[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=() ] = 0.731
+ProcessNormalization::n_exp_binptbin0charmfail2016_proc_ttbarBoosted[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=() ] = 826.626
+ProcessNormalization::n_exp_binptbin0charmpass2016_proc_VBFDipoleRecoilOn[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=() ] = 0.174
+ProcessNormalization::n_exp_binptbin0charmpass2016_proc_VV[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=(rVV) ] = 6.576
+ProcessNormalization::n_exp_binptbin0charmpass2016_proc_WH[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=() ] = 2.902
+ProcessNormalization::n_exp_binptbin0charmpass2016_proc_Wjets[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=() ] = 14.284
+ProcessNormalization::n_exp_binptbin0charmpass2016_proc_ZH[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=() ] = 1.35
+ProcessNormalization::n_exp_binptbin0charmpass2016_proc_Zjets[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=() ] = 31.209
+ProcessNormalization::n_exp_binptbin0charmpass2016_proc_ggF[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=() ] = 0.298
+ProcessNormalization::n_exp_binptbin0charmpass2016_proc_singlet[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=() ] = 10.208
+ProcessNormalization::n_exp_binptbin0charmpass2016_proc_ttH[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=() ] = 0.281
+ProcessNormalization::n_exp_binptbin0charmpass2016_proc_ttbarBoosted[ thetaList=(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_) asymmThetaList=() otherFactorList=() ] = 44.204
+RooProduct::n_exp_final_binptbin0charmfail2016_proc_qcd[ n_exp_binptbin0charmfail2016_proc_qcd * shapeBkg_qcd_ptbin0charmfail2016__norm ] = 26317.5
+RooProduct::n_exp_final_binptbin0charmpass2016_proc_qcd[ n_exp_binptbin0charmpass2016_proc_qcd * shapeBkg_qcd_ptbin0charmpass2016__norm ] = 259.639
+RooFormulaVar::ptbin0charmfail2016_qcd_bin0[ actualVars=(qcdparam_charm_ptbin0) formula="(2517.2329454251762*(1.1993142255276243**@0))" ] = 2517.23
+RooFormulaVar::ptbin0charmfail2016_qcd_bin0_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(2517.2329454251762*(1.1993142255276243**@0))" ] = 2517.23
+RooFormulaVar::ptbin0charmfail2016_qcd_bin1[ actualVars=(qcdparam_charm_ptbin0) formula="(2262.1062358411905*(1.2102536294957098**@0))" ] = 2262.11
+RooFormulaVar::ptbin0charmfail2016_qcd_bin10[ actualVars=(qcdparam_charm_ptbin0) formula="(990.7357067929313*(1.3177028364523298**@0))" ] = 990.736
+RooFormulaVar::ptbin0charmfail2016_qcd_bin10_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(990.7357067929313*(1.3177028364523298**@0))" ] = 990.736
+RooFormulaVar::ptbin0charmfail2016_qcd_bin11[ actualVars=(qcdparam_charm_ptbin0) formula="(983.1691536277642*(1.3189230272620458**@0))" ] = 983.169
+RooFormulaVar::ptbin0charmfail2016_qcd_bin11_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(983.1691536277642*(1.3189230272620458**@0))" ] = 983.169
+RooFormulaVar::ptbin0charmfail2016_qcd_bin12[ actualVars=(qcdparam_charm_ptbin0) formula="(959.0997358628799*(1.322900051517256**@0))" ] = 959.1
+RooFormulaVar::ptbin0charmfail2016_qcd_bin12_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(959.0997358628799*(1.322900051517256**@0))" ] = 959.1
+RooFormulaVar::ptbin0charmfail2016_qcd_bin13[ actualVars=(qcdparam_charm_ptbin0) formula="(894.3079513187141*(1.334392442830942**@0))" ] = 894.308
+RooFormulaVar::ptbin0charmfail2016_qcd_bin13_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(894.3079513187141*(1.334392442830942**@0))" ] = 894.308
+RooFormulaVar::ptbin0charmfail2016_qcd_bin14[ actualVars=(qcdparam_charm_ptbin0) formula="(876.1824727859668*(1.337833505289345**@0))" ] = 876.182
+RooFormulaVar::ptbin0charmfail2016_qcd_bin14_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(876.1824727859668*(1.337833505289345**@0))" ] = 876.182
+RooFormulaVar::ptbin0charmfail2016_qcd_bin15[ actualVars=(qcdparam_charm_ptbin0) formula="(818.9183130495572*(1.3494457061758598**@0))" ] = 818.918
+RooFormulaVar::ptbin0charmfail2016_qcd_bin15_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(818.9183130495572*(1.3494457061758598**@0))" ] = 818.918
+RooFormulaVar::ptbin0charmfail2016_qcd_bin16[ actualVars=(qcdparam_charm_ptbin0) formula="(631.8103630182816*(1.3978383339558877**@0))" ] = 631.81
+RooFormulaVar::ptbin0charmfail2016_qcd_bin16_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(631.8103630182816*(1.3978383339558877**@0))" ] = 631.81
+RooFormulaVar::ptbin0charmfail2016_qcd_bin17[ actualVars=(qcdparam_charm_ptbin0) formula="(700.4778025073622*(1.377835544455961**@0))" ] = 700.478
+RooFormulaVar::ptbin0charmfail2016_qcd_bin17_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(700.4778025073622*(1.377835544455961**@0))" ] = 700.478
+RooFormulaVar::ptbin0charmfail2016_qcd_bin18[ actualVars=(qcdparam_charm_ptbin0) formula="(553.915901272288*(1.4248915397397917**@0))" ] = 553.916
+RooFormulaVar::ptbin0charmfail2016_qcd_bin18_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(553.915901272288*(1.4248915397397917**@0))" ] = 553.916
+RooFormulaVar::ptbin0charmfail2016_qcd_bin19[ actualVars=(qcdparam_charm_ptbin0) formula="(442.27296802973785*(1.475504686978255**@0))" ] = 442.273
+RooFormulaVar::ptbin0charmfail2016_qcd_bin19_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(442.27296802973785*(1.475504686978255**@0))" ] = 442.273
+RooFormulaVar::ptbin0charmfail2016_qcd_bin1_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(2262.1062358411905*(1.2102536294957098**@0))" ] = 2262.11
+RooFormulaVar::ptbin0charmfail2016_qcd_bin2[ actualVars=(qcdparam_charm_ptbin0) formula="(2126.3606524876805*(1.2168610401022892**@0))" ] = 2126.36
+RooFormulaVar::ptbin0charmfail2016_qcd_bin20[ actualVars=(qcdparam_charm_ptbin0) formula="(467.0623318242705*(1.4627139345376514**@0))" ] = 467.062
+RooFormulaVar::ptbin0charmfail2016_qcd_bin20_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(467.0623318242705*(1.4627139345376514**@0))" ] = 467.062
+RooFormulaVar::ptbin0charmfail2016_qcd_bin21[ actualVars=(qcdparam_charm_ptbin0) formula="(340.3203918997258*(1.542070800137914**@0))" ] = 340.32
+RooFormulaVar::ptbin0charmfail2016_qcd_bin21_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(340.3203918997258*(1.542070800137914**@0))" ] = 340.32
+RooFormulaVar::ptbin0charmfail2016_qcd_bin22[ actualVars=(qcdparam_charm_ptbin0) formula="(322.51203682105324*(1.5568356549655253**@0))" ] = 322.512
+RooFormulaVar::ptbin0charmfail2016_qcd_bin22_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(322.51203682105324*(1.5568356549655253**@0))" ] = 322.512
+RooFormulaVar::ptbin0charmfail2016_qcd_bin2_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(2126.3606524876805*(1.2168610401022892**@0))" ] = 2126.36
+RooFormulaVar::ptbin0charmfail2016_qcd_bin3[ actualVars=(qcdparam_charm_ptbin0) formula="(1929.116804813562*(1.227677827054519**@0))" ] = 1929.12
+RooFormulaVar::ptbin0charmfail2016_qcd_bin3_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(1929.116804813562*(1.227677827054519**@0))" ] = 1929.12
+RooFormulaVar::ptbin0charmfail2016_qcd_bin4[ actualVars=(qcdparam_charm_ptbin0) formula="(1625.2257284684495*(1.248052241329743**@0))" ] = 1625.23
+RooFormulaVar::ptbin0charmfail2016_qcd_bin4_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(1625.2257284684495*(1.248052241329743**@0))" ] = 1625.23
+RooFormulaVar::ptbin0charmfail2016_qcd_bin5[ actualVars=(qcdparam_charm_ptbin0) formula="(1439.0315101110184*(1.2636118009534343**@0))" ] = 1439.03
+RooFormulaVar::ptbin0charmfail2016_qcd_bin5_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(1439.0315101110184*(1.2636118009534343**@0))" ] = 1439.03
+RooFormulaVar::ptbin0charmfail2016_qcd_bin6[ actualVars=(qcdparam_charm_ptbin0) formula="(1425.7752942878296*(1.2648344374808513**@0))" ] = 1425.78
+RooFormulaVar::ptbin0charmfail2016_qcd_bin6_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(1425.7752942878296*(1.2648344374808513**@0))" ] = 1425.78
+RooFormulaVar::ptbin0charmfail2016_qcd_bin7[ actualVars=(qcdparam_charm_ptbin0) formula="(1323.9375163193445*(1.2748313401143165**@0))" ] = 1323.94
+RooFormulaVar::ptbin0charmfail2016_qcd_bin7_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(1323.9375163193445*(1.2748313401143165**@0))" ] = 1323.94
+RooFormulaVar::ptbin0charmfail2016_qcd_bin8[ actualVars=(qcdparam_charm_ptbin0) formula="(1458.653854170898*(1.2618326963205486**@0))" ] = 1458.65
+RooFormulaVar::ptbin0charmfail2016_qcd_bin8_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(1458.653854170898*(1.2618326963205486**@0))" ] = 1458.65
+RooFormulaVar::ptbin0charmfail2016_qcd_bin9[ actualVars=(qcdparam_charm_ptbin0) formula="(1229.244810925376*(1.2852205468222868**@0))" ] = 1229.24
+RooFormulaVar::ptbin0charmfail2016_qcd_bin9_ptbin0charmpass2016[ actualVars=(qcdparam_charm_ptbin0) formula="(1229.244810925376*(1.2852205468222868**@0))" ] = 1229.24
+RooFormulaVar::ptbin0charmpass2016_qcd_bin0[ actualVars=(tf_dataResidual_2016charm_eval_pt0p300_rho0p132,tf_MCtempl_charm2016_eval_pt0p300_rho0p132,ptbin0charmfail2016_qcd_bin0) formula="(((0.009931144661183819*@1)*@0)*@2)" ] = 10.1955
+RooFormulaVar::ptbin0charmpass2016_qcd_bin0_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_eval_pt0p300_rho0p132_ptbin0charmpass2016,tf_MCtempl_charm2016_eval_pt0p300_rho0p132_ptbin0charmpass2016,ptbin0charmfail2016_qcd_bin0_ptbin0charmpass2016) formula="(((0.009931144661183819*@1)*@0)*@2)" ] = 10.1955
+RooFormulaVar::ptbin0charmpass2016_qcd_bin1[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p209,tf_dataResidual_2016charm_eval_pt0p300_rho0p209,ptbin0charmfail2016_qcd_bin1) formula="(((0.009931144661183819*@0)*@1)*@2)" ] = 11.9676
+RooFormulaVar::ptbin0charmpass2016_qcd_bin10[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p624,ptbin0charmfail2016_qcd_bin10,tf_dataResidual_2016charm_eval_pt0p300_rho0p624) formula="(((0.009931144661183819*@0)*@2)*@1)" ] = 11.9103
+RooFormulaVar::ptbin0charmpass2016_qcd_bin10_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p624_ptbin0charmpass2016,ptbin0charmfail2016_qcd_bin10_ptbin0charmpass2016,tf_dataResidual_2016charm_eval_pt0p300_rho0p624_ptbin0charmpass2016) formula="(((0.009931144661183819*@0)*@2)*@1)" ] = 11.9103
+RooFormulaVar::ptbin0charmpass2016_qcd_bin11[ actualVars=(ptbin0charmfail2016_qcd_bin11,tf_MCtempl_charm2016_eval_pt0p300_rho0p655,tf_dataResidual_2016charm_eval_pt0p300_rho0p655) formula="(((0.009931144661183819*@1)*@2)*@0)" ] = 12.3084
+RooFormulaVar::ptbin0charmpass2016_qcd_bin11_ptbin0charmpass2016[ actualVars=(ptbin0charmfail2016_qcd_bin11_ptbin0charmpass2016,tf_MCtempl_charm2016_eval_pt0p300_rho0p655_ptbin0charmpass2016,tf_dataResidual_2016charm_eval_pt0p300_rho0p655_ptbin0charmpass2016) formula="(((0.009931144661183819*@1)*@2)*@0)" ] = 12.3084
+RooFormulaVar::ptbin0charmpass2016_qcd_bin12[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p684,tf_dataResidual_2016charm_eval_pt0p300_rho0p684,ptbin0charmfail2016_qcd_bin12) formula="(((0.009931144661183819*@0)*@1)*@2)" ] = 12.4572
+RooFormulaVar::ptbin0charmpass2016_qcd_bin12_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p684_ptbin0charmpass2016,tf_dataResidual_2016charm_eval_pt0p300_rho0p684_ptbin0charmpass2016,ptbin0charmfail2016_qcd_bin12_ptbin0charmpass2016) formula="(((0.009931144661183819*@0)*@1)*@2)" ] = 12.4572
+RooFormulaVar::ptbin0charmpass2016_qcd_bin13[ actualVars=(tf_dataResidual_2016charm_eval_pt0p300_rho0p711,tf_MCtempl_charm2016_eval_pt0p300_rho0p711,ptbin0charmfail2016_qcd_bin13) formula="(((0.009931144661183819*@1)*@0)*@2)" ] = 12.0129
+RooFormulaVar::ptbin0charmpass2016_qcd_bin13_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_eval_pt0p300_rho0p711_ptbin0charmpass2016,tf_MCtempl_charm2016_eval_pt0p300_rho0p711_ptbin0charmpass2016,ptbin0charmfail2016_qcd_bin13_ptbin0charmpass2016) formula="(((0.009931144661183819*@1)*@0)*@2)" ] = 12.0129
+RooFormulaVar::ptbin0charmpass2016_qcd_bin14[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p737,tf_dataResidual_2016charm_eval_pt0p300_rho0p737,ptbin0charmfail2016_qcd_bin14) formula="(((0.009931144661183819*@0)*@1)*@2)" ] = 12.1389
+RooFormulaVar::ptbin0charmpass2016_qcd_bin14_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p737_ptbin0charmpass2016,tf_dataResidual_2016charm_eval_pt0p300_rho0p737_ptbin0charmpass2016,ptbin0charmfail2016_qcd_bin14_ptbin0charmpass2016) formula="(((0.009931144661183819*@0)*@1)*@2)" ] = 12.1389
+RooFormulaVar::ptbin0charmpass2016_qcd_bin15[ actualVars=(ptbin0charmfail2016_qcd_bin15,tf_MCtempl_charm2016_eval_pt0p300_rho0p762,tf_dataResidual_2016charm_eval_pt0p300_rho0p762) formula="(((0.009931144661183819*@1)*@2)*@0)" ] = 11.6742
+RooFormulaVar::ptbin0charmpass2016_qcd_bin15_ptbin0charmpass2016[ actualVars=(ptbin0charmfail2016_qcd_bin15_ptbin0charmpass2016,tf_MCtempl_charm2016_eval_pt0p300_rho0p762_ptbin0charmpass2016,tf_dataResidual_2016charm_eval_pt0p300_rho0p762_ptbin0charmpass2016) formula="(((0.009931144661183819*@1)*@2)*@0)" ] = 11.6742
+RooFormulaVar::ptbin0charmpass2016_qcd_bin16[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p786,ptbin0charmfail2016_qcd_bin16,tf_dataResidual_2016charm_eval_pt0p300_rho0p786) formula="(((0.009931144661183819*@0)*@2)*@1)" ] = 9.24878
+RooFormulaVar::ptbin0charmpass2016_qcd_bin16_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p786_ptbin0charmpass2016,ptbin0charmfail2016_qcd_bin16_ptbin0charmpass2016,tf_dataResidual_2016charm_eval_pt0p300_rho0p786_ptbin0charmpass2016) formula="(((0.009931144661183819*@0)*@2)*@1)" ] = 9.24878
+RooFormulaVar::ptbin0charmpass2016_qcd_bin17[ actualVars=(ptbin0charmfail2016_qcd_bin17,tf_MCtempl_charm2016_eval_pt0p300_rho0p808,tf_dataResidual_2016charm_eval_pt0p300_rho0p808) formula="(((0.009931144661183819*@1)*@2)*@0)" ] = 10.5103
+RooFormulaVar::ptbin0charmpass2016_qcd_bin17_ptbin0charmpass2016[ actualVars=(ptbin0charmfail2016_qcd_bin17_ptbin0charmpass2016,tf_MCtempl_charm2016_eval_pt0p300_rho0p808_ptbin0charmpass2016,tf_dataResidual_2016charm_eval_pt0p300_rho0p808_ptbin0charmpass2016) formula="(((0.009931144661183819*@1)*@2)*@0)" ] = 10.5103
+RooFormulaVar::ptbin0charmpass2016_qcd_bin18[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p830,ptbin0charmfail2016_qcd_bin18,tf_dataResidual_2016charm_eval_pt0p300_rho0p830) formula="(((0.009931144661183819*@0)*@2)*@1)" ] = 8.50542
+RooFormulaVar::ptbin0charmpass2016_qcd_bin18_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p830_ptbin0charmpass2016,ptbin0charmfail2016_qcd_bin18_ptbin0charmpass2016,tf_dataResidual_2016charm_eval_pt0p300_rho0p830_ptbin0charmpass2016) formula="(((0.009931144661183819*@0)*@2)*@1)" ] = 8.50542
+RooFormulaVar::ptbin0charmpass2016_qcd_bin19[ actualVars=(ptbin0charmfail2016_qcd_bin19,tf_MCtempl_charm2016_eval_pt0p300_rho0p851,tf_dataResidual_2016charm_eval_pt0p300_rho0p851) formula="(((0.009931144661183819*@1)*@2)*@0)" ] = 6.9399
+RooFormulaVar::ptbin0charmpass2016_qcd_bin19_ptbin0charmpass2016[ actualVars=(ptbin0charmfail2016_qcd_bin19_ptbin0charmpass2016,tf_MCtempl_charm2016_eval_pt0p300_rho0p851_ptbin0charmpass2016,tf_dataResidual_2016charm_eval_pt0p300_rho0p851_ptbin0charmpass2016) formula="(((0.009931144661183819*@1)*@2)*@0)" ] = 6.9399
+RooFormulaVar::ptbin0charmpass2016_qcd_bin1_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p209_ptbin0charmpass2016,tf_dataResidual_2016charm_eval_pt0p300_rho0p209_ptbin0charmpass2016,ptbin0charmfail2016_qcd_bin1_ptbin0charmpass2016) formula="(((0.009931144661183819*@0)*@1)*@2)" ] = 11.9676
+RooFormulaVar::ptbin0charmpass2016_qcd_bin2[ actualVars=(tf_dataResidual_2016charm_eval_pt0p300_rho0p275,tf_MCtempl_charm2016_eval_pt0p300_rho0p275,ptbin0charmfail2016_qcd_bin2) formula="(((0.009931144661183819*@1)*@0)*@2)" ] = 13.5438
+RooFormulaVar::ptbin0charmpass2016_qcd_bin20[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p871,ptbin0charmfail2016_qcd_bin20,tf_dataResidual_2016charm_eval_pt0p300_rho0p871) formula="(((0.009931144661183819*@0)*@2)*@1)" ] = 7.47987
+RooFormulaVar::ptbin0charmpass2016_qcd_bin20_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p871_ptbin0charmpass2016,ptbin0charmfail2016_qcd_bin20_ptbin0charmpass2016,tf_dataResidual_2016charm_eval_pt0p300_rho0p871_ptbin0charmpass2016) formula="(((0.009931144661183819*@0)*@2)*@1)" ] = 7.47987
+RooFormulaVar::ptbin0charmpass2016_qcd_bin21[ actualVars=(ptbin0charmfail2016_qcd_bin21,tf_MCtempl_charm2016_eval_pt0p300_rho0p890,tf_dataResidual_2016charm_eval_pt0p300_rho0p890) formula="(((0.009931144661183819*@1)*@2)*@0)" ] = 5.55603
+RooFormulaVar::ptbin0charmpass2016_qcd_bin21_ptbin0charmpass2016[ actualVars=(ptbin0charmfail2016_qcd_bin21_ptbin0charmpass2016,tf_MCtempl_charm2016_eval_pt0p300_rho0p890_ptbin0charmpass2016,tf_dataResidual_2016charm_eval_pt0p300_rho0p890_ptbin0charmpass2016) formula="(((0.009931144661183819*@1)*@2)*@0)" ] = 5.55603
+RooFormulaVar::ptbin0charmpass2016_qcd_bin22[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p908,tf_dataResidual_2016charm_eval_pt0p300_rho0p908,ptbin0charmfail2016_qcd_bin22) formula="(((0.009931144661183819*@0)*@1)*@2)" ] = 5.36203
+RooFormulaVar::ptbin0charmpass2016_qcd_bin22_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p908_ptbin0charmpass2016,tf_dataResidual_2016charm_eval_pt0p300_rho0p908_ptbin0charmpass2016,ptbin0charmfail2016_qcd_bin22_ptbin0charmpass2016) formula="(((0.009931144661183819*@0)*@1)*@2)" ] = 5.36203
+RooFormulaVar::ptbin0charmpass2016_qcd_bin2_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_eval_pt0p300_rho0p275_ptbin0charmpass2016,tf_MCtempl_charm2016_eval_pt0p300_rho0p275_ptbin0charmpass2016,ptbin0charmfail2016_qcd_bin2_ptbin0charmpass2016) formula="(((0.009931144661183819*@1)*@0)*@2)" ] = 13.5438
+RooFormulaVar::ptbin0charmpass2016_qcd_bin3[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p334,tf_dataResidual_2016charm_eval_pt0p300_rho0p334,ptbin0charmfail2016_qcd_bin3) formula="(((0.009931144661183819*@0)*@1)*@2)" ] = 14.1295
+RooFormulaVar::ptbin0charmpass2016_qcd_bin3_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p334_ptbin0charmpass2016,tf_dataResidual_2016charm_eval_pt0p300_rho0p334_ptbin0charmpass2016,ptbin0charmfail2016_qcd_bin3_ptbin0charmpass2016) formula="(((0.009931144661183819*@0)*@1)*@2)" ] = 14.1295
+RooFormulaVar::ptbin0charmpass2016_qcd_bin4[ actualVars=(tf_dataResidual_2016charm_eval_pt0p300_rho0p387,tf_MCtempl_charm2016_eval_pt0p300_rho0p387,ptbin0charmfail2016_qcd_bin4) formula="(((0.009931144661183819*@1)*@0)*@2)" ] = 13.2955
+RooFormulaVar::ptbin0charmpass2016_qcd_bin4_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_eval_pt0p300_rho0p387_ptbin0charmpass2016,tf_MCtempl_charm2016_eval_pt0p300_rho0p387_ptbin0charmpass2016,ptbin0charmfail2016_qcd_bin4_ptbin0charmpass2016) formula="(((0.009931144661183819*@1)*@0)*@2)" ] = 13.2955
+RooFormulaVar::ptbin0charmpass2016_qcd_bin5[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p435,tf_dataResidual_2016charm_eval_pt0p300_rho0p435,ptbin0charmfail2016_qcd_bin5) formula="(((0.009931144661183819*@0)*@1)*@2)" ] = 12.8895
+RooFormulaVar::ptbin0charmpass2016_qcd_bin5_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p435_ptbin0charmpass2016,tf_dataResidual_2016charm_eval_pt0p300_rho0p435_ptbin0charmpass2016,ptbin0charmfail2016_qcd_bin5_ptbin0charmpass2016) formula="(((0.009931144661183819*@0)*@1)*@2)" ] = 12.8895
+RooFormulaVar::ptbin0charmpass2016_qcd_bin6[ actualVars=(tf_dataResidual_2016charm_eval_pt0p300_rho0p479,tf_MCtempl_charm2016_eval_pt0p300_rho0p479,ptbin0charmfail2016_qcd_bin6) formula="(((0.009931144661183819*@1)*@0)*@2)" ] = 13.783
+RooFormulaVar::ptbin0charmpass2016_qcd_bin6_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_eval_pt0p300_rho0p479_ptbin0charmpass2016,tf_MCtempl_charm2016_eval_pt0p300_rho0p479_ptbin0charmpass2016,ptbin0charmfail2016_qcd_bin6_ptbin0charmpass2016) formula="(((0.009931144661183819*@1)*@0)*@2)" ] = 13.783
+RooFormulaVar::ptbin0charmpass2016_qcd_bin7[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p519,tf_dataResidual_2016charm_eval_pt0p300_rho0p519,ptbin0charmfail2016_qcd_bin7) formula="(((0.009931144661183819*@0)*@1)*@2)" ] = 13.6645
+RooFormulaVar::ptbin0charmpass2016_qcd_bin7_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p519_ptbin0charmpass2016,tf_dataResidual_2016charm_eval_pt0p300_rho0p519_ptbin0charmpass2016,ptbin0charmfail2016_qcd_bin7_ptbin0charmpass2016) formula="(((0.009931144661183819*@0)*@1)*@2)" ] = 13.6645
+RooFormulaVar::ptbin0charmpass2016_qcd_bin8[ actualVars=(tf_dataResidual_2016charm_eval_pt0p300_rho0p557,tf_MCtempl_charm2016_eval_pt0p300_rho0p557,ptbin0charmfail2016_qcd_bin8) formula="(((0.009931144661183819*@1)*@0)*@2)" ] = 15.9393
+RooFormulaVar::ptbin0charmpass2016_qcd_bin8_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_eval_pt0p300_rho0p557_ptbin0charmpass2016,tf_MCtempl_charm2016_eval_pt0p300_rho0p557_ptbin0charmpass2016,ptbin0charmfail2016_qcd_bin8_ptbin0charmpass2016) formula="(((0.009931144661183819*@1)*@0)*@2)" ] = 15.9393
+RooFormulaVar::ptbin0charmpass2016_qcd_bin9[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p592,tf_dataResidual_2016charm_eval_pt0p300_rho0p592,ptbin0charmfail2016_qcd_bin9) formula="(((0.009931144661183819*@0)*@1)*@2)" ] = 14.1271
+RooFormulaVar::ptbin0charmpass2016_qcd_bin9_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_eval_pt0p300_rho0p592_ptbin0charmpass2016,tf_dataResidual_2016charm_eval_pt0p300_rho0p592_ptbin0charmpass2016,ptbin0charmfail2016_qcd_bin9_ptbin0charmpass2016) formula="(((0.009931144661183819*@0)*@1)*@2)" ] = 14.1271
+RooAddition::shapeBkg_qcd_ptbin0charmfail2016__norm[ ptbin0charmfail2016_qcd_bin0_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin1_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin2_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin3_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin4_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin5_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin6_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin7_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin8_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin9_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin10_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin11_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin12_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin13_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin14_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin15_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin16_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin17_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin18_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin19_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin20_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin21_ptbin0charmpass2016 + ptbin0charmfail2016_qcd_bin22_ptbin0charmpass2016 ] = 26317.5
+RooAddition::shapeBkg_qcd_ptbin0charmpass2016__norm[ ptbin0charmpass2016_qcd_bin0_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin1_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin2_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin3_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin4_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin5_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin6_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin7_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin8_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin9_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin10_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin11_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin12_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin13_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin14_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin15_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin16_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin17_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin18_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin19_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin20_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin21_ptbin0charmpass2016 + ptbin0charmpass2016_qcd_bin22_ptbin0charmpass2016 ] = 259.639
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p132[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@0*0.1323324344728762)+(@1*0.8676675655271238))" ] = 0.407835
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p132_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@0*0.1323324344728762)+(@1*0.8676675655271238))" ] = 0.407835
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p209[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@0*0.20885161303014596)+(@1*0.791148386969854))" ] = 0.532717
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p209_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@0*0.20885161303014596)+(@1*0.791148386969854))" ] = 0.532717
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p275[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@0*0.2754216702209103)+(@1*0.7245783297790898))" ] = 0.641362
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p275_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@0*0.2754216702209103)+(@1*0.7245783297790898))" ] = 0.641362
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p334[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@0*0.334334632271383)+(@1*0.6656653677286171))" ] = 0.73751
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p334_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@0*0.334334632271383)+(@1*0.6656653677286171))" ] = 0.73751
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p387[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@0*0.38717167119355506)+(@1*0.6128283288064449))" ] = 0.823742
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p387_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@0*0.38717167119355506)+(@1*0.6128283288064449))" ] = 0.823742
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p435[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@0*0.43506970970042724)+(@1*0.5649302902995728))" ] = 0.901913
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p435_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@0*0.43506970970042724)+(@1*0.5649302902995728))" ] = 0.901913
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p479[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@0*0.4788736846513768)+(@1*0.5211263153486232))" ] = 0.973403
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p479_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@0*0.4788736846513768)+(@1*0.5211263153486232))" ] = 0.973403
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p519[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@1*0.48077130582264116)+(@0*0.5192286941773588))" ] = 1.03926
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p519_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@1*0.48077130582264116)+(@0*0.5192286941773588))" ] = 1.03926
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p557[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@1*0.4433615624143502)+(@0*0.5566384375856498))" ] = 1.10032
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p557_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@1*0.4433615624143502)+(@0*0.5566384375856498))" ] = 1.10032
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p592[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@1*0.4084962593451539)+(@0*0.5915037406548461))" ] = 1.15722
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p592_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@1*0.4084962593451539)+(@0*0.5915037406548461))" ] = 1.15722
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p624[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@1*0.3758512071543961)+(@0*0.6241487928456039))" ] = 1.2105
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p624_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@1*0.3758512071543961)+(@0*0.6241487928456039))" ] = 1.2105
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p655[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@1*0.3451604809958052)+(@0*0.6548395190041948))" ] = 1.26059
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p655_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@1*0.3451604809958052)+(@0*0.6548395190041948))" ] = 1.26059
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p684[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@1*0.3162032442431021)+(@0*0.6837967557568979))" ] = 1.30785
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p684_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@1*0.3162032442431021)+(@0*0.6837967557568979))" ] = 1.30785
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p711[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@1*0.28879409837468517)+(@0*0.7112059016253148))" ] = 1.35258
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p711_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@1*0.28879409837468517)+(@0*0.7112059016253148))" ] = 1.35258
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p737[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@1*0.2627758839944807)+(@0*0.7372241160055193))" ] = 1.39504
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p737_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@1*0.2627758839944807)+(@0*0.7372241160055193))" ] = 1.39504
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p762[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@1*0.2380142218614233)+(@0*0.7619857781385767))" ] = 1.43545
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p762_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@1*0.2380142218614233)+(@0*0.7619857781385767))" ] = 1.43545
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p786[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@1*0.21439331243755944)+(@0*0.7856066875624406))" ] = 1.474
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p786_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@1*0.21439331243755944)+(@0*0.7856066875624406))" ] = 1.474
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p808[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@1*0.19181266107832706)+(@0*0.8081873389216729))" ] = 1.51086
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p808_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@1*0.19181266107832706)+(@0*0.8081873389216729))" ] = 1.51086
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p830[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@1*0.17018449438565375)+(@0*0.8298155056143462))" ] = 1.54615
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p830_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@1*0.17018449438565375)+(@0*0.8298155056143462))" ] = 1.54615
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p851[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@1*0.1494316997431684)+(@0*0.8505683002568316))" ] = 1.58002
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p851_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@1*0.1494316997431684)+(@0*0.8505683002568316))" ] = 1.58002
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p871[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@1*0.12948616583482297)+(@0*0.870513834165177))" ] = 1.61257
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p871_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@1*0.12948616583482297)+(@0*0.870513834165177))" ] = 1.61257
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p890[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@1*0.11028743400296115)+(@0*0.8897125659970389))" ] = 1.64391
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p890_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@1*0.11028743400296115)+(@0*0.8897125659970389))" ] = 1.64391
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p908[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1,tf_MCtempl_charm2016_pt_par0_rho_par0) formula="((@1*0.09178159309300171)+(@0*0.9082184069069983))" ] = 1.67411
+RooFormulaVar::tf_MCtempl_charm2016_eval_pt0p300_rho0p908_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016,tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016) formula="((@1*0.09178159309300171)+(@0*0.9082184069069983))" ] = 1.67411
+RooFormulaVar::tf_MCtempl_charm2016_pt_par0_rho_par0[ actualVars=(tf_MCtempl_charm2016_deco1,tf_MCtempl_charm2016_deco0) formula="(((@0*0.13450692883573911)+(@1*-0.1345694579433222))+0.19186318184993212)" ] = 0.191863
+RooFormulaVar::tf_MCtempl_charm2016_pt_par0_rho_par0_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_deco1,tf_MCtempl_charm2016_deco0) formula="(((@0*0.13450692883573911)+(@1*-0.1345694579433222))+0.19186318184993212)" ] = 0.191863
+RooFormulaVar::tf_MCtempl_charm2016_pt_par0_rho_par1[ actualVars=(tf_MCtempl_charm2016_deco1,tf_MCtempl_charm2016_deco0) formula="(((@0*0.057435197081663926)+(@1*0.31514690334065176))+1.8239007040335071)" ] = 1.8239
+RooFormulaVar::tf_MCtempl_charm2016_pt_par0_rho_par1_ptbin0charmpass2016[ actualVars=(tf_MCtempl_charm2016_deco1,tf_MCtempl_charm2016_deco0) formula="(((@0*0.057435197081663926)+(@1*0.31514690334065176))+1.8239007040335071)" ] = 1.8239
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p132[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@1*0.1323324344728762)+(@0*0.8676675655271238))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p132_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@1*0.1323324344728762)+(@0*0.8676675655271238))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p209[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@1*0.20885161303014596)+(@0*0.791148386969854))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p209_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@1*0.20885161303014596)+(@0*0.791148386969854))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p275[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@1*0.2754216702209103)+(@0*0.7245783297790898))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p275_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@1*0.2754216702209103)+(@0*0.7245783297790898))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p334[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@1*0.334334632271383)+(@0*0.6656653677286171))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p334_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@1*0.334334632271383)+(@0*0.6656653677286171))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p387[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@1*0.38717167119355506)+(@0*0.6128283288064449))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p387_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@1*0.38717167119355506)+(@0*0.6128283288064449))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p435[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@1*0.43506970970042724)+(@0*0.5649302902995728))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p435_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@1*0.43506970970042724)+(@0*0.5649302902995728))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p479[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@1*0.4788736846513768)+(@0*0.5211263153486232))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p479_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@1*0.4788736846513768)+(@0*0.5211263153486232))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p519[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.48077130582264116)+(@1*0.5192286941773588))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p519_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.48077130582264116)+(@1*0.5192286941773588))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p557[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.4433615624143502)+(@1*0.5566384375856498))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p557_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.4433615624143502)+(@1*0.5566384375856498))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p592[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.4084962593451539)+(@1*0.5915037406548461))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p592_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.4084962593451539)+(@1*0.5915037406548461))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p624[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.3758512071543961)+(@1*0.6241487928456039))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p624_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.3758512071543961)+(@1*0.6241487928456039))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p655[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.3451604809958052)+(@1*0.6548395190041948))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p655_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.3451604809958052)+(@1*0.6548395190041948))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p684[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.3162032442431021)+(@1*0.6837967557568979))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p684_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.3162032442431021)+(@1*0.6837967557568979))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p711[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.28879409837468517)+(@1*0.7112059016253148))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p711_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.28879409837468517)+(@1*0.7112059016253148))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p737[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.2627758839944807)+(@1*0.7372241160055193))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p737_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.2627758839944807)+(@1*0.7372241160055193))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p762[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.2380142218614233)+(@1*0.7619857781385767))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p762_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.2380142218614233)+(@1*0.7619857781385767))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p786[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.21439331243755944)+(@1*0.7856066875624406))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p786_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.21439331243755944)+(@1*0.7856066875624406))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p808[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.19181266107832706)+(@1*0.8081873389216729))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p808_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.19181266107832706)+(@1*0.8081873389216729))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p830[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.17018449438565375)+(@1*0.8298155056143462))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p830_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.17018449438565375)+(@1*0.8298155056143462))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p851[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.1494316997431684)+(@1*0.8505683002568316))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p851_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.1494316997431684)+(@1*0.8505683002568316))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p871[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.12948616583482297)+(@1*0.870513834165177))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p871_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.12948616583482297)+(@1*0.870513834165177))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p890[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.11028743400296115)+(@1*0.8897125659970389))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p890_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.11028743400296115)+(@1*0.8897125659970389))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p908[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.09178159309300171)+(@1*0.9082184069069983))" ] = 1
+RooFormulaVar::tf_dataResidual_2016charm_eval_pt0p300_rho0p908_ptbin0charmpass2016[ actualVars=(tf_dataResidual_2016charm_pt_par0_rho_par0,tf_dataResidual_2016charm_pt_par0_rho_par1) formula="((@0*0.09178159309300171)+(@1*0.9082184069069983))" ] = 1
+
+datasets
+--------
+RooDataSet::data_obs(msd,CMS_channel)
+
+embedded datasets (in pdfs and functions)
+-----------------------------------------
+RooDataHist::shapeBkg_Zjets_ptbin0charmpass2016(msd)
+RooDataHist::shapeSig_ZH_ptbin0charmpass2016(msd)
+RooDataHist::shapeBkg_ggF_ptbin0charmpass2016(msd)
+RooDataHist::shapeSig_WH_ptbin0charmpass2016(msd)
+RooDataHist::shapeBkg_VBFDipoleRecoilOn_ptbin0charmpass2016(msd)
+RooDataHist::shapeBkg_singlet_ptbin0charmpass2016(msd)
+RooDataHist::shapeBkg_Wjets_ptbin0charmpass2016(msd)
+RooDataHist::shapeBkg_ttH_ptbin0charmpass2016(msd)
+RooDataHist::shapeBkg_VV_ptbin0charmpass2016(msd)
+RooDataHist::shapeBkg_ttbarBoosted_ptbin0charmpass2016(msd)
+RooDataHist::shapeBkg_Zjets_ptbin0charmfail2016(msd)
+RooDataHist::shapeSig_ZH_ptbin0charmfail2016(msd)
+RooDataHist::shapeBkg_ggF_ptbin0charmfail2016(msd)
+RooDataHist::shapeSig_WH_ptbin0charmfail2016(msd)
+RooDataHist::shapeBkg_VBFDipoleRecoilOn_ptbin0charmfail2016(msd)
+RooDataHist::shapeBkg_singlet_ptbin0charmfail2016(msd)
+RooDataHist::shapeBkg_Wjets_ptbin0charmfail2016(msd)
+RooDataHist::shapeBkg_ttH_ptbin0charmfail2016(msd)
+RooDataHist::shapeBkg_VV_ptbin0charmfail2016(msd)
+RooDataHist::shapeBkg_ttbarBoosted_ptbin0charmfail2016(msd)
+
+named sets
+----------
+ModelConfig_GlobalObservables:(CMS_lumi_13TeV_2016_In,CMS_lumi_13TeV_correlated__In,tf_MCtempl_charm2016_deco0_In,tf_MCtempl_charm2016_deco1_In)
+ModelConfig_NuisParams:(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_,tf_MCtempl_charm2016_deco0,tf_MCtempl_charm2016_deco1)
+ModelConfig_Observables:(msd,CMS_channel)
+ModelConfig_POI:(rVV)
+ModelConfig_bonly_GlobalObservables:(CMS_lumi_13TeV_2016_In,CMS_lumi_13TeV_correlated__In,tf_MCtempl_charm2016_deco0_In,tf_MCtempl_charm2016_deco1_In)
+ModelConfig_bonly_NuisParams:(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_,tf_MCtempl_charm2016_deco0,tf_MCtempl_charm2016_deco1)
+ModelConfig_bonly_Observables:(msd,CMS_channel)
+ModelConfig_bonly_POI:(rVV)
+POI:(rVV)
+globalObservables:(CMS_lumi_13TeV_2016_In,CMS_lumi_13TeV_correlated__In,tf_MCtempl_charm2016_deco0_In,tf_MCtempl_charm2016_deco1_In)
+nuisances:(CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_,tf_MCtempl_charm2016_deco0,tf_MCtempl_charm2016_deco1)
+observables:(msd,CMS_channel)
+
+generic objects
+---------------
+RooStats::ModelConfig::ModelConfig
+RooStats::ModelConfig::ModelConfig_bonly
+RooArgSet::discreteParams
+
+Workspace has a ModelConfig for signal called 'ModelConfig', with contents:
+
+=== Using the following for ModelConfig ===
+Observables:             RooArgSet:: = (msd,CMS_channel)
+Parameters of Interest:  RooArgSet:: = (rVV)
+Nuisance Parameters:     RooArgSet:: = (CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_,tf_MCtempl_charm2016_deco0,tf_MCtempl_charm2016_deco1)
+Global Observables:      RooArgSet:: = (CMS_lumi_13TeV_2016_In,CMS_lumi_13TeV_correlated__In,tf_MCtempl_charm2016_deco0_In,tf_MCtempl_charm2016_deco1_In)
+PDF:                     RooSimultaneousOpt::model_s[ indexCat=CMS_channel ptbin0charmpass2016=pdf_binptbin0charmpass2016 ptbin0charmfail2016=pdf_binptbin0charmfail2016 extraConstraints=() channelMasks=() ] = 0.00667207
+
+Input ModelConfig 'ModelConfig': 
+
+=== Using the following for ModelConfig ===
+Observables:             RooArgSet:: = (msd,CMS_channel)
+Parameters of Interest:  RooArgSet:: = (rVV)
+Nuisance Parameters:     RooArgSet:: = (CMS_lumi_13TeV_2016,CMS_lumi_13TeV_correlated_,tf_MCtempl_charm2016_deco0,tf_MCtempl_charm2016_deco1)
+Global Observables:      RooArgSet:: = (CMS_lumi_13TeV_2016_In,CMS_lumi_13TeV_correlated__In,tf_MCtempl_charm2016_deco0_In,tf_MCtempl_charm2016_deco1_In)
+PDF:                     RooSimultaneousOpt::model_s[ indexCat=CMS_channel ptbin0charmpass2016=pdf_binptbin0charmpass2016 ptbin0charmfail2016=pdf_binptbin0charmfail2016 extraConstraints=() channelMasks=() ] = 0.00667207
+
+Set Default Value of Parameter rVV To : 1
+Redefining the POIs to be: RooArgSet:: = (rVV)
+[#1] INFO:ObjectHandling -- RooWorkspace::import(w) importing RooUniform::prior
+[#1] INFO:InputArguments -- RooAbsReal::createHistogram(pdf_binptbin0charmpass2016_obsOnly) INFO: Model has intrinsic binning definition, selecting that binning for the histogram
+  ToyMCSampleOpt  -- Generating Asimov with histogram for pdf pdf_binptbin0charmpass2016_obsOnly: in 23 x-bins 
+[#1] INFO:InputArguments -- RooAbsReal::createHistogram(pdf_binptbin0charmfail2016_obsOnly) INFO: Model has intrinsic binning definition, selecting that binning for the histogram
+  ToyMCSampleOpt  -- Generating Asimov with histogram for pdf pdf_binptbin0charmfail2016_obsOnly: in 23 x-bins 
+ bin               msd       CMS_channel    weight
+   0              43.5  ptbin0charmfail2  2767.2383423
+   1              50.5  ptbin0charmfail2  2483.4170532
+   2              57.5  ptbin0charmfail2  2340.5668945
+   3              64.5  ptbin0charmfail2  2131.2135315
+   4              71.5  ptbin0charmfail2  1852.5610657
+   5              78.5  ptbin0charmfail2  1731.8802795
+   6              85.5  ptbin0charmfail2  1809.3649902
+   7              92.5  ptbin0charmfail2  1639.7062073
+   8              99.5  ptbin0charmfail2  1695.3467865
+   9             106.5  ptbin0charmfail2  1432.4868317
+  10             113.5  ptbin0charmfail2  1177.9011383
+  11             120.5  ptbin0charmfail2  1158.1887512
+  12             127.5  ptbin0charmfail2  1119.2402496
+  13             134.5  ptbin0charmfail2  1049.4093323
+  14             141.5  ptbin0charmfail2  1015.0506287
+  15             148.5  ptbin0charmfail2   943.1829224
+  16             155.5  ptbin0charmfail2   733.0642548
+  17             162.5  ptbin0charmfail2   786.4099884
+  18             169.5  ptbin0charmfail2   634.4701157
+  19             176.5  ptbin0charmfail2   512.2669449
+  20             183.5  ptbin0charmfail2   527.1822128
+  21             190.5  ptbin0charmfail2   386.5290070
+  22             197.5  ptbin0charmfail2   364.7667999
+  23              43.5  ptbin0charmpass2    12.4862771
+  24              50.5  ptbin0charmpass2    14.2509303
+  25              57.5  ptbin0charmpass2    15.9526699
+  26              64.5  ptbin0charmpass2    17.3923757
+  27              71.5  ptbin0charmpass2    18.2442393
+  28              78.5  ptbin0charmpass2    20.7867408
+  29              85.5  ptbin0charmpass2    25.1111138
+  30              92.5  ptbin0charmpass2    28.4155035
+  31              99.5  ptbin0charmpass2    27.8571463
+  32             106.5  ptbin0charmpass2    20.3359027
+  33             113.5  ptbin0charmpass2    16.7171049
+  34             120.5  ptbin0charmpass2    17.9933658
+  35             127.5  ptbin0charmpass2    19.3798244
+  36             134.5  ptbin0charmpass2    16.8880835
+  37             141.5  ptbin0charmpass2    16.9360919
+  38             148.5  ptbin0charmpass2    14.6622815
+  39             155.5  ptbin0charmpass2    11.9772217
+  40             162.5  ptbin0charmpass2    12.7796416
+  41             169.5  ptbin0charmpass2    10.2351450
+  42             176.5  ptbin0charmpass2     8.7814059
+  43             183.5  ptbin0charmpass2     9.8229426
+  44             190.5  ptbin0charmpass2     7.2237902
+  45             197.5  ptbin0charmpass2     6.8955796
+Minuit2Minimizer: Minimize with max-calls 4000 convergence for edm < 0.1 strategy 0
+Minuit2Minimizer::Minuit  - Changing default options
+             StorageLevel :               0
+MnSeedGenerator: for initial parameters FCN = 0
+MnSeedGenerator: Initial state:   - FCN =                0 Edm =  3.71567e-10 NCalls =     33
+VariableMetric: start iterating until Edm is < 0.0001
+VariableMetric: Initial state   - FCN =                0 Edm =  3.71567e-10 NCalls =     33
+VariableMetric: Iteration #   0 - FCN =                0 Edm =  3.71567e-10 NCalls =     33
+VariableMetric: Iteration #   1 - FCN =                0 Edm =  3.71567e-10 NCalls =     44
+Number of iterations 3
+----------> Iteration 0
+            FVAL = 0 Edm = 3.71567326288e-10 Nfcn = 33
+            Error matrix change = 1
+            Parameters :  p0 = 0 p1 = 0 p2 = 0 p3 = 1 p4 = 0 p5 = 0 p6 = 1 p7 = 1
+----------> Iteration 1
+            FVAL = 0 Edm = 3.71567326288e-10 Nfcn = 44
+            Error matrix change = 1
+            Parameters :  p0 = 0 p1 = 0 p2 = 0 p3 = 1 p4 = 0 p5 = 0 p6 = 1 p7 = 1
+----------> Iteration 2
+            FVAL = 0 Edm = 3.71567326288e-10 Nfcn = 44
+            Error matrix change = 1
+            Parameters :  p0 = 0 p1 = 0 p2 = 0 p3 = 1 p4 = 0 p5 = 0 p6 = 1 p7 = 1
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = 0
+Edm   = 3.71567326288337129e-10
+Nfcn  = 44
+CMS_lumi_13TeV_2016	  = 0	 +/-  0.968536	(limited)
+CMS_lumi_13TeV_correlated_	  = 0	 +/-  0.986189	(limited)
+qcdparam_charm_ptbin0	  = 0	 +/-  0.0257647	(limited)
+rVV	  = 1	 +/-  0.832867	(limited)
+tf_MCtempl_charm2016_deco0	  = 0	 +/-  0.518261	(limited)
+tf_MCtempl_charm2016_deco1	  = 0	 +/-  0.520743	(limited)
+tf_dataResidual_2016charm_pt_par0_rho_par0	  = 1	 +/-  0.152723	(limited)
+tf_dataResidual_2016charm_pt_par0_rho_par1	  = 1	 +/-  0.119008	(limited)
+Minuit2Minimizer: Minimize with max-calls 3500 convergence for edm < 0.1 strategy 0
+Minuit2Minimizer::Minuit  - Changing default options
+             StorageLevel :               0
+MnSeedGenerator: for initial parameters FCN = 0
+MnSeedGenerator: Initial state:   - FCN =                0 Edm =     0.307696 NCalls =     29
+VariableMetric: start iterating until Edm is < 0.0001
+VariableMetric: Initial state   - FCN =                0 Edm =     0.307696 NCalls =     29
+VariableMetric: Iteration #   0 - FCN =                0 Edm =     0.307696 NCalls =     29
+VariableMetric: Iteration #   1 - FCN = -0.1703843471605 Edm =    0.0542826 NCalls =     45
+VariableMetric: Iteration #   2 - FCN = -0.2060584822082 Edm =   0.00348774 NCalls =     61
+VariableMetric: Iteration #   3 - FCN = -0.2110548015786 Edm =  0.000801184 NCalls =     77
+VariableMetric: Iteration #   4 - FCN =  -0.216415468904 Edm =  0.000151455 NCalls =     94
+VariableMetric: Iteration #   5 - FCN =  -0.216595809776 Edm =  2.79907e-05 NCalls =    110
+Number of iterations 7
+----------> Iteration 0
+            FVAL = 0 Edm = 0.307696206914 Nfcn = 29
+            Error matrix change = 1
+            Parameters :  p0 = 0 p1 = 0 p2 = 0 p3 = 0 p4 = 0 p5 = 1 p6 = 1
+----------> Iteration 1
+            FVAL = -0.17038434716 Edm = 0.0542825731263 Nfcn = 45
+            Error matrix change = 0.566921
+            Parameters :  p0 = 0.10542 p1 = 0.0655232 p2 = 0.00851283 p3 = 0.0550731 p4 = 0.0525307 p5 = 1.02304 p6 = 1.01586
+----------> Iteration 2
+            FVAL = -0.206058482208 Edm = 0.00348774287128 Nfcn = 61
+----------> Iteration 3
+            FVAL = -0.211054801579 Edm = 0.000801183973628 Nfcn = 77
+----------> Iteration 4
+            FVAL = -0.216415468904 Edm = 0.000151455409884 Nfcn = 94
+----------> Iteration 5
+            FVAL = -0.216595809776 Edm = 2.7990708849e-05 Nfcn = 110
+            Error matrix change = 0.232102
+            Parameters :  p0 = 0.0604195 p1 = 0.0350736 p2 = 0.0143573 p3 = 0.0722337 p4 = -0.0760777 p5 = 1.05982 p6 = 0.987736
+----------> Iteration 6
+            FVAL = -0.216595809776 Edm = 2.7990708849e-05 Nfcn = 110
+            Error matrix change = 0.232102
+            Parameters :  p0 = 0.0604195 p1 = 0.0350736 p2 = 0.0143573 p3 = 0.0722337 p4 = -0.0760777 p5 = 1.05982 p6 = 0.987736
+Minuit2Minimizer : Valid minimum - status = 0
+FVAL  = -0.216595809776009229
+Edm   = 2.79907088489769977e-05
+Nfcn  = 110
+CMS_lumi_13TeV_2016	  = 0.0604195	 +/-  0.990584	(limited)
+CMS_lumi_13TeV_correlated_	  = 0.0350736	 +/-  0.997655	(limited)
+qcdparam_charm_ptbin0	  = 0.0143573	 +/-  0.0266127	(limited)
+tf_MCtempl_charm2016_deco0	  = 0.0722337	 +/-  0.56338	(limited)
+tf_MCtempl_charm2016_deco1	  = -0.0760777	 +/-  0.843749	(limited)
+tf_dataResidual_2016charm_pt_par0_rho_par0	  = 1.05982	 +/-  0.342347	(limited)
+tf_dataResidual_2016charm_pt_par0_rho_par1	  = 0.987736	 +/-  0.198435	(limited)
+
+ -- Significance -- 
+Significance: 0.965961
+       (p-value = 0.167032)
+Done in 0.00 min (cpu), 0.00 min (real)
+Printing Message Summary From ... combine_logger.out
+----------------------------------------------
+Messages of type INFO : 27
+Messages of type DEBUG : 0
+Messages of type ERROR : 0
+----------------------------------------------
+INFO: (function: run) Combine.cc: 961 -- Generate Asimov toy from parameter values ... 
+INFO: (function: run) Combine.cc: 965 -- CMS_channel = 1 
+INFO: (function: run) Combine.cc: 965 -- CMS_lumi_13TeV_2016 = 0 
+INFO: (function: run) Combine.cc: 965 -- CMS_lumi_13TeV_2016_In = 0 (constant)
+INFO: (function: run) Combine.cc: 965 -- CMS_lumi_13TeV_correlated_ = 0 
+INFO: (function: run) Combine.cc: 965 -- CMS_lumi_13TeV_correlated__In = 0 (constant)
+INFO: (function: run) Combine.cc: 965 -- msd = 197.5 
+INFO: (function: run) Combine.cc: 965 -- n_exp_binptbin0charmfail2016_proc_qcd = 1 (constant)
+INFO: (function: run) Combine.cc: 965 -- n_exp_binptbin0charmpass2016_proc_qcd = 1 (constant)
+INFO: (function: run) Combine.cc: 965 -- qcdparam_charm_ptbin0 = 0 
+INFO: (function: run) Combine.cc: 965 -- rVV = 1 
+INFO: (function: run) Combine.cc: 965 -- tf_MCtempl_charm2016_deco0 = 0 
+INFO: (function: run) Combine.cc: 965 -- tf_MCtempl_charm2016_deco0_In = 0 (constant)
+INFO: (function: run) Combine.cc: 965 -- tf_MCtempl_charm2016_deco1 = 0 
+INFO: (function: run) Combine.cc: 965 -- tf_MCtempl_charm2016_deco1_In = 0 (constant)
+INFO: (function: run) Combine.cc: 965 -- tf_dataResidual_2016charm_pt_par0_rho_par0 = 1 
+INFO: (function: run) Combine.cc: 965 -- tf_dataResidual_2016charm_pt_par0_rho_par1 = 1 
+INFO: (function: generateAsimov) ToyMCSamplerOpt.cc: 139 -- Using internal logic for binned/unbinned Asimov dataset generation
+INFO: (function: generateWithHisto) ToyMCSamplerOpt.cc: 214 -- Generating asimov with histogram for pdf pdf_binptbin0charmpass2016_obsOnly: in 23 x-bins
+INFO: (function: generateAsimov) ToyMCSamplerOpt.cc: 139 -- Using internal logic for binned/unbinned Asimov dataset generation
+INFO: (function: generateWithHisto) ToyMCSamplerOpt.cc: 214 -- Generating asimov with histogram for pdf pdf_binptbin0charmfail2016_obsOnly: in 23 x-bins
+INFO: (function: improveOnce) CascadeMinimizer.cc: 167 -- Minimisation configured with Type=Minuit2, Algo=Migrad, strategy=0, tolerance=0.1
+INFO: (function: improveOnce) CascadeMinimizer.cc: 190 -- Minimisation finished with status=0
+INFO: (function: improveOnce) CascadeMinimizer.cc: 195 -- Minimization success! status=0
+INFO: (function: improveOnce) CascadeMinimizer.cc: 167 -- Minimisation configured with Type=Minuit2, Algo=Migrad, strategy=0, tolerance=0.1
+INFO: (function: improveOnce) CascadeMinimizer.cc: 190 -- Minimisation finished with status=0
+INFO: (function: improveOnce) CascadeMinimizer.cc: 195 -- Minimization success! status=0
