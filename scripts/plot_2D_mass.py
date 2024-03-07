@@ -25,11 +25,11 @@ def main():
             'ttH',
             'ttbarBoosted']
     
-    p = ['singlet']
+    p = ['Wjets']
     h = pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('systematic', 'nominal').sum( 'bb1', 'cc2', 'dr')
     hp = h.integrate('process',p)
 
-    hist.plot2d(hp, xaxis="msd1", patch_opts={'norm': plt.Normalize(vmin=0, vmax=10)})
+    hist.plot2d(hp, xaxis="msd1", patch_opts={'norm': plt.Normalize(vmin=0, vmax=80)})
     plt.xlabel(r'Jet 1 $m_{sd}$ [GeV] ')
     plt.ylabel(r'Jet 2 $m_{sd}$ [GeV] ')
     plt.savefig(f'plots/mass2D_{p[0]}.pdf', bbox_inches='tight')
