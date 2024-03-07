@@ -15,11 +15,11 @@ import uproot
 from coffea import processor, util, hist
 from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
 
+# Add path so the script sees the modules in parent directory                  
+sys.path.append('/srv')
+
 #Import processor
 from boostedhiggs import VHbbProcessorV5
-
-# Add path so the script sees the modules in parent directory
-sys.path.append('/srv')
 
 from distributed import Client
 from lpcjobqueue import LPCCondorCluster

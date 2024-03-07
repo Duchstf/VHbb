@@ -45,7 +45,7 @@ cluster = LPCCondorCluster(
 )
 
 year = sys.argv[1]
-ignore_list = ['QCDbEnriched', 'QCDBGenFilter'] #Sample to ignore processing for now
+ignore_list = ['QCDbEnriched', 'QCDBGenFilter', 'JetHT2016Data'] #Sample to ignore processing for now
 
 out_path = "output/coffea/{}/{}/".format(tag,year)
 os.system('mkdir -p  %s' %out_path)
