@@ -1,11 +1,11 @@
 '''
 To submit processing jobs, do:
 
-./shell coffeateam/coffea-dask:0.7.21-fastjet-3.4.0.1-g6238ea8
+./shell
 
 And then (define the selected sample in the script):
 
-python submit/submit-dask-selected.py 2017 > dask.out 2>&1
+python submit/submit-dask-selected.py 2018 > dask.out 2>&1
 '''
 
 import os, sys
@@ -16,7 +16,7 @@ from coffea import processor, util, hist
 from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
 
 #Import processor
-from boostedhiggs import ParticleNetMsdProcessor
+from boostedhiggs import VHbbProcessorV5
 
 # Add path so the script sees the modules in parent directory
 sys.path.append('/srv')
@@ -42,8 +42,8 @@ cluster = LPCCondorCluster(
 )
 
 year = sys.argv[1]
-tag = "jennet_Nov92023"
-run_list = ['QCD'] #Sample to ignore processing for now
+tag = "vhbb_v5"
+run_list = ['ZJetsToQQ', 'WJetsToQQ', 'WJetsToLNu', 'Diboson'] #Sample to process
 
 out_path = "output/coffea/{}/{}/".format(tag,year)
 os.system('mkdir -p  %s' %out_path)
@@ -78,7 +78,7 @@ with Client(cluster) as client:
                 uproot.open.defaults["xrootd_handler"] = uproot.source.xrootd.MultithreadedXRootDSource
 
                 #RUN MAIN PROCESSOR
-                p = ParticleNetMsdProcessor(year=year, jet_arbitration='T_cvb' , systematics=True)
+                p = VHbbProcessorV5(year=year, jet_arbitration='T_cvb' , systematics=False)
                 args = {'savemetrics':True, 'schema':NanoAODSchema}
 
                 output = processor.run_uproot_job(
@@ -91,6 +91,7 @@ with Client(cluster) as client:
                         "skipbadfiles": 1,
                         "schema": processor.NanoAODSchema,
                         "treereduction": 2,
+                        "savemetrics": True,
                     },
                     chunksize=50000,
                     #        maxchunks=args.max,

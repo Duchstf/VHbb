@@ -95,6 +95,7 @@ with Client(cluster) as client:
                         "skipbadfiles": 1,
                         "schema": processor.NanoAODSchema,
                         "treereduction": 2,
+                        "savemetrics": True,
                     },
                     chunksize=50000,
                     #        maxchunks=args.max,
