@@ -22,14 +22,42 @@ with open('files/lumi.json') as f:
 WPs = {
     
     '2016APV_bb1': 0.9883,
-    
     '2016_bb1': 0.9883,
-    
     '2017_bb1': 0.9870,
-    
     '2018_bb1':  0.9880,
 }
 
+mass_regions = {'target': slice(68., 103.), 'low': slice(40., 68.), 'high': slice(103., 201.)} #Low, Target, and High mass
+
+#Same in make_cards.py
+samples = ['QCD','WH','ZH','VV',
+            'Wjets', 'Zjets',
+            'VBFDipoleRecoilOn','ggF','ttH',
+            'singlet',
+            'ttbarBoosted',
+            'data', #!DATA MISSING FOR EACH YEAR
+            ]
+
+btag_SF_samples = ['Wjets', 'Zjets']
+
+def check_missing(pickle_hist):
+    
+    #Print sample names
+    hist_samples = [x.name for x in pickle_hist.integrate('systematic', 'nomial').sum('msd1', 'msd2', 'bb1', 'genflavor1').identifiers('process')]
+    print("Available samples: ", hist_samples)
+    print("Checking available samples ... ")
+    
+    # Find items in samples that are not in hist_samples
+    missing_items = [item for item in samples if item not in hist_samples]
+    # Check if there are any missing items
+    if missing_items:
+        # Raise an error and include information about the missing items
+        raise ValueError(f"Missing items: {missing_items}")
+    
+    #Save the sample here and then load it in make_cards.py
+    with open("files/samples.json", "w") as f:   #Pickling
+        json.dump(samples, f)
+    
 # Main method
 def main():
 
@@ -41,8 +69,8 @@ def main():
         print("Incorrect number of arguments")
         return
 
+    #Define the most basic parameters
     year = sys.argv[1]
-    regions = ['charm']
     
     #Define the score threshold
     bbthr = WPs[f'{year}_bb1']
@@ -52,57 +80,53 @@ def main():
     out_path = '{}/signalregion.root'.format(year)
     
     #If file already exists remove it and create a new file
-    if os.path.isfile(out_path):
-        os.remove(out_path)
+    if os.path.isfile(out_path): os.remove(out_path)
     fout = uproot3.create(out_path)
     
     #Check if pickle exists     
     if not os.path.isfile(pickle_path):
-        print("You need to link the pickle file (using absolute paths)")
-        return
-    
-    #! USE THE EXACT SAME SAMPLE IN make_cards.py
-    samples = ['data',
-            'QCD',
-            'WH','ZH',
-            'VV',
-            'Wjets', 'Zjets',
-            'VBFDipoleRecoilOn',
-            'ggF', 
-            'singlet',
-            'ttH',
-            'ttbarBoosted']
-    
-    #Save the sample here and then load it in make_cards.py
-    with open("files/samples.json", "w") as f:   #Pickling
-        json.dump(samples, f)
-    
+        raise FileNotFoundError("You need to link the pickle file (using absolute paths)")
+
+    #Read in the pickle file
+    pickle_hist =  pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('pt1', int_range=slice(450., None), overflow='over')
+    check_missing(pickle_hist, samples)
+
     #Process each region
-    for region in regions:
-    
+    for region, msd2_int_range in mass_regions.items():
+
         print('Running for {} in {} region'.format(year, region))
-        
-        # Read the histogram from the pickle file
-        # Integrate over signal region and Jet 2 charm score
-        sig_0 =  pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('systematic', 'nominal').sum('genflavor1', overflow='all')
-        sig = sig_0.integrate('pt1', int_range=slice(450., None), overflow='over').integrate('msd2',int_range=slice(68.,103.))
-        # sig = sig_0.integrate('pt1', int_range=slice(450., None), overflow='over').integrate('msd2',int_range=slice(40.,68.))
-        # sig = sig_0.integrate('pt1', int_range=slice(450., None), overflow='over').integrate('msd2',int_range=slice(103.,201.))
-        
-        #Print sample names
-        hist_samples = [x.name for x in sig.integrate('bb1',int_range=slice(bbthr,1)).sum('msd1').identifiers('process')]
-        print("Available samples: ", hist_samples)
-        assert(all(item in hist_samples for item in samples))
     
+        sig = pickle_hist.integrate('msd2',msd2_int_range)
+        
         #Split into Jet 1 score b-tag passing/failing region. 
         for p in samples:
             print('Processing sample: ', p)
+            
+            #Just initialize the values
+            hpass=None
+            hfail=None
+            
+            if p not in btag_SF_samples:
+                
+                hpass = sig.integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',p)
+                hfail = sig.integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',p)
+                
+            else:
+                
+                hpass = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',p)
+                hfail = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',p)
+                
+                hpass_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',p)
+                hfail_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',p)
+                
+                for s in hfail.identifiers('systematic'):
+                    fout[f"{region}_pass_{p + 'bb'}_{s}"] = hist.export1d(hpass_bb.integrate('systematic',s))
+                    fout[f"{region}_fail_{p + 'bb'}_{s}"] = hist.export1d(hfail_bb.integrate('systematic',s))
+            
+            for s in hfail.identifiers('systematic'):
 
-            hpass = sig.integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',p)
-            hfail = sig.integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',p)
-
-            fout["{}_pass_{}_nominal".format(region, p)] = hist.export1d(hpass)
-            fout["{}_fail_{}_nominal".format(region, p)] = hist.export1d(hfail)
+                    fout[f"{region}_pass_{p}_{s}"] = hist.export1d(hpass.integrate('systematic',s))
+                    fout[f"{region}_fail_{p}_{s}"] = hist.export1d(hfail.integrate('systematic',s))
 
     return
 

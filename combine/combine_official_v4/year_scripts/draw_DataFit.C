@@ -81,37 +81,37 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   pad1->cd();
   if( log ) pad1->SetLogy();
 
-  /*DATA*/
-  // Dummy variable to select the data branch
-  string data_file = "signalregion.root";
+  // /*DATA*/
+  // // Dummy variable to select the data branch
+  // string data_file = "signalregion.root";
 
-  string leading_name  = (pass) ? "_pass_": "_fail_";
-  if (charm) leading_name =  "charm" + leading_name;
+  // string leading_name  = (pass) ? "_pass_": "_fail_";
+  // if (charm) leading_name =  "charm" + leading_name;
 
-  TFile *dataf = new TFile(data_file.c_str());
-  TH1D* data_obs = (TH1D*)dataf->Get((leading_name+"data_nominal").c_str());
+  // TFile *dataf = new TFile(data_file.c_str());
+  // TH1D* data_obs = (TH1D*)dataf->Get((leading_name+"data_nominal").c_str());
 
-  // Check if the histogram is retrieved successfully
-  if (!data_obs) {
-    std::cerr << "Error: Histogram not found in the ROOT file." << std::endl;
-    dataf->Close(); // Close the file
-    return;
-  }
+  // // Check if the histogram is retrieved successfully
+  // if (!data_obs) {
+  //   std::cerr << "Error: Histogram not found in the ROOT file." << std::endl;
+  //   dataf->Close(); // Close the file
+  //   return;
+  // }
 
-  cout << data_obs->Integral() << endl;
+  // cout << data_obs->Integral() << endl;
 
-  // blind data!
-  if( blind && pass ){                                                                                        
-    for(int i=10; i<15; i++){
-      data_obs->SetBinContent(i,0);
-      data_obs->SetBinError(i,0);
-    }                            
-  } 
+  // // blind data!
+  // if( blind && pass ){                                                                                        
+  //   for(int i=10; i<15; i++){
+  //     data_obs->SetBinContent(i,0);
+  //     data_obs->SetBinError(i,0);
+  //   }                            
+  // } 
 
   // Plot data
-  data_obs->SetLineColor(kBlack);
-  data_obs->SetMarkerColor(kBlack);
-  data_obs->SetMarkerStyle(20);    
+  // data_obs->SetLineColor(kBlack);
+  // data_obs->SetMarkerColor(kBlack);
+  // data_obs->SetMarkerStyle(20);    
 
   float mc_scale = 7.0; //FitDiagnostics scale every MC by the bin width
   // >>>>>>>>>>>Signal<<<<<<<<<<<<
@@ -242,8 +242,8 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   bkg->GetYaxis()->SetTitleSize(textsize1);
   bkg->GetYaxis()->SetLabelSize(textsize1);
 
-  data_obs->Draw("pesame");
-  data_obs->Draw("axissame");
+  // data_obs->Draw("pesame");
+  // data_obs->Draw("axissame");
   
   double x1=.6, y1=.88;
   TLegend* leg = new TLegend(x1,y1,x1+.3,y1-.3);
@@ -252,7 +252,7 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   leg->SetNColumns(2);
   leg->SetTextSize(textsize1);
 
-  leg->AddEntry(data_obs,"Data","p");
+  // leg->AddEntry(data_obs,"Data","p");
   leg->AddEntry(TotalBkg,"Bkg. Unc.","f");
   leg->AddEntry(qcd,"QCD","f");
   leg->AddEntry(Wjets,"W","f");
@@ -290,58 +290,58 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   l3.DrawLatex(0.2,.82,text.c_str());
 
   // Draw data - obs ratio
-  pad2->cd();
+  // pad2->cd();
 
-  TH1D* TotalBkg_sub = (TH1D*)TotalBkg->Clone("TotalBkg_sub");
-  TotalBkg_sub->Reset();
-  TH1D* data_obs_sub = (TH1D*)data_obs->Clone("data_obs_ratio");
-  data_obs_sub->Reset();
+  // TH1D* TotalBkg_sub = (TH1D*)TotalBkg->Clone("TotalBkg_sub");
+  // TotalBkg_sub->Reset();
+  // TH1D* data_obs_sub = (TH1D*)data_obs->Clone("data_obs_ratio");
+  // data_obs_sub->Reset();
 
-  TH1D* WH_sub = (TH1D*)WH->Clone("WH_sub");
-  WH_sub->Reset();
-  TH1D* ZH_sub = (TH1D*)ZH->Clone("ZH_sub");
-  ZH_sub->Reset();
+  // TH1D* WH_sub = (TH1D*)WH->Clone("WH_sub");
+  // WH_sub->Reset();
+  // TH1D* ZH_sub = (TH1D*)ZH->Clone("ZH_sub");
+  // ZH_sub->Reset();
 
-  for(int i=1; i<TotalBkg_sub->GetNbinsX()+1; i++){
-    TotalBkg_sub->SetBinError(i,TotalBkg->GetBinError(i)/data_obs->GetBinError(i));
+  // for(int i=1; i<TotalBkg_sub->GetNbinsX()+1; i++){
+  //   TotalBkg_sub->SetBinError(i,TotalBkg->GetBinError(i)/data_obs->GetBinError(i));
 
 
-    data_obs_sub->SetBinContent(i,(data_obs->GetBinContent(i)-TotalBkg->GetBinContent(i))/data_obs->GetBinError(i));
-    data_obs_sub->SetBinError(i,data_obs->GetBinError(i)/data_obs->GetBinError(i));
+  //   data_obs_sub->SetBinContent(i,(data_obs->GetBinContent(i)-TotalBkg->GetBinContent(i))/data_obs->GetBinError(i));
+  //   data_obs_sub->SetBinError(i,data_obs->GetBinError(i)/data_obs->GetBinError(i));
 
-    WH_sub->SetBinContent(i,WH->GetBinContent(i)/data_obs->GetBinError(i));
-    ZH_sub->SetBinContent(i,ZH->GetBinContent(i)/data_obs->GetBinError(i));
-  }
+  //   WH_sub->SetBinContent(i,WH->GetBinContent(i)/data_obs->GetBinError(i));
+  //   ZH_sub->SetBinContent(i,ZH->GetBinContent(i)/data_obs->GetBinError(i));
+  // }
 
-  TotalBkg_sub->GetYaxis()->SetTitleSize(textsize2);
-  TotalBkg_sub->GetYaxis()->SetLabelSize(textsize2);
-  TotalBkg_sub->GetXaxis()->SetTitleSize(textsize2);
-  TotalBkg_sub->GetXaxis()->SetLabelSize(textsize2);
-  TotalBkg_sub->GetYaxis()->SetTitleOffset(2*pad2->GetAbsHNDC());
-  TotalBkg_sub->GetYaxis()->SetTitle("(Data - Bkg)/#sigma_{Data}");
-  TotalBkg_sub->SetMarkerSize(0);
+  // TotalBkg_sub->GetYaxis()->SetTitleSize(textsize2);
+  // TotalBkg_sub->GetYaxis()->SetLabelSize(textsize2);
+  // TotalBkg_sub->GetXaxis()->SetTitleSize(textsize2);
+  // TotalBkg_sub->GetXaxis()->SetLabelSize(textsize2);
+  // TotalBkg_sub->GetYaxis()->SetTitleOffset(2*pad2->GetAbsHNDC());
+  // TotalBkg_sub->GetYaxis()->SetTitle("(Data - Bkg)/#sigma_{Data}");
+  // TotalBkg_sub->SetMarkerSize(0);
 
-  // blind data!                                                                                                                                                              
-  if( blind  ){
-    for(int i=10; i<15; i++){
-      TotalBkg_sub->SetBinError(i,0);
-      data_obs_sub->SetBinContent(i,0);
-      data_obs_sub->SetBinError(i,0);
-    }
-  }
+  // // blind data!                                                                                                                                                              
+  // if( blind  ){
+  //   for(int i=10; i<15; i++){
+  //     TotalBkg_sub->SetBinError(i,0);
+  //     data_obs_sub->SetBinContent(i,0);
+  //     data_obs_sub->SetBinError(i,0);
+  //   }
+  // }
 
-  double min2 = data_obs_sub->GetMinimum();
-  double max2 = data_obs_sub->GetMaximum();
-  if( !pass ){
-    max2 += 1;
-    min2 -= 1;
-  }
-  TotalBkg_sub->GetYaxis()->SetRangeUser(1.3*min2,1.3*max2);
+  // double min2 = data_obs_sub->GetMinimum();
+  // double max2 = data_obs_sub->GetMaximum();
+  // if( !pass ){
+  //   max2 += 1;
+  //   min2 -= 1;
+  // }
+  // TotalBkg_sub->GetYaxis()->SetRangeUser(1.3*min2,1.3*max2);
 
-  TotalBkg_sub->Draw("e2");
-  WH_sub->Draw("histsame");                                                                                                                                              
-  ZH_sub->Draw("histsame");                                                                                                                                              
-  data_obs_sub->Draw("pesame");                                                                                    
+  // TotalBkg_sub->Draw("e2");
+  // WH_sub->Draw("histsame");                                                                                                                                              
+  // ZH_sub->Draw("histsame");                                                                                                                                              
+  // data_obs_sub->Draw("pesame");                                                                                    
 
   c->SaveAs(("plots/"+ name.substr(6)+ "_DataFit"+ ".png").c_str());
   c->SaveAs(("plots/"+ name.substr(6)+ "_DataFit"+ ".pdf").c_str());

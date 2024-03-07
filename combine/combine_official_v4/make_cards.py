@@ -338,7 +338,7 @@ def vh_rhalphabet(tmpdir):
 
                         ch.addSample(sample)
 
-                    data_obs = get_template('data', isPass, binindex+1, cat, obs=msd, syst='nominal')
+                    data_obs = get_template('QCD', isPass, binindex+1, cat, obs=msd, syst='nominal') #TODO: TO CHANGE BACK
 
                     ch.setObservation(data_obs, read_sumw2=True)
 
