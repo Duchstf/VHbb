@@ -27,7 +27,7 @@ WPs = {
     '2018_bb1':  0.9880,
 }
 
-mass_regions = {'target': slice(68., 103.), 'low': slice(40., 68.), 'high': slice(103., 201.)} #Low, Target, and High mass
+mass_range = [40., 68., 103., 201.]
 
 #Same in make_cards.py
 samples = ['QCD','WH','ZH','VV',
@@ -41,14 +41,15 @@ samples = ['QCD','WH','ZH','VV',
 btag_SF_samples = ['Wjets', 'Zjets']
 
 def check_missing(pickle_hist):
-    
+        
     #Print sample names
-    hist_samples = [x.name for x in pickle_hist.integrate('systematic', 'nomial').sum('msd1', 'msd2', 'bb1', 'genflavor1').identifiers('process')]
+    hist_samples = [x.name for x in pickle_hist.identifiers('process')]
     print("Available samples: ", hist_samples)
     print("Checking available samples ... ")
     
     # Find items in samples that are not in hist_samples
     missing_items = [item for item in samples if item not in hist_samples]
+    
     # Check if there are any missing items
     if missing_items:
         # Raise an error and include information about the missing items
@@ -89,14 +90,16 @@ def main():
 
     #Read in the pickle file
     pickle_hist =  pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('pt1', int_range=slice(450., None), overflow='over')
-    check_missing(pickle_hist, samples)
+    check_missing(pickle_hist)
 
     #Process each region
-    for region, msd2_int_range in mass_regions.items():
+    for i in range(len(mass_range)-1):
 
-        print('Running for {} in {} region'.format(year, region))
+        print('Running for {} in {} mass region'.format(year, i))
+        
+        msd2_int_range = slice(mass_range[i], mass_range[i+1])
     
-        sig = pickle_hist.integrate('msd2',msd2_int_range)
+        sig = pickle_hist.integrate('msd2', msd2_int_range)
         
         #Split into Jet 1 score b-tag passing/failing region. 
         for p in samples:
@@ -108,8 +111,8 @@ def main():
             
             if p not in btag_SF_samples:
                 
-                hpass = sig.integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',p)
-                hfail = sig.integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',p)
+                hpass = sig.integrate('bb1',int_range=slice(bbthr,1.)).sum('genflavor1').integrate('process',p)
+                hfail = sig.integrate('bb1',int_range=slice(0.,bbthr)).sum('genflavor1').integrate('process',p)
                 
             else:
                 
@@ -120,13 +123,12 @@ def main():
                 hfail_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',p)
                 
                 for s in hfail.identifiers('systematic'):
-                    fout[f"{region}_pass_{p + 'bb'}_{s}"] = hist.export1d(hpass_bb.integrate('systematic',s))
-                    fout[f"{region}_fail_{p + 'bb'}_{s}"] = hist.export1d(hfail_bb.integrate('systematic',s))
+                    fout[f"Vmass_{i}_pass_{p + 'bb'}_{s}"] = hist.export1d(hpass_bb.integrate('systematic',s))
+                    fout[f"Vmass{i}_fail_{p + 'bb'}_{s}"] = hist.export1d(hfail_bb.integrate('systematic',s))
             
             for s in hfail.identifiers('systematic'):
-
-                    fout[f"{region}_pass_{p}_{s}"] = hist.export1d(hpass.integrate('systematic',s))
-                    fout[f"{region}_fail_{p}_{s}"] = hist.export1d(hfail.integrate('systematic',s))
+                    fout[f"Vmass_{i}_pass_{p}_{s}"] = hist.export1d(hpass.integrate('systematic',s))
+                    fout[f"Vmass_{i}_fail_{p}_{s}"] = hist.export1d(hfail.integrate('systematic',s))
 
     return
 
