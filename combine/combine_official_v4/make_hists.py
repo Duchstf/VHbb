@@ -58,6 +58,12 @@ def check_missing(pickle_hist):
     #Save the sample here and then load it in make_cards.py
     with open("files/samples.json", "w") as f:   #Pickling
         json.dump(samples, f)
+        
+    sys_list = [x.name for x in pickle_hist.identifiers('systematic')]
+    
+    #Save the systematics here
+    with open("files/sys_list.json", "w") as f:   #Pickling
+        json.dump(sys_list, f)
     
 # Main method
 def main():
@@ -91,14 +97,16 @@ def main():
     #Read in the pickle file
     pickle_hist =  pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('pt1', int_range=slice(450., None), overflow='over')
     check_missing(pickle_hist)
+    
+    #Save a list of mass categories to a file to be used in make_cards
+    with open("files/Vmass.json", "w") as f:   #Pickling
+        json.dump(mass_range, f)
 
     #Process each region
     for i in range(len(mass_range)-1):
 
         print('Running for {} in {} mass region'.format(year, i))
-        
         msd2_int_range = slice(mass_range[i], mass_range[i+1])
-    
         sig = pickle_hist.integrate('msd2', msd2_int_range)
         
         #Split into Jet 1 score b-tag passing/failing region. 
@@ -111,13 +119,13 @@ def main():
             
             if p not in btag_SF_samples:
                 
-                hpass = sig.integrate('bb1',int_range=slice(bbthr,1.)).sum('genflavor1').integrate('process',p)
-                hfail = sig.integrate('bb1',int_range=slice(0.,bbthr)).sum('genflavor1').integrate('process',p)
+                hpass = sig.integrate('bb1',int_range=slice(bbthr,1.)).sum('genflavor1', overflow='under').integrate('process',p)
+                hfail = sig.integrate('bb1',int_range=slice(0.,bbthr)).sum('genflavor1', overflow='under').integrate('process',p)
                 
             else:
                 
-                hpass = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',p)
-                hfail = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',p)
+                hpass = sig.integrate('genflavor1', int_range=slice(None,3), overflow='under').integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',p)
+                hfail = sig.integrate('genflavor1', int_range=slice(None,3), overflow='under').integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',p)
                 
                 hpass_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',p)
                 hfail_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',p)
@@ -129,7 +137,7 @@ def main():
             for s in hfail.identifiers('systematic'):
                     fout[f"Vmass_{i}_pass_{p}_{s}"] = hist.export1d(hpass.integrate('systematic',s))
                     fout[f"Vmass_{i}_fail_{p}_{s}"] = hist.export1d(hfail.integrate('systematic',s))
-
+    
     return
 
 if __name__ == "__main__":

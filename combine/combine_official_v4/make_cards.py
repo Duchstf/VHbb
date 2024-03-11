@@ -12,7 +12,6 @@ from rhalphalib import AffineMorphTemplate, MorphHistW2
 
 rl.util.install_roofit_helpers()
 
-
 eps=0.0000001
 do_muon_CR = False
 
@@ -24,7 +23,6 @@ Example:
 python make_cards.py 2017
 '''
 
-######----------------HELPER FUNCTIONS-----------------#######
 # Tell me if my sample is too small to care about
 def badtemp_ma(hvalues, mask=None):
     # Need minimum size & more than 1 non-zero bins                                                                                                                                   
@@ -81,347 +79,124 @@ def vh_rhalphabet(tmpdir):
     2. Fill in actual fit model to every thing except for QCD
     3. Fill QCD in the actual fit model
     """
+    
     with open('files/lumi.json') as f:
         lumi = json.load(f)
+    
+    with open("files/samples.json", "r") as f:   # Unpickling
+        samples = json.load(f)
+        
+    with open("files/Vmass_cat.json", "r") as f:   # Unpickling
+        mass_catergories = json.load(f)
+        
+    ptbins = np.array([450, 500, 550, 600, 675, 800, 1200])
+    npt = len(ptbins) - 1
+    msdbins = np.linspace(40, 201, 24)
+    msd = rl.Observable("msd", msdbins)
 
-    ###>>>>>> TODO: DIFFERENT NUMBERS FOR VH???
-    # Depends on how we define the ttbar control region.
-    # If we define a control region in VH, it might be the same control region
-    vbf_ttbar_unc = dict({"2016":1.29,"2017":1.62,"2018":1.52})
+    # here we derive these all at once with 2D array
+    ptpts, msdpts = np.meshgrid(ptbins[:-1] + 0.3 * np.diff(ptbins), msdbins[:-1] + 0.5 * np.diff(msdbins), indexing="ij")
+    rhopts = 2 * np.log(msdpts / ptpts)
+    ptscaled = (ptpts - 450.0) / (1200.0 - 450.0)
+    rhoscaled = (rhopts - (-6)) / ((-2.1) - (-6))
+    validbins = (rhoscaled >= 0) & (rhoscaled <= 1)
+    rhoscaled[~validbins] = 1  # we will mask these out later
 
-    # TT params #TODO: WHAT IS THIS?
-    # Scale factor from the muon control region
-    # Allowed to float
-    # not signal strength: nuisance parameter. 
-    tqqeffSF = rl.IndependentParameter('tqqeffSF_{}'.format(year), 1., -10, 50) #ddb efficiency
-    tqqnormSF = rl.IndependentParameter('tqqnormSF_{}'.format(year), 1., -10, 50) #Overall scale factor on ttbar
-
-    # Simple lumi systematics
-    # Changes event yield
-    # Constraints applied to overall likelihood                                                                                                                                                        
-    sys_lumi_uncor = rl.NuisanceParameter('CMS_lumi_13TeV_{}'.format(year), 'lnN') #lnN: Log Normal
-    sys_lumi_cor_161718 = rl.NuisanceParameter('CMS_lumi_13TeV_correlated_', 'lnN')
-    sys_lumi_cor_1718 = rl.NuisanceParameter('CMS_lumi_13TeV_correlated_20172018', 'lnN')
-
-    # define bins TODO: REDEFINE BINS??
-    # In VH
-    # Charm category and light category
-    # Within each can have bins in pt and other variables like mass
-    # Start with two category and no differential bins.
-    ptbins = {}
-    ptbins['charm'] = np.array([450,1200])
-
-    npt = {}
-    npt['charm'] = len(ptbins['charm']) - 1
-
+    # Define the bins
     msdbins = np.linspace(40, 201, 24)
     msd = rl.Observable('msd', msdbins)
 
     validbins = {}
-
-    cats = ['charm'] #TODO: Split by Jet 2 C score.
-
-    # Build qcd MC pass+fail model and fit to polynomial
-    # QCD MC only fit
-    tf_params = {}
-    for cat in cats:
-
-        fitfailed_qcd = 0
-
-        # here we derive these all at once with 2D array  
-        #>>>>>>>                          
-        ptpts, msdpts = np.meshgrid(ptbins[cat][:-1] + 0.3 * np.diff(ptbins[cat]), msdbins[:-1] + 0.5 * np.diff(msdbins), indexing='ij')
-        rhopts = 2*np.log(msdpts/ptpts) 
-        ptscaled = (ptpts - 450.) / (1200. - 450.) #Keep same with vbf
-        rhoscaled = (rhopts - (-6)) / ((-2.1) - (-6)) 
-
-        validbins[cat] = (rhoscaled >= 0) & (rhoscaled <= 1)
-        rhoscaled[~validbins[cat]] = 1  # we will mask these out later   
-
-        while fitfailed_qcd < 5: #Fail if choose bad initial values, start from where the fits fail. 
-        
-            qcdmodel = rl.Model('qcdmodel_'+cat)
-            qcdpass, qcdfail = 0., 0.
-
-            ##>>>>>>>!!!Cut out this for loop?
-            for ptbin in range(npt[cat]):
-
-                failCh = rl.Channel('ptbin%d%s%s%s' % (ptbin, cat, 'fail',year))
-                passCh = rl.Channel('ptbin%d%s%s%s' % (ptbin, cat, 'pass',year))
-                qcdmodel.addChannel(failCh)
-                qcdmodel.addChannel(passCh)
-
-                binindex = ptbin
-
-                # QCD templates from file
-                # Look at the root file and see what's in there.                         
-                failTempl = get_template('QCD', 0, binindex+1, cat, obs=msd, syst='nominal')
-                passTempl = get_template('QCD', 1, binindex+1, cat, obs=msd, syst='nominal')
-
-                failCh.setObservation(failTempl, read_sumw2=True)
-                passCh.setObservation(passTempl, read_sumw2=True)
-
-                qcdfail += sum([val for val in failCh.getObservation()[0]])
-                qcdpass += sum([val for val in passCh.getObservation()[0]])
-
-            qcdeff = qcdpass / qcdfail
-            print('Inclusive P/F from Monte Carlo = ' + str(qcdeff))
-
-            # initial values
-            # Right size of arrays
-            # Want to make an zeroth order in pt
-            # {"initial_vals":[[1,1]]} in json file (0th pt and 1st in rho)                                                               
-            print('Initial fit values read from file initial_vals*')
-            with open('files/initial_vals_'+cat+'.json') as f:
-                initial_vals = np.array(json.load(f)['initial_vals'])
-            print(initial_vals)
-
-            #tf polynomial
-            tf_MCtempl = rl.BasisPoly("tf_MCtempl_"+cat+year, #name
-                                      (initial_vals.shape[0]-1,initial_vals.shape[1]-1), #shape
-                                      ['pt', 'rho'], #variable names
-                                      basis='Bernstein', #type of polys
-                                      init_params=initial_vals, #initial values
-                                      limits=(-10, 10), #limits on poly coefficients
-                                      coefficient_transform=None)
-
-            tf_MCtempl_params = qcdeff * tf_MCtempl(ptscaled, rhoscaled) #make sure the coeff stays of order 1. 
-
-            for ptbin in range(npt[cat]):
-                    
-                    #!!! I guess we need to cut out the loop but still need to keep some of the code to
-                    #fit within the category
-                    failCh = qcdmodel['ptbin%d%sfail%s' % (ptbin, cat, year)]
-                    passCh = qcdmodel['ptbin%d%spass%s' % (ptbin, cat, year)]
-                    failObs = failCh.getObservation()
-                    passObs = passCh.getObservation()
-                
-                    qcdparams = np.array([rl.IndependentParameter('qcdparam_'+cat+'_ptbin%d' % ptbin, 0)])
-                    sigmascale = 10.
-                    scaledparams = failObs * (1 + sigmascale/np.maximum(1., np.sqrt(failObs)))**qcdparams
-                
-                    fail_qcd = rl.ParametericSample('ptbin%d%sfail%s_qcd' % (ptbin, cat, year), rl.Sample.BACKGROUND, msd, scaledparams[0])
-                    failCh.addSample(fail_qcd)
-                    pass_qcd = rl.TransferFactorSample('ptbin%d%spass%s_qcd' % (ptbin, cat, year), rl.Sample.BACKGROUND, tf_MCtempl_params[ptbin, :], fail_qcd)
-                    passCh.addSample(pass_qcd)
-
-                    #MC only fit, don't need to blind higgs region. 
-                    failCh.mask = validbins[cat][ptbin] 
-                    passCh.mask = validbins[cat][ptbin]
-
-            #Run the fit for qcd mc pass/fail
-            qcdfit_ws = ROOT.RooWorkspace('w')
-
-            simpdf, obs = qcdmodel.renderRoofit(qcdfit_ws)
-            qcdfit = simpdf.fitTo(obs,
-                                  ROOT.RooFit.Extended(True),
-                                  ROOT.RooFit.SumW2Error(True),
-                                  ROOT.RooFit.Strategy(2),
-                                  ROOT.RooFit.Save(),
-                                  ROOT.RooFit.Minimizer('Minuit2', 'migrad'),
-                                  ROOT.RooFit.PrintLevel(1),
-                              )
-            qcdfit_ws.add(qcdfit)
-            qcdfit_ws.writeToFile(os.path.join(str(tmpdir), 'testModel_qcdfit_'+cat+'_'+year+'.root'))
-
-            # Set parameters to fitted values
-            # Check what the values and if the fit fails
-            allparams = dict(zip(qcdfit.nameArray(), qcdfit.valueArray()))
-            pvalues = []
-            for i, p in enumerate(tf_MCtempl.parameters.reshape(-1)):
-                p.value = allparams[p.name]
-                pvalues += [p.value]
-            
-            if qcdfit.status() != 0:
-                print('Could not fit qcd')
-                fitfailed_qcd += 1
-
-                new_values = np.array(pvalues).reshape(tf_MCtempl.parameters.shape)
-                with open("files/initial_vals_"+cat+".json", "w") as outfile:
-                    json.dump({"initial_vals":new_values.tolist()},outfile)
-
-            else:
-                break
-
-        if fitfailed_qcd >=5:
-            raise RuntimeError('Could not fit qcd after 5 tries')
-
-        print("Fitted qcd for category " + cat) #Know the whole part works
-
-        # Plot the MC P/F transfer factor                                                   
-        # plot_mctf(tf_MCtempl,msdbins, cat)                           
-
-        param_names = [p.name for p in tf_MCtempl.parameters.reshape(-1)]
-        decoVector = rl.DecorrelatedNuisanceVector.fromRooFitResult(tf_MCtempl.name + '_deco', qcdfit, param_names)
-        tf_MCtempl.parameters = decoVector.correlated_params.reshape(tf_MCtempl.parameters.shape)
-        tf_MCtempl_params_final = tf_MCtempl(ptscaled, rhoscaled)
-
-        # initial values                                                                                                            # for a different tf, can just copy the other ones in a
-        # different file                        
-        with open('files/initial_vals_data_'+cat+'.json') as f:
-            initial_vals_data = np.array(json.load(f)['initial_vals'])
-
-        # Fitting ratio of the data and the MC prediction
-        tf_dataResidual = rl.BasisPoly("tf_dataResidual_"+year+cat,
-                                       (initial_vals_data.shape[0]-1,initial_vals_data.shape[1]-1), 
-                                       ['pt', 'rho'],
-                                       basis='Bernstein',
-                                       init_params=initial_vals_data,
-                                       limits=(-20,20), 
-                                       coefficient_transform=None)
-
-        tf_dataResidual_params = tf_dataResidual(ptscaled, rhoscaled)
-        tf_params[cat] = qcdeff * tf_MCtempl_params_final * tf_dataResidual_params
-
-    # build actual fit model now
-    # the model that would go into the workspace.
-    model = rl.Model('testModel_'+year)
-
-    # Exclude QCD from MC samps
-    # Use the same samples from make hists
-    with open("files/samples.json", "r") as f:   # Unpickling
-        samps = json.load(f)
     
-    samps = [str(x) for x in samps if str(x) not in ['QCD','data']] 
+    exp_systs = ['pileup_weight', 'JES','JER','UES']
+
+    # TT params: scale factor from the muon control region, allowed to float, not signal strength: nuisance parameter. 
+    tqqeffSF = rl.IndependentParameter('tqqeffSF_{}'.format(year), 1., 0, 2) 
+    tqqnormSF = rl.IndependentParameter('tqqnormSF_{}'.format(year), 1., 0, 2) 
+
+    #! SYSTEMATICS
+    # Simple lumi systematics, changes event yields, onstraints applied to overall likelihood                                                                                                                                                        
+    sys_lumi_uncor = rl.NuisanceParameter('CMS_lumi_13TeV_{}'.format(year), 'lnN') #lnN: Log Normal
+    sys_lumi_cor_161718 = rl.NuisanceParameter('CMS_lumi_13TeV_correlated_', 'lnN')
+    sys_lumi_cor_1718 = rl.NuisanceParameter('CMS_lumi_13TeV_correlated_20172018', 'lnN')
     
-    sigs = ['ZH','WH']
+    # Lepton vetoes
+    sys_eleveto = rl.NuisanceParameter('CMS_hbb_e_veto_{}'.format(year), 'lnN')                                    
+    sys_muveto = rl.NuisanceParameter('CMS_hbb_mu_veto_{}'.format(year), 'lnN')  
+    sys_tauveto = rl.NuisanceParameter('CMS_hbb_tau_veto_{}'.format(year), 'lnN')
 
-    #Fill actual fit model with the expected fit value for every process except for QCD
-    # Model need to know the signal, and background
-    # different background have different uncertainties
-    # Don't treat the QCD like everything else
-    # Take the QCD expectation from previous fit.
-    # Take expectation from MC
-    for cat in cats:
-        for ptbin in range(npt[cat]):
-                for region in ['pass', 'fail']: #Separate also by b scores in addition to charm scores.
+    sys_dict = {}
+    yearstr = year
+    if 'APV' in year: yearstr = '2016preVFP'
+    elif year == '2016': yearstr = '2016postVFP'
+    
+    # Muon control region only
+    sys_dict[f'muon_ID_{yearstr}_value'] = rl.NuisanceParameter('CMS_mu_id_{}'.format(year), 'lnN')
+    sys_dict[f'muon_ISO_{yearstr}_value'] = rl.NuisanceParameter('CMS_mu_iso_{}'.format(year), 'lnN')
+    sys_dict[f'muon_TRIGNOISO_{yearstr}_value'] = rl.NuisanceParameter('CMS_hbb_mu_trigger_{}'.format(year), 'lnN')
 
-                    binindex = ptbin
+    #All experimental systematics
+    sys_dict['JES'] = rl.NuisanceParameter('CMS_scale_j_{}'.format(year), 'lnN')
+    sys_dict['JER'] = rl.NuisanceParameter('CMS_res_j_{}'.format(year), 'lnN')
+    sys_dict['UES'] = rl.NuisanceParameter('CMS_ues_j_{}'.format(year), 'lnN')
+    sys_dict['jet_trigger'] = rl.NuisanceParameter('CMS_hbb_jet_trigger_{}'.format(year), 'lnN')
+    sys_dict['pileup_weight'] = rl.NuisanceParameter('CMS_hbb_PU_{}'.format(year), 'lnN')
 
-                    print("Bin: " + cat + " bin " + str(binindex) + " " + region)
-
-                    # drop bins outside rho validity                                                
-                    mask = validbins[cat][ptbin] # If want to can blind the higgs peak to not confuse the model.
-                    # mask[9:14] = False to blind, don't need to do it right now since using -t -1
-                    failCh.mask = validbins[cat][ptbin]
-                    passCh.mask = validbins[cat][ptbin]
-
-                    ch = rl.Channel('ptbin%d%s%s%s' % (ptbin, cat, region, year))
-                    model.addChannel(ch)
-
-                    isPass = region == 'pass'
-                    templates = {}
-            
-                    for sName in samps:
-                        
-                        templates[sName] = get_template(sName, isPass, binindex+1, cat, obs=msd, syst='nominal')
-                        nominal = templates[sName][0]
-
-                        if(badtemp_ma(nominal)):
-                            print("Sample {} is too small, skipping".format(sName))
-                            continue
-
-                        # expectations
-                        templ = templates[sName]
-                        
-                        if sName in sigs:
-                            stype = rl.Sample.SIGNAL
-                        else:
-                            stype = rl.Sample.BACKGROUND
-                    
-                        sample = rl.TemplateSample(ch.name + '_' + sName, stype, templ)
-
-                        # You need one systematic
-                        sample.setParamEffect(sys_lumi_uncor, lumi[year]['uncorrelated'])
-                        sample.setParamEffect(sys_lumi_cor_161718, lumi[year]['correlated'])
-                        sample.setParamEffect(sys_lumi_cor_1718, lumi[year]['correlated_20172018'])
-
-                        ch.addSample(sample)
-
-                    data_obs = get_template('QCD', isPass, binindex+1, cat, obs=msd, syst='nominal') #TODO: TO CHANGE BACK
-
-                    ch.setObservation(data_obs, read_sumw2=True)
-
-    #Fill in the QCD in the actual fit model. 
-    for cat in cats:
-        for ptbin in range(npt[cat]):
-
-                failCh = model['ptbin%d%sfail%s' % (ptbin, cat, year)]
-                passCh = model['ptbin%d%spass%s' % (ptbin, cat, year)]
-
-                qcdparams = np.array([rl.IndependentParameter('qcdparam_'+cat+'_ptbin%d' % (ptbin), 0)])
-                initial_qcd = failCh.getObservation()[0].astype(float)  # was integer, and numpy complained about subtracting float from it
-
-                for sample in failCh:
-                    #Subtract away from data all mc processes except for QCD
-                    initial_qcd -= sample.getExpectation(nominal=True)
-
-                if np.any(initial_qcd < 0.):
-                    raise ValueError('initial_qcd negative for some bins..', initial_qcd)
-
-                sigmascale = 10  # to scale the deviation from initial                      
-                scaledparams = initial_qcd * (1 + sigmascale/np.maximum(1., np.sqrt(initial_qcd)))**qcdparams
-                fail_qcd = rl.ParametericSample('ptbin%d%sfail%s_qcd' % (ptbin, cat, year), rl.Sample.BACKGROUND, msd, scaledparams)
-                failCh.addSample(fail_qcd)
-                pass_qcd = rl.TransferFactorSample('ptbin%d%spass%s_qcd' % (ptbin, cat, year), rl.Sample.BACKGROUND, tf_params[cat][ptbin, :], fail_qcd)
-                passCh.addSample(pass_qcd)
-
-                if do_muon_CR:
-                
-                    tqqpass = passCh['ttbar']
-                    tqqfail = failCh['ttbar']
-                    tqqPF = tqqpass.getExpectation(nominal=True).sum() / tqqfail.getExpectation(nominal=True).sum()
-                    tqqpass.setParamEffect(tqqeffSF, 1*tqqeffSF)
-                    tqqfail.setParamEffect(tqqeffSF, (1 - tqqeffSF) * tqqPF + 1)
-                    tqqpass.setParamEffect(tqqnormSF, 1*tqqnormSF)
-                    tqqfail.setParamEffect(tqqnormSF, 1*tqqnormSF)
-
-    # Fill in muon CR
-    # Ingore this for now. 
-    # if do_muon_CR:
-    #     templates = {}
-    #     samps = ['ttbar','QCD','singlet','Zjets','Zjetsbb','Wjets','VV']
-    #     for region in ['pass', 'fail']:
-    #         ch = rl.Channel('muonCR%s%s' % (region, year))
-    #         model.addChannel(ch)
-
-    #         isPass = region == 'pass'
-    #         print("Bin: muon cr " + region)
-
-    #         for sName in samps:
-
-    #             templates[sName] = one_bin(get_template(sName, isPass, -1, '', obs=msd, syst='nominal', muon=True))
-    #             nominal = templates[sName][0]
-
-    #             if(np.sum(nominal) < eps):
-    #                 print("Sample {} is too small, skipping".format(sName))
-    #                 continue
-
-    #             stype = rl.Sample.BACKGROUND
-    #             sample = rl.TemplateSample(ch.name + '_' + sName, stype, templates[sName])
-
-    #             # You need one systematic
-    #             sample.setParamEffect(sys_lumi_uncor, lumi[year]['uncorrelated'])
-    #             sample.setParamEffect(sys_lumi_cor_161718, lumi[year]['correlated'])
-    #             sample.setParamEffect(sys_lumi_cor_1718, lumi[year]['correlated_20172018'])
-
-    #             ch.addSample(sample)
-
-    #         # END loop over MC samples
-
-    #         data_obs = one_bin(get_template('muondata', isPass, -1, '', obs=msd, syst='nominal', muon=True))
-    #         ch.setObservation(data_obs, read_sumw2=True)
-
-    #     tqqpass = model['muonCRpass'+year+'_ttbar']
-    #     tqqfail = model['muonCRfail'+year+'_ttbar']
-    #     tqqPF = tqqpass.getExpectation(nominal=True).sum() / tqqfail.getExpectation(nominal=True).sum()
-    #     tqqpass.setParamEffect(tqqeffSF, 1*tqqeffSF)
-    #     tqqfail.setParamEffect(tqqeffSF, (1 - tqqeffSF) * tqqPF + 1)
-    #     tqqpass.setParamEffect(tqqnormSF, 1*tqqnormSF)
-    #     tqqfail.setParamEffect(tqqnormSF, 1*tqqnormSF)
+    #If condition later to use it or not
+    sys_dict['L1Prefiring'] = rl.NuisanceParameter('CMS_L1Prefiring_{}'.format(year),'lnN')
+    if '2018' not in year: exp_systs += ['L1Prefiring']
+    mu_exp_systs = exp_systs + ['muon_ID_'+yearstr+'_value','muon_ISO_'+yearstr+'_value','muon_TRIGNOISO_'+yearstr+'_value']
+    
+    exp_systs += ['jet_trigger'] #No jet trigger in muon control region systematics
+    
+    #Particle Net BB systematics
+    #TODO: Put the scale factor and uncertainty into a json file and read it afterwards
+    sys_ParticleNetEffBB = rl.NuisanceParameter('CMS_eff_bb_{}'.format(year), 'lnN')
+    
+    #n2 uncertainty, derived
+    sys_veff = rl.NuisanceParameter('CMS_hbb_veff_{}'.format(year), 'lnN')
+    
+    #All derived from muon control region, shape systematics in all the masses.
+    sys_smear = rl.NuisanceParameter('CMS_hbb_smear_{}'.format(year), 'shape')
+    sys_scale = rl.NuisanceParameter('CMS_hbb_scale_{}'.format(year), 'shape')
+    
+    #lnN up and down, shape varies the shape
+    
+    # Theory systematics are correlated across years
+    # V + jets, not year in name and correlated accross year
+    for sys in ['d1kappa_EW', 'Z_d2kappa_EW', 'Z_d3kappa_EW', 'W_d2kappa_EW', 'W_d3kappa_EW', 'd1K_NLO', 'd2K_NLO', 'd3K_NLO']:
+        sys_dict[sys] = rl.NuisanceParameter('CMS_hbb_{}'.format(sys), 'lnN')
         
-        # END if do_muon_CR  
+    Zjets_thsysts = ['d1kappa_EW', 'Z_d2kappa_EW', 'Z_d3kappa_EW', 'd1K_NLO', 'd2K_NLO']
+    Wjets_thsysts = ['d1kappa_EW', 'W_d2kappa_EW', 'W_d3kappa_EW', 'd1K_NLO', 'd2K_NLO', 'd3K_NLO']
+    
+    #TODO: Likely add VV for these theory systematics
+    pdf_Higgs_ggF = rl.NuisanceParameter('pdf_Higgs_ggF','lnN')
+    pdf_Higgs_VBF = rl.NuisanceParameter('pdf_Higgs_VBF','lnN')
+    pdf_Higgs_VH  = rl.NuisanceParameter('pdf_Higgs_VH','lnN')
+    pdf_Higgs_ttH = rl.NuisanceParameter('pdf_Higgs_ttH','lnN')
 
+    scale_ggF = rl.NuisanceParameter('QCDscale_ggF', 'lnN')
+    scale_VBF = rl.NuisanceParameter('QCDscale_VBF', 'lnN')
+    scale_VH = rl.NuisanceParameter('QCDscale_VH', 'lnN')
+    scale_ttH = rl.NuisanceParameter('QCDscale_ttH', 'lnN')
+
+    isr_ggF = rl.NuisanceParameter('UEPS_ISR_ggF', 'lnN')
+    isr_VBF = rl.NuisanceParameter('UEPS_ISR_VBF', 'lnN')
+    isr_VH = rl.NuisanceParameter('UEPS_ISR_VH', 'lnN')
+    isr_ttH = rl.NuisanceParameter('UEPS_ISR_ttH', 'lnN')
+
+    fsr_ggF = rl.NuisanceParameter('UEPS_FSR_ggF', 'lnN')
+    fsr_VBF = rl.NuisanceParameter('UEPS_FSR_VBF', 'lnN')
+    fsr_VH = rl.NuisanceParameter('UEPS_FSR_VH', 'lnN')
+    fsr_ttH = rl.NuisanceParameter('UEPS_FSR_ttH', 'lnN')
+    
+    
+    
+
+    return
+
+   
     with open(os.path.join(str(tmpdir), 'testModel_'+year+'.pkl'), 'wb') as fout:
         pickle.dump(model, fout)
 
