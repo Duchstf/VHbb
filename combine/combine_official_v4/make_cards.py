@@ -108,7 +108,7 @@ def vh_rhalphabet(tmpdir):
 
     validbins = {}
     
-    exp_systs = ['pileup_weight', 'JES','JER','UES']
+    exp_systs = ['pileup_weight', 'JES','JER','UES', 'jet_trigger']
 
     # TT params: scale factor from the muon control region, allowed to float, not signal strength: nuisance parameter. 
     tqqeffSF = rl.IndependentParameter('tqqeffSF_{}'.format(year), 1., 0, 2) 
@@ -127,13 +127,15 @@ def vh_rhalphabet(tmpdir):
 
     sys_dict = {}
     yearstr = year
-    if 'APV' in year: yearstr = '2016preVFP'
-    elif year == '2016': yearstr = '2016postVFP'
+    if 'APV' in year:
+        yearstr = '2016preVFP'
+    elif year == '2016':
+        yearstr = '2016postVFP'
     
     # Muon control region only
-    sys_dict[f'muon_ID_{yearstr}_value'] = rl.NuisanceParameter('CMS_mu_id_{}'.format(year), 'lnN')
-    sys_dict[f'muon_ISO_{yearstr}_value'] = rl.NuisanceParameter('CMS_mu_iso_{}'.format(year), 'lnN')
-    sys_dict[f'muon_TRIGNOISO_{yearstr}_value'] = rl.NuisanceParameter('CMS_hbb_mu_trigger_{}'.format(year), 'lnN')
+    sys_dict['muon_ID_{}_value'.format(yearstr)] = rl.NuisanceParameter('CMS_mu_id_{}'.format(year), 'lnN')
+    sys_dict['muon_ISO_{}_value'.format(yearstr)] = rl.NuisanceParameter('CMS_mu_iso_{}'.format(year), 'lnN')
+    sys_dict['muon_TRIGNOISO_{}_value'.format(yearstr)] = rl.NuisanceParameter('CMS_hbb_mu_trigger_{}'.format(year), 'lnN')
 
     #All experimental systematics
     sys_dict['JES'] = rl.NuisanceParameter('CMS_scale_j_{}'.format(year), 'lnN')
@@ -142,12 +144,16 @@ def vh_rhalphabet(tmpdir):
     sys_dict['jet_trigger'] = rl.NuisanceParameter('CMS_hbb_jet_trigger_{}'.format(year), 'lnN')
     sys_dict['pileup_weight'] = rl.NuisanceParameter('CMS_hbb_PU_{}'.format(year), 'lnN')
 
-    #If condition later to use it or not
-    sys_dict['L1Prefiring'] = rl.NuisanceParameter('CMS_L1Prefiring_{}'.format(year),'lnN')
+    #Pre firing for 2018
     if '2018' not in year: exp_systs += ['L1Prefiring']
-    mu_exp_systs = exp_systs + ['muon_ID_'+yearstr+'_value','muon_ISO_'+yearstr+'_value','muon_TRIGNOISO_'+yearstr+'_value']
+    sys_dict['L1Prefiring'] = rl.NuisanceParameter('CMS_L1Prefiring_{}'.format(year),'lnN')
     
-    exp_systs += ['jet_trigger'] #No jet trigger in muon control region systematics
+    #No jet trigger in muon control region systematics
+    mu_exp_systs = [x for x in exp_systs if x is not 'jet_trigger']
+    mu_exp_systs += ['muon_ID_{}_value'.format(yearstr), 'muon_ISO_{}_value'.format(yearstr), 'muon_TRIGNOISO_{}_value'.format(yearstr)]
+    
+    print("Experimental systematics: ",  exp_systs) 
+    print("Muon CR systematics: ", mu_exp_systs)
     
     #Particle Net BB systematics
     #TODO: Put the scale factor and uncertainty into a json file and read it afterwards
@@ -193,7 +199,6 @@ def vh_rhalphabet(tmpdir):
     
     
     
-
     return
 
    
