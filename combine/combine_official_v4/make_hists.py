@@ -132,7 +132,7 @@ def main():
                 
                 for s in hfail.identifiers('systematic'):
                     fout[f"Vmass_{i}_pass_{p + 'bb'}_{s}"] = hist.export1d(hpass_bb.integrate('systematic',s))
-                    fout[f"Vmass{i}_fail_{p + 'bb'}_{s}"] = hist.export1d(hfail_bb.integrate('systematic',s))
+                    fout[f"Vmass_{i}_fail_{p + 'bb'}_{s}"] = hist.export1d(hfail_bb.integrate('systematic',s))
             
             for s in hfail.identifiers('systematic'):
                     fout[f"Vmass_{i}_pass_{p}_{s}"] = hist.export1d(hpass.integrate('systematic',s))

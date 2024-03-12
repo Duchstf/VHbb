@@ -10,7 +10,7 @@ using namespace RooStats;
 
 bool blind = true;
 
-void draw(int pt_index, bool charm, bool pass,  bool log=true){
+void draw(int Vmass_bin, bool bb_pass,  bool log=true){
 
   // Get the year and prefit/postfit/obs from the running directory
   string thisdir = gSystem->pwd();
@@ -38,15 +38,10 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   //Fit root file
   string filename = "fitDiagnostics.root";
 
+  string bb_region = (bb_pass) ? "pass" : "fail";
+
   // branch name (only one pT bin)
-  string name = "ptbin" + to_string(pt_index);
-
-  //Category
-  if (charm) name = name + "charm";
-
-  //Pass fail
-  if (pass) name = name + "pass" + year;
-  else name = name + "fail" + year;
+  string name = "VmassBin" + to_string(Vmass_bin) + bb_region + year;
 
   // Fit directory
   string hist_dir = "shapes_prefit/" + name+ "/";
@@ -81,37 +76,37 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   pad1->cd();
   if( log ) pad1->SetLogy();
 
-  // /*DATA*/
-  // // Dummy variable to select the data branch
-  // string data_file = "signalregion.root";
+  /*DATA*/
+  // Dummy variable to select the data branch
+  string data_file = "signalregion.root";
 
-  // string leading_name  = (pass) ? "_pass_": "_fail_";
-  // if (charm) leading_name =  "charm" + leading_name;
+  string data_bb_region  = (bb_pass) ? "_pass_": "_fail_";
+  string leading_name = "Vmass_" + to_string(Vmass_bin) + data_bb_region;
 
-  // TFile *dataf = new TFile(data_file.c_str());
-  // TH1D* data_obs = (TH1D*)dataf->Get((leading_name+"data_nominal").c_str());
+  TFile *dataf = new TFile(data_file.c_str());
+  TH1D* data_obs = (TH1D*)dataf->Get((leading_name+"data_nominal").c_str());
 
-  // // Check if the histogram is retrieved successfully
-  // if (!data_obs) {
-  //   std::cerr << "Error: Histogram not found in the ROOT file." << std::endl;
-  //   dataf->Close(); // Close the file
-  //   return;
-  // }
+  // Check if the histogram is retrieved successfully
+  if (!data_obs) {
+    std::cerr << "Error: Histogram not found in the ROOT file." << std::endl;
+    dataf->Close(); // Close the file
+    return;
+  }
 
-  // cout << data_obs->Integral() << endl;
+  cout << data_obs->Integral() << endl;
 
-  // // blind data!
-  // if( blind && pass ){                                                                                        
-  //   for(int i=10; i<15; i++){
-  //     data_obs->SetBinContent(i,0);
-  //     data_obs->SetBinError(i,0);
-  //   }                            
-  // } 
+  // blind data!
+  if( blind && bb_pass ){                                                                                        
+    for(int i=0; i<15; i++){
+      data_obs->SetBinContent(i,0);
+      data_obs->SetBinError(i,0);
+    }                            
+  } 
 
   // Plot data
-  // data_obs->SetLineColor(kBlack);
-  // data_obs->SetMarkerColor(kBlack);
-  // data_obs->SetMarkerStyle(20);    
+  data_obs->SetLineColor(kBlack);
+  data_obs->SetMarkerColor(kBlack);
+  data_obs->SetMarkerStyle(20);    
 
   float mc_scale = 7.0; //FitDiagnostics scale every MC by the bin width
   // >>>>>>>>>>>Signal<<<<<<<<<<<<
@@ -170,6 +165,12 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   Zjets->SetLineColor(kBlack);
   Zjets->SetFillColor(kAzure+8);
 
+  /* Z + jets bb*/
+  TH1D* Zjetsbb = (TH1D*)f->Get((hist_dir+"Zjetsbb").c_str());
+  Zjetsbb->Scale(mc_scale);
+  Zjetsbb->SetLineColor(kBlack);
+  Zjetsbb->SetFillColor(kBlue-9);
+
   /* W + jets */
   TH1D* Wjets = (TH1D*)f->Get((hist_dir+"Wjets").c_str());
   Wjets->Scale(mc_scale);
@@ -209,6 +210,7 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
     bkg->Add(VV);
     bkg->Add(singlet);
     bkg->Add(Zjets);
+    bkg->Add(Zjetsbb);
     bkg->Add(ttbar);
     bkg->Add(Wjets);
     bkg->Add(qcd);
@@ -219,6 +221,7 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
     bkg->Add(VV);
     bkg->Add(Wjets);
     bkg->Add(Zjets);
+    bkg->Add(Zjetsbb);
     bkg->Add(singlet);
     bkg->Add(bkgHiggs);
   }
@@ -226,6 +229,7 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   cout << "QCD: "     << qcd->Integral()     << endl;
   cout << "Wjets: "   << Wjets->Integral()   << endl;
   cout << "Zjets: "   << Zjets->Integral()   << endl;
+  cout << "Zjetsbb: "   << Zjetsbb->Integral()   << endl;
   cout << "ttbar: "   << ttbar->Integral()   << endl;
   cout << "singlet: " << singlet->Integral() << endl;
   cout << "VV: "      << VV->Integral()      << endl;
@@ -242,8 +246,8 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   bkg->GetYaxis()->SetTitleSize(textsize1);
   bkg->GetYaxis()->SetLabelSize(textsize1);
 
-  // data_obs->Draw("pesame");
-  // data_obs->Draw("axissame");
+  data_obs->Draw("pesame");
+  data_obs->Draw("axissame");
   
   double x1=.6, y1=.88;
   TLegend* leg = new TLegend(x1,y1,x1+.3,y1-.3);
@@ -252,12 +256,13 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   leg->SetNColumns(2);
   leg->SetTextSize(textsize1);
 
-  // leg->AddEntry(data_obs,"Data","p");
+  leg->AddEntry(data_obs,"Data","p");
   leg->AddEntry(TotalBkg,"Bkg. Unc.","f");
   leg->AddEntry(qcd,"QCD","f");
   leg->AddEntry(Wjets,"W","f");
   leg->AddEntry(ttbar,"t#bar{t}","f");
   leg->AddEntry(Zjets,"Z","f");
+  leg->AddEntry(Zjetsbb,"Z(bb)","f");
   leg->AddEntry(singlet,"Single t","f");
   leg->AddEntry(VV,"VV","f");
   leg->AddEntry(bkgHiggs,"Bkg. H","f");
@@ -283,65 +288,68 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
   l3.SetTextFont(42);
   l3.SetTextSize(textsize1);
 
-  string text = "Jet 1 B Fail, ";
-  if( pass )
-    text = "Jet 1 B Pass";
+  string region_text = "Vmass " + to_string(Vmass_bin) + "; ";
 
-  l3.DrawLatex(0.2,.82,text.c_str());
+  if( bb_pass )
+    region_text += "Jet 1 B Pass";
+  else
+    region_text += "Jet 1 B Fail";
+
+  l3.DrawLatex(0.2,.82,region_text.c_str());
 
   // Draw data - obs ratio
-  // pad2->cd();
+  pad2->cd();
 
-  // TH1D* TotalBkg_sub = (TH1D*)TotalBkg->Clone("TotalBkg_sub");
-  // TotalBkg_sub->Reset();
-  // TH1D* data_obs_sub = (TH1D*)data_obs->Clone("data_obs_ratio");
-  // data_obs_sub->Reset();
+  TH1D* TotalBkg_sub = (TH1D*)TotalBkg->Clone("TotalBkg_sub");
+  TotalBkg_sub->Reset();
+  TH1D* data_obs_sub = (TH1D*)data_obs->Clone("data_obs_ratio");
+  data_obs_sub->Reset();
 
-  // TH1D* WH_sub = (TH1D*)WH->Clone("WH_sub");
-  // WH_sub->Reset();
-  // TH1D* ZH_sub = (TH1D*)ZH->Clone("ZH_sub");
-  // ZH_sub->Reset();
+  TH1D* WH_sub = (TH1D*)WH->Clone("WH_sub");
+  WH_sub->Reset();
+  TH1D* ZH_sub = (TH1D*)ZH->Clone("ZH_sub");
+  ZH_sub->Reset();
 
-  // for(int i=1; i<TotalBkg_sub->GetNbinsX()+1; i++){
-  //   TotalBkg_sub->SetBinError(i,TotalBkg->GetBinError(i)/data_obs->GetBinError(i));
+  for(int i=1; i<TotalBkg_sub->GetNbinsX()+1; i++){
+    TotalBkg_sub->SetBinError(i,TotalBkg->GetBinError(i)/data_obs->GetBinError(i));
 
 
-  //   data_obs_sub->SetBinContent(i,(data_obs->GetBinContent(i)-TotalBkg->GetBinContent(i))/data_obs->GetBinError(i));
-  //   data_obs_sub->SetBinError(i,data_obs->GetBinError(i)/data_obs->GetBinError(i));
+    data_obs_sub->SetBinContent(i,(data_obs->GetBinContent(i)-TotalBkg->GetBinContent(i))/data_obs->GetBinError(i));
+    data_obs_sub->SetBinError(i,data_obs->GetBinError(i)/data_obs->GetBinError(i));
 
-  //   WH_sub->SetBinContent(i,WH->GetBinContent(i)/data_obs->GetBinError(i));
-  //   ZH_sub->SetBinContent(i,ZH->GetBinContent(i)/data_obs->GetBinError(i));
-  // }
+    WH_sub->SetBinContent(i,WH->GetBinContent(i)/data_obs->GetBinError(i));
+    ZH_sub->SetBinContent(i,ZH->GetBinContent(i)/data_obs->GetBinError(i));
+  }
 
-  // TotalBkg_sub->GetYaxis()->SetTitleSize(textsize2);
-  // TotalBkg_sub->GetYaxis()->SetLabelSize(textsize2);
-  // TotalBkg_sub->GetXaxis()->SetTitleSize(textsize2);
-  // TotalBkg_sub->GetXaxis()->SetLabelSize(textsize2);
-  // TotalBkg_sub->GetYaxis()->SetTitleOffset(2*pad2->GetAbsHNDC());
-  // TotalBkg_sub->GetYaxis()->SetTitle("(Data - Bkg)/#sigma_{Data}");
-  // TotalBkg_sub->SetMarkerSize(0);
+  TotalBkg_sub->GetYaxis()->SetTitleSize(textsize2);
+  TotalBkg_sub->GetYaxis()->SetLabelSize(textsize2);
+  TotalBkg_sub->GetXaxis()->SetTitleSize(textsize2);
+  TotalBkg_sub->GetXaxis()->SetLabelSize(textsize2);
+  TotalBkg_sub->GetYaxis()->SetTitleOffset(2*pad2->GetAbsHNDC());
+  TotalBkg_sub->GetYaxis()->SetTitle("(Data - Bkg)/#sigma_{Data}");
+  TotalBkg_sub->SetMarkerSize(0);
 
-  // // blind data!                                                                                                                                                              
-  // if( blind  ){
-  //   for(int i=10; i<15; i++){
-  //     TotalBkg_sub->SetBinError(i,0);
-  //     data_obs_sub->SetBinContent(i,0);
-  //     data_obs_sub->SetBinError(i,0);
-  //   }
-  // }
+  // blind data!                                                                                                                                                              
+  if( blind  ){
+    for(int i=0; i<15; i++){
+      TotalBkg_sub->SetBinError(i,0);
+      data_obs_sub->SetBinContent(i,0);
+      data_obs_sub->SetBinError(i,0);
+    }
+  }
 
-  // double min2 = data_obs_sub->GetMinimum();
-  // double max2 = data_obs_sub->GetMaximum();
-  // if( !pass ){
-  //   max2 += 1;
-  //   min2 -= 1;
-  // }
-  // TotalBkg_sub->GetYaxis()->SetRangeUser(1.3*min2,1.3*max2);
+  double min2 = data_obs_sub->GetMinimum();
+  double max2 = data_obs_sub->GetMaximum();
+  if( !bb_pass ){
+    max2 += 1;
+    min2 -= 1;
+  }
+  TotalBkg_sub->GetYaxis()->SetRangeUser(1.3*min2,1.3*max2);
 
-  // TotalBkg_sub->Draw("e2");
-  // WH_sub->Draw("histsame");                                                                                                                                              
-  // ZH_sub->Draw("histsame");                                                                                                                                              
-  // data_obs_sub->Draw("pesame");                                                                                    
+  TotalBkg_sub->Draw("e2");
+  WH_sub->Draw("histsame");                                                                                                                                              
+  ZH_sub->Draw("histsame");                                                                                                                                              
+  data_obs_sub->Draw("pesame");                                                                                    
 
   c->SaveAs(("plots/"+ name.substr(6)+ "_DataFit"+ ".png").c_str());
   c->SaveAs(("plots/"+ name.substr(6)+ "_DataFit"+ ".pdf").c_str());
@@ -352,10 +360,10 @@ void draw(int pt_index, bool charm, bool pass,  bool log=true){
 
 void draw_DataFit(){
 
-  //Loop over pt bins
-  for(int i=0; i<1; i++){
-    draw(i,1,0,0); //charm fail
-    draw(i,0,1,0); //charm pass
+  //Loop over V mass bins
+  for(int i=0; i<3; i++){
+    draw(i,1,0); //bb pass
+    draw(i,0,0); //bb fail
   }
 
   return 0;

@@ -1,0 +1,2 @@
+combineCards.py VmassBin0pass2017=VmassBin0pass2017.txt VmassBin0fail2017=VmassBin0fail2017.txt VmassBin1pass2017=VmassBin1pass2017.txt VmassBin1fail2017=VmassBin1fail2017.txt VmassBin2pass2017=VmassBin2pass2017.txt VmassBin2fail2017=VmassBin2fail2017.txt > model_combined.txt
+text2workspace.py model_combined.txt

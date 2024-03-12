@@ -62,6 +62,8 @@ def get_template(sName, bb_pass, V_bin, obs, syst, muon=False):
 
     sumw = []
     sumw2 = []
+    
+    print(h)
 
     for i in range(1,h.GetNbinsX()+1):
         sumw += [h.GetBinContent(i)]
@@ -177,6 +179,7 @@ def vh_rhalphabet(tmpdir):
     
     with open("files/samples.json", "r") as f:   # Unpickling
         samples = json.load(f)
+        samples += ['Zjetsbb', 'Wjetsbb']
         
     with open("files/Vmass.json", "r") as f:   # Unpickling
         VmassBins = np.asarray(json.load(f))
