@@ -37,29 +37,29 @@ pickle_dir="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output"
 cmsenv
 
 #Produce combine cards
-python make_cards.py $1
+python make_cards.py $1 > out_make_cards.txt
 
-# #Run the combine jobs
-# cd $1
+#Run the combine jobs
+cd $1
 
-# mkdir -p plots
+mkdir -p plots
 
-# ln -s -f ../year_scripts/*.C .
-# ln -s -f ../year_scripts/*.sh .
+ln -s -f ../year_scripts/*.C .
+ln -s -f ../year_scripts/*.sh .
 
-# ./make_workspace.sh
-# ./exp_shapes.sh 
+./make_workspace.sh
+./exp_shapes.sh 
 
-# #Produce the relevant plots
-# root -b -q draw_MC.C
-# root -b -q draw_DataFit.C
-# #root -b draw_PFratio_QCDMC.C
+#Produce the relevant plots
+root -b -q draw_MC.C
+root -b -q draw_DataFit.C
+#root -b draw_PFratio_QCDMC.C
 
-# ./exp_significance.sh > significance.txt
+./exp_significance.sh > significance.txt
 
-# #Run for VV
-# ./make_workspace_VV.sh
-# ./exp_shapes_VV.sh 
-# ./exp_significance_VV.sh > significance_VV.txt
+#Run for VV
+./make_workspace_VV.sh
+./exp_shapes_VV.sh 
+./exp_significance_VV.sh > significance_VV.txt
 
-# cd ../
+cd ../

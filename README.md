@@ -86,5 +86,6 @@ conda env update --file environment.yml  --prune
 * ParticleNet Performance Paper: https://cds.cern.ch/record/2866276/files/BTV-22-001-pas.pdf
 
 ## Other relevant links
+* Combine installation: https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/#standalone-compilation-with-lcg
 * [NanoAOD attributes](https://cms-nanoaod-integration.web.cern.ch/integration/master-cmsswmaster/mc102X_doc.html)
 * [Save data array to ParQuet](https://awkward-array.org/doc/main/reference/generated/ak.to_parquet.html)
