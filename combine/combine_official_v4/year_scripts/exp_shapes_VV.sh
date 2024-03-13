@@ -13,6 +13,6 @@ elif [[ "$PWD" == *"year"* ]]; then
     year="_year"
 fi
 
-combine -M FitDiagnostics -m 125 output/testModel${year}/model_combined.root --setParameters rVV=1 -t -1 --saveShapes --saveWithUncertainties --cminDefaultMinimizerStrategy 0 --robustFit=1
-
 #-t -1 keeps us from using the data.
+#combine -M MultiDimFit -m 90 output/testModel${year}/model_combined.root --setParameters rVV=1,rVH=1 -t -1 --saveShapes --saveWithUncertainties --cminDefaultMinimizerStrategy 0 --robustFit=1
+combine -M MultiDimFit -m 90 output/testModel${year}/model_combined.root --setParameters rVV=1,rVH=1 -t -1 --cminDefaultMinimizerStrategy 0 --robustFit=1

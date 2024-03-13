@@ -261,7 +261,7 @@ void draw(int Vmass_bin, bool bb_pass,  bool log=true){
   leg->AddEntry(qcd,"QCD","f");
   leg->AddEntry(Wjets,"W","f");
   leg->AddEntry(ttbar,"t#bar{t}","f");
-  leg->AddEntry(Zjets,"Z","f");
+  leg->AddEntry(Zjets,"Z(qq)","f");
   leg->AddEntry(Zjetsbb,"Z(bb)","f");
   leg->AddEntry(singlet,"Single t","f");
   leg->AddEntry(VV,"VV","f");

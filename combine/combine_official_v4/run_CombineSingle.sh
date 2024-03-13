@@ -48,17 +48,15 @@ ln -s -f ../year_scripts/*.C .
 ln -s -f ../year_scripts/*.sh .
 
 ./make_workspace.sh
-./exp_shapes.sh 
+
+# ./exp_shapes.sh 
+# ./exp_significance.sh > significance.txt
+
+#./exp_shapes_VV.sh 
+./exp_significance_VV.sh > significance_VV.txt
+
 
 # #Produce the relevant plots
 root -b -q draw_DataFit.C
-# root -b draw_PFratio_QCDMC.C
-
-./exp_significance.sh > significance.txt
-
-# #Run for VV
-./make_workspace_VV.sh
-./exp_shapes_VV.sh 
-./exp_significance_VV.sh > significance_VV.txt
 
 cd ../

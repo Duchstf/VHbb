@@ -27,7 +27,7 @@ WPs = {
     '2018_bb1':  0.9880,
 }
 
-mass_range = [40., 68., 103., 201.]
+mass_range = [68., 103.]
 
 #Same in make_cards.py
 samples = ['QCD','WH','ZH','VV',

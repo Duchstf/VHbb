@@ -63,8 +63,6 @@ def get_template(sName, bb_pass, V_bin, obs, syst, muon=False):
     sumw = []
     sumw2 = []
     
-    print(h)
-
     for i in range(1,h.GetNbinsX()+1):
         sumw += [h.GetBinContent(i)]
         sumw2 += [h.GetBinError(i)*h.GetBinError(i)]
@@ -93,7 +91,7 @@ def vh_rhalphabet(tmpdir):
     
     # Simple lumi systematics, changes event yields, onstraints applied to overall likelihood                                                                                                                                                        
     sys_lumi_uncor = rl.NuisanceParameter('CMS_lumi_13TeV_{}'.format(year), 'lnN') #lnN: Log Normal
-    sys_lumi_cor_161718 = rl.NuisanceParameter('CMS_lumi_13TeV_correlated_', 'lnN')
+    sys_lumi_cor_161718 = rl.NuisanceParameter('CMS_lumi_13TeV_correlated', 'lnN')
     sys_lumi_cor_1718 = rl.NuisanceParameter('CMS_lumi_13TeV_correlated_20172018', 'lnN')
     
     # Lepton vetoes
@@ -208,8 +206,8 @@ def vh_rhalphabet(tmpdir):
         for iBin in range(nVmass):
             Vmass_bin = 'Vmass_{}'.format(iBin)
             
-            failCh = rl.Channel("VmassBin%d%s%s" % (iBin, "fail", year)) #Naming convention prevents using "_"
-            passCh = rl.Channel("VmassBin%d%s%s" % (iBin, "pass", year)) #Naming convention prevents using "_" 
+            failCh = rl.Channel("VBin%d%s%s" % (iBin, "fail", year)) #Naming convention prevents using "_"
+            passCh = rl.Channel("VBin%d%s%s" % (iBin, "pass", year)) #Naming convention prevents using "_" 
             qcdmodel.addChannel(failCh)
             qcdmodel.addChannel(passCh)
             
@@ -219,9 +217,6 @@ def vh_rhalphabet(tmpdir):
             failCh.setObservation(failTempl, read_sumw2=True)
             passCh.setObservation(passTempl, read_sumw2=True)
             
-            print("QCD SUM FAIL: ", sum([val for val in failCh.getObservation()[0]]))
-            print("QCD SUM PASS: ", sum([val for val in passCh.getObservation()[0]]))
-            
             qcdfail += sum([val for val in failCh.getObservation()[0]])
             qcdpass += sum([val for val in passCh.getObservation()[0]])
             
@@ -230,7 +225,7 @@ def vh_rhalphabet(tmpdir):
         print('Inclusive P/F from Monte Carlo: ', str(qcdeff))
         
         # Initial values
-        # {"initial_vals":[[1,1]]} in json file (0th pt and 1st in rho)                                                               
+        # {"initial_vals":[[1,1]]} in json file (1st Vmass and 1st in Hmass)                                                               
         print('Initial fit values read from file initial_vals*')
         with open('files/initial_vals.json') as f: initial_vals = np.array(json.load(f)['initial_vals'])
         print("Initial fit values: ", initial_vals)
@@ -250,13 +245,13 @@ def vh_rhalphabet(tmpdir):
         for iBin in range(nVmass):
             
             #TODO: Get observation from qcd model built before?
-            failCh = qcdmodel["VmassBin%dfail%s" % (iBin, year)]
-            passCh = qcdmodel["VmassBin%dpass%s" % (iBin, year)]
+            failCh = qcdmodel["VBin%dfail%s" % (iBin, year)]
+            passCh = qcdmodel["VBin%dpass%s" % (iBin, year)]
             
             failObs = failCh.getObservation()
             
             #TODO: What is this for?
-            qcdparams = np.array([rl.IndependentParameter("qcdparam_VmassBin%d_HmassBin%d" % (iBin, i), 0) for i in range(msd.nbins)])
+            qcdparams = np.array([rl.IndependentParameter("qcdparam_VBin%d_HBin%d_%s" % (iBin, i, year), 0) for i in range(msd.nbins)])
             sigmascale = 10.0
             scaledparams = failObs * (1 + sigmascale / np.maximum(1.0, np.sqrt(failObs))) ** qcdparams
             
@@ -267,9 +262,9 @@ def vh_rhalphabet(tmpdir):
             #     print(scaledparams[i])
             
             #TODO: What are ParametericSample and TransferFactorSample, what are they used for?
-            fail_qcd = rl.ParametericSample("VmassBin%dfail%s_qcd" % (iBin, year), rl.Sample.BACKGROUND, msd, scaledparams[0])
+            fail_qcd = rl.ParametericSample("VBin%dfail%s_qcd" % (iBin, year), rl.Sample.BACKGROUND, msd, scaledparams[0])
             failCh.addSample(fail_qcd)
-            pass_qcd = rl.TransferFactorSample("VmassBin%dpass%s_qcd" % (iBin, year), rl.Sample.BACKGROUND, tf_MCtempl_params[iBin, :], fail_qcd)
+            pass_qcd = rl.TransferFactorSample("VBin%dpass%s_qcd" % (iBin, year), rl.Sample.BACKGROUND, tf_MCtempl_params[iBin, :], fail_qcd)
             passCh.addSample(pass_qcd)
 
             failCh.mask = validbins[iBin]
@@ -324,6 +319,8 @@ def vh_rhalphabet(tmpdir):
     
     # Start fitting data to mc transfer factor                   
     with open('files/initial_vals_data.json') as f: initial_vals_data = np.array(json.load(f)['initial_vals'])
+    
+    print((initial_vals_data.shape[0]-1,initial_vals_data.shape[1]-1))
 
     # Fitting ratio of the data and the MC prediction
     tf_dataResidual = rl.BasisPoly("tf_dataResidual_{}".format(year),
@@ -364,7 +361,7 @@ def vh_rhalphabet(tmpdir):
             failCh.mask = mask
             passCh.mask = mask_pass
             
-            ch = rl.Channel('VmassBin%d%s%s' % (iBin, bb_region, year))
+            ch = rl.Channel('VBin%d%s%s' % (iBin, bb_region, year))
             model.addChannel(ch)
 
             isPass = bb_region == 'pass'
@@ -401,10 +398,10 @@ def vh_rhalphabet(tmpdir):
     #Fill in the QCD in the actual fit model. 
     for iBin in range(nVmass):
 
-            failCh = model['VmassBin%dfail%s' % (iBin, year)]
-            passCh = model['VmassBin%dpass%s' % (iBin, year)]
+            failCh = model['VBin%dfail%s' % (iBin, year)]
+            passCh = model['VBin%dpass%s' % (iBin, year)]
 
-            qcdparams = np.array([rl.IndependentParameter("qcdparam_VmassBin%d_HmassBin%d" % (iBin, i), 0) for i in range(msd.nbins)])
+            qcdparams = np.array([rl.IndependentParameter("qcdparam_VBin%d_HBin%d_%s" % (iBin, i, year), 0) for i in range(msd.nbins)])
             initial_qcd = failCh.getObservation()[0].astype(float)  # Was integer, and numpy complained about subtracting float from it
 
             # Subtract away from data all mc processes except for QCD
@@ -415,9 +412,9 @@ def vh_rhalphabet(tmpdir):
             sigmascale = 10  # to scale the deviation from initial                      
             scaledparams = initial_qcd * (1 + sigmascale/np.maximum(1., np.sqrt(initial_qcd)))**qcdparams
             
-            fail_qcd = rl.ParametericSample("VmassBin%dfail%s_qcd" % (iBin, year), rl.Sample.BACKGROUND, msd, scaledparams)
+            fail_qcd = rl.ParametericSample("VBin%dfail%s_qcd" % (iBin, year), rl.Sample.BACKGROUND, msd, scaledparams)
             failCh.addSample(fail_qcd)
-            pass_qcd = rl.TransferFactorSample("VmassBin%dpass%s_qcd" % (iBin, year), rl.Sample.BACKGROUND, tf_params[iBin, :], fail_qcd)
+            pass_qcd = rl.TransferFactorSample("VBin%dpass%s_qcd" % (iBin, year), rl.Sample.BACKGROUND, tf_params[iBin, :], fail_qcd)
             passCh.addSample(pass_qcd)
 
    
