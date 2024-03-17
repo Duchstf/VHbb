@@ -41,7 +41,7 @@ void draw(int Vmass_bin, bool bb_pass,  bool log=true){
   string bb_region = (bb_pass) ? "pass" : "fail";
 
   // branch name (only one pT bin)
-  string name = "VmassBin" + to_string(Vmass_bin) + bb_region + year;
+  string name = "VBin" + to_string(Vmass_bin) + bb_region + year;
 
   // Fit directory
   string hist_dir = "shapes_prefit/" + name+ "/";
@@ -288,7 +288,7 @@ void draw(int Vmass_bin, bool bb_pass,  bool log=true){
   l3.SetTextFont(42);
   l3.SetTextSize(textsize1);
 
-  string region_text = "Vmass " + to_string(Vmass_bin) + "; ";
+  string region_text = "VBin " + to_string(Vmass_bin) + "; ";
 
   if( bb_pass )
     region_text += "Jet 1 B Pass";
@@ -351,8 +351,8 @@ void draw(int Vmass_bin, bool bb_pass,  bool log=true){
   ZH_sub->Draw("histsame");                                                                                                                                              
   data_obs_sub->Draw("pesame");                                                                                    
 
-  c->SaveAs(("plots/"+ name.substr(6)+ "_DataFit"+ ".png").c_str());
-  c->SaveAs(("plots/"+ name.substr(6)+ "_DataFit"+ ".pdf").c_str());
+  c->SaveAs(("plots/"+ name + "_DataFit"+ ".png").c_str());
+  c->SaveAs(("plots/"+ name + "_DataFit"+ ".pdf").c_str());
 
   return;
 

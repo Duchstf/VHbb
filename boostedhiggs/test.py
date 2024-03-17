@@ -16,7 +16,7 @@ ParticleNet_WorkingPoints = {
 }
 
 #Scan thresholds for bb
-bb_bins = [0.0, 0.97, 0.9918] + [round(x,4) for x in list(np.linspace(0.98,1.,20))] + ParticleNet_WorkingPoints['{}_bb'.format(sys.argv[1])][1:]
+bb_bins = [1.] + ParticleNet_WorkingPoints['{}_bb'.format(sys.argv[1])]
 bb_bins.sort()
 print('bb bins: ', bb_bins)
 print(any(bb_bins.count(x) > 1 for x in bb_bins))
@@ -26,3 +26,9 @@ cc_bins = [round(x,4) for x in list(np.linspace(0.,1.,50))]  + ParticleNet_Worki
 cc_bins.sort()
 print('cc bins: ', cc_bins)
 print(any(cc_bins.count(x) > 1 for x in cc_bins))
+
+#Scan thresholds for tt
+tt_bins = [round(x,4) for x in list(np.linspace(0.,0.49,50))] + [round(x,4) for x in list(np.linspace(0.5, 1.,100))]
+
+print('tt bins: ', tt_bins)
+print(any(tt_bins.count(x) > 1 for x in tt_bins))

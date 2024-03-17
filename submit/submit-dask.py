@@ -1,7 +1,10 @@
 '''
 To submit processing jobs, do:
 
-./shell coffeateam/coffea-dask:0.7.21-fastjet-3.4.0.1-g6238ea8
+ssh -L 8787:localhost:8787 dhoang@cmslpc123.fnal.gov
+grid-proxy-init -valid 1000:00
+
+./shell
 
 And then
 
@@ -19,7 +22,9 @@ from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
 sys.path.append('/srv')
 
 #Import processor
-from boostedhiggs import VHbbProcessorV1
+from boostedhiggs import VHbbProcessorV6
+tag = "vhbb_v6"
+syst = False
 
 from distributed import Client
 from lpcjobqueue import LPCCondorCluster
@@ -41,8 +46,7 @@ cluster = LPCCondorCluster(
 )
 
 year = sys.argv[1]
-tag = "vhbb_official_v1"
-ignore_list = ['QCDbEnriched', 'QCDBGenFilter'] #Sample to ignore processing for now
+ignore_list = ['QCDbEnriched', 'QCDBGenFilter', 'JetHT2016Data'] #Sample to ignore processing for now
 
 out_path = "output/coffea/{}/{}/".format(tag,year)
 os.system('mkdir -p  %s' %out_path)
@@ -79,7 +83,7 @@ with Client(cluster) as client:
                 uproot.open.defaults["xrootd_handler"] = uproot.source.xrootd.MultithreadedXRootDSource
 
                 #RUN MAIN PROCESSOR
-                p = VHbbProcessorV1(year=year, jet_arbitration='T_bvc' , systematics=True)
+                p = VHbbProcessorV6(year=year, jet_arbitration='T_bvc' , systematics=syst)
                 args = {'savemetrics':True, 'schema':NanoAODSchema}
 
                 output = processor.run_uproot_job(
@@ -92,6 +96,7 @@ with Client(cluster) as client:
                         "skipbadfiles": 1,
                         "schema": processor.NanoAODSchema,
                         "treereduction": 2,
+                        "savemetrics": True,
                     },
                     chunksize=50000,
                     #        maxchunks=args.max,

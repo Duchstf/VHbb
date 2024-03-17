@@ -198,7 +198,7 @@ def vh_rhalphabet(tmpdir):
                     failObs = failCh.getObservation()
                     passObs = passCh.getObservation()
                 
-                    qcdparams = np.array([rl.IndependentParameter('qcdparam_'+cat+'_ptbin%d' % ptbin, 0)])
+                    qcdparams = np.array([rl.IndependentParameter('qcdparam_%s_ptbin%d_msd%d' % (cat, ptbin, i), 0) for i in range(msd.nbins)])
                     sigmascale = 10.
                     scaledparams = failObs * (1 + sigmascale/np.maximum(1., np.sqrt(failObs)))**qcdparams
                 
@@ -351,7 +351,7 @@ def vh_rhalphabet(tmpdir):
                 failCh = model['ptbin%d%sfail%s' % (ptbin, cat, year)]
                 passCh = model['ptbin%d%spass%s' % (ptbin, cat, year)]
 
-                qcdparams = np.array([rl.IndependentParameter('qcdparam_'+cat+'_ptbin%d' % (ptbin), 0)])
+                qcdparams = np.array([rl.IndependentParameter('qcdparam_%s_ptbin%d_msd%d' % (cat, ptbin, i), 0) for i in range(msd.nbins)])
                 initial_qcd = failCh.getObservation()[0].astype(float)  # was integer, and numpy complained about subtracting float from it
 
                 for sample in failCh:
