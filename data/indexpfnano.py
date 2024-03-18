@@ -120,6 +120,11 @@ folders_to_index = [
     # "/store/user/lpcpfnano/rkansal/v2_3/2018/SingleMu2018",
     
     #Data
+    "/store/user/lpcpfnano/cmantill/v2_3/2016/JetHT2016", #Split into 2016 and 2016APV in filesets.ipynb,
+    "/store/user/lpcpfnano/cmantill/v2_3/2017/JetHT2017",
+    "/store/user/lpcpfnano/cmantill/v2_3/2018/JetHT2018",
+    
+    #Top-up data
     "/store/user/lpcpfnano/rkansal/v2_3/2016/JetHT2016", #Split into 2016 and 2016APV in filesets.ipynb,
     "/store/user/lpcpfnano/rkansal/v2_3/2017/JetHT2017",
     "/store/user/lpcpfnano/rkansal/v2_3/2018/JetHT2018",
