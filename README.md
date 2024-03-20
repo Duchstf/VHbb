@@ -50,7 +50,7 @@ ssh -L 127.0.0.1:8703:127.0.0.1:8703 dhoang@cmslpc135.fnal.gov
 ```
 
 ```
-jupyter nbclassic --no-browser --port 8703 --ip 127.0.0.1
+jupyter notebook --no-browser --port 8703 --ip 127.0.0.1
 ```
 
 ## Conda environment
