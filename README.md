@@ -26,7 +26,7 @@ Run the `./shell` script as setup above:
 ./shell
 ```
 
-**Note: ** View all coffea images: 
+**Note:** View all coffea images: 
 ```
 ls /cvmfs/unpacked.cern.ch/registry.hub.docker.com/coffeateam/
 ```
