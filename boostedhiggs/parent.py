@@ -49,8 +49,7 @@ from boostedhiggs.corrections import (
 
     # Jennet adds theory variations                                                                                                
     add_ps_weight,
-    add_scalevar_7pt,
-    add_scalevar_3pt,
+    add_scalevar,
     add_pdf_weight,
 )
 

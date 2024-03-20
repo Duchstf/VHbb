@@ -29,8 +29,7 @@ from boostedhiggs.corrections import (
 
     # Jennet adds theory variations                                                                                                
     add_ps_weight,
-    add_scalevar_7pt,
-    add_scalevar_3pt,
+    add_scalevar,
     add_pdf_weight,
 )
 
@@ -124,10 +123,10 @@ class VHbbProcessorV5(processor.ProcessorABC):
                 hist.Cat('region', 'Region'),
                 hist.Cat('systematic', 'Systematic'),
                 hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
-                hist.Bin('msd2', r'Jet 2 $m_{sd}$', [40., 68.,  75.,  82.,  89.,  96., 103., 110., 201.]),
+                hist.Bin('msd2', r'Jet 2 $m_{sd}$', 23, 40, 201),
                 hist.Bin('bb1', r'Jet 1 Paticle Net B Score', bb_bins),
-                hist.Bin('genflavor1', 'Gen. jet 1 flavor', [1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
-                hist.Bin('genflavor2', 'Gen. jet 2 flavor', [1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
+                hist.Bin('genflavor1', 'Gen. jet 1 flavor', [0, 1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
+                hist.Bin('genflavor2', 'Gen. jet 2 flavor', [0, 1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
             )
         }
 
@@ -383,11 +382,9 @@ class VHbbProcessorV5(processor.ProcessorABC):
                     else:
                         add_pdf_weight(weights,[])
                     if "LHEScaleWeight" in events.fields:
-                        add_scalevar_7pt(weights, events.LHEScaleWeight)
-                        add_scalevar_3pt(weights, events.LHEScaleWeight)
+                        add_scalevar(weights, events.LHEScaleWeight)
                     else:
-                        add_scalevar_7pt(weights,[])
-                        add_scalevar_3pt(weights,[])
+                        add_scalevar(weights,[])
 
             add_pileup_weight(weights, events.Pileup.nPU, self._year)
             bosons = getBosons(events.GenPart)
