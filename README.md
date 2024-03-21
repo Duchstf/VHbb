@@ -92,5 +92,5 @@ conda env update --file environment.yml  --prune
 
 ## Other relevant links
 * Combine installation: https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/#standalone-compilation-with-lcg
-* [NanoAOD attributes](https://cms-nanoaod-integration.web.cern.ch/integration/master-cmsswmaster/mc102X_doc.html)
+* [NanoAOD attributes](https://cms-nanoaod-integration.web.cern.ch/integration/cms-swCMSSW_12_4_X/mc123Xrun3_v10_doc.html)
 * [Save data array to ParQuet](https://awkward-array.org/doc/main/reference/generated/ak.to_parquet.html)
