@@ -17,12 +17,12 @@ fileset = {
 }
 
 #autoreload forces the kernel to reload the processor to include any new changes
-from boostedhiggs import ParQuetProc
+from boostedhiggs import VHbbProcessorV6
 
 import time
 tstart = time.time()
 
-p = ParQuetProc(year='2017', jet_arbitration='T_bvc' , systematics=False, output_location='./output/parquet/test')
+p = VHbbProcessorV6(year='2017', jet_arbitration='T_bvc' , systematics=False)
 
 #Run Coffea code using uproot
 dummy = processor.run_uproot_job(

@@ -115,17 +115,17 @@ folders_to_index = [
     # For muon control region.
     # TODO: Not really sure what's up with these samples, need to check with rahgav
     # TODO: His original code commented out 2016 and 2017 
-    # "/store/user/lpcpfnano/rkansal/v2_3/2016/SingleMu2016",
-    # "/store/user/lpcpfnano/rkansal/v2_3/2017/SingleMu2017",
-    # "/store/user/lpcpfnano/rkansal/v2_3/2018/SingleMu2018",
-    
+    "/store/user/lpcpfnano/dryu/v2_2_1/2016/SingleMu2016",
+    "/store/user/lpcpfnano/dryu/v2_2_1/2017/SingleMu2017",
+    "/store/user/lpcpfnano/dryu/v2_2/2018/SingleMu2018",
+
     #Data
     "/store/user/lpcpfnano/cmantill/v2_3/2016/JetHT2016", #Split into 2016 and 2016APV in filesets.ipynb,
     "/store/user/lpcpfnano/cmantill/v2_3/2017/JetHT2017",
     "/store/user/lpcpfnano/cmantill/v2_3/2018/JetHT2018",
     
     #Top-up data
-    "/store/user/lpcpfnano/rkansal/v2_3/2016/JetHT2016", #Split into 2016 and 2016APV in filesets.ipynb,
+    "/store/user/lpcpfnano/rkansal/v2_3/2016/JetHT2016",
     "/store/user/lpcpfnano/rkansal/v2_3/2017/JetHT2017",
     "/store/user/lpcpfnano/rkansal/v2_3/2018/JetHT2018",
 
@@ -149,17 +149,23 @@ ignore_subsamples = ["SingleMuon_Run2016B_ver1_HIPM"]
 
 #TODO: Need to check whether I need this whole framework.
 #TODO: Not exactly sure what this is doing here and whether the same thing should be done for VH
-for pyear in ["2016", "2016APV", "2017", "2018"]:
+for pyear in ["2016", "2016APV"]:
     
     print("Processing for year: ", pyear)
     
     index = {}
     for f1 in folders_to_index:
+        
         f1 = f1.rstrip("/")
         year = f1.split("/")[-2]
         sample_short = f1.split("/")[-1]
+        
+        print("--------------------")
+        print(f1, year, sample_short)
+        
         if year == "2017v1":
             year = "2017"
+            
         if year != pyear:
             continue
 

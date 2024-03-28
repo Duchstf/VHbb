@@ -58,12 +58,12 @@ def main():
             out = util.load(filename)
 
             if started == 0:
-                outsum[hist_name] = out[hist_name]
-                outsum['sumw'] = out['sumw']
+                outsum[hist_name] = out[0][hist_name]
+                outsum['sumw'] = out[0]['sumw']
                 started += 1
             else:
-                outsum[hist_name].add(out[hist_name])
-                outsum['sumw'].add(out['sumw'])
+                outsum[hist_name].add(out[0][hist_name])
+                outsum['sumw'].add(out[0]['sumw'])
 
             del out
 

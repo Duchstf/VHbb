@@ -45,6 +45,17 @@ def update(events, collections):
         out = ak.with_field(out, value, name)
     return out
 
+def ak4_jets(events):
+
+    jets = events.Jet
+    jets = jets[
+        (jets.pt > 30.)
+        & (abs(jets.eta) < 5.0)
+        & jets.isTight
+        & (jets.puId > 0)
+    ]
+        
+    return jets
 
 class VHbbProcessorV6(processor.ProcessorABC):
     
@@ -107,8 +118,6 @@ class VHbbProcessorV6(processor.ProcessorABC):
         bb_bins = [1.] + ParticleNet_WorkingPoints['{}_bb'.format(self._year)]
         bb_bins.sort()
         
-        tt_bins = [round(x,4) for x in list(np.linspace(0.,0.49,50))] + [round(x,4) for x in list(np.linspace(0.5, 1.,100))]
-        
         #Create the histogram.
         self.make_output = lambda: {
             
@@ -126,8 +135,10 @@ class VHbbProcessorV6(processor.ProcessorABC):
                 hist.Cat('region', 'Region'),
                 hist.Cat('systematic', 'Systematic'),
                 hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
+                hist.Bin('msd2', r'Jet 2 $m_{sd}$', [40., 68., 110., 201.]),
                 hist.Bin('bb1', r'Jet 1 Paticle Net B Score', bb_bins),
-                hist.Bin('tt2', r'Jet 2 Paticle Net TvsWZ Score', tt_bins),
+                hist.Bin('njets', r'Number of AK4 Jets', list(range(0,21))),
+                hist.Bin('njets_away', r'Number of AK4 Jets outside ', list(range(0,16)))
             )
         }
 
@@ -276,25 +287,16 @@ class VHbbProcessorV6(processor.ProcessorABC):
         #Exact C scores for V candidate
         cc2 = secondjet.particleNetMD_Xcc /  (secondjet.particleNetMD_Xcc + secondjet.particleNetMD_QCD)
         
-        #Extract TvsWZ scocrs
-        t2 = (secondjet.particleNet_TvsQCD*secondjet.particleNet_QCD) / (1. - secondjet.particleNet_TvsQCD)
-        w2 = (secondjet.particleNet_WvsQCD*secondjet.particleNet_QCD) / (1. - secondjet.particleNet_WvsQCD)
-        z2 = (secondjet.particleNet_ZvsQCD*secondjet.particleNet_QCD) / (1. - secondjet.particleNet_ZvsQCD)
-        
-        tt2 = (w2+z2)/(t2+w2+z2)
-        
 
         #!Add selections------------------>
         #There is a list at the end which specifies the selections being used 
         selection.add('jet1kin',
-            (abs(candidatejet.eta) < 2.5)
-            & (candidatejet.pt >= 450)
+            (candidatejet.pt >= 450)
+            & (abs(candidatejet.eta) < 2.5)
         )
         selection.add('jet2kin',
             (secondjet.pt >= 200)
             & (abs(secondjet.eta) < 2.5)
-            & (secondjet.msdcorr <= 110)
-            & (secondjet.msdcorr >= 68) 
         )
 
         selection.add('jetacceptance',
@@ -337,6 +339,15 @@ class VHbbProcessorV6(processor.ProcessorABC):
         dR = abs(jets.delta_r(candidatejet))
         second_jet_dR = abs(secondjet.delta_r(candidatejet))
         ak4_away = jets[dR > 0.8]
+        
+        #Count the number of ak4 jets that are away
+        ak4_jets_events = ak4_jets(events)
+        n_ak4_jets = ak.count(ak4_jets_events.pt, axis=1)
+        ak4_dR = abs(ak4_jets_events.delta_r(candidatejet))
+        second_jet_ak4_dR = abs(ak4_jets_events.delta_r(secondjet))
+        ak4_jets_away = ak4_jets_events[(ak4_dR>0.8) & (second_jet_ak4_dR>0.8)]
+        n_ak4_jets_away = ak.count(ak4_jets_away.pt, axis=1)
+        
 
         met = events.MET
         selection.add('met', met.pt < 140.)
@@ -482,8 +493,10 @@ class VHbbProcessorV6(processor.ProcessorABC):
                 region=region,
                 systematic=sname,
                 msd1=normalize(msd1_matched, cut),
+                msd2=normalize(msd2_matched, cut),
                 bb1=normalize(bb1, cut),
-                tt2=normalize(tt2, cut),
+                njets=normalize(n_ak4_jets, cut),
+                njets_away=normalize(n_ak4_jets_away, cut),
                 weight=weight,
             )
 
