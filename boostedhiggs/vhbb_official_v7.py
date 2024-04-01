@@ -392,19 +392,19 @@ class VHbbProcessorV7(processor.ProcessorABC):
                 if self._ewkHcorr:
                     add_HiggsEW_kFactors(weights, events.GenPart, dataset)
 
-                if self._systematics:
-                    # Jennet adds theory variations                                                                               
-                    add_ps_weight(weights, events.PSWeight)
-                    if "LHEPdfWeight" in events.fields:
-                        add_pdf_weight(weights,events.LHEPdfWeight)
-                    else:
-                        add_pdf_weight(weights,[])
-                    if "LHEScaleWeight" in events.fields:
-                        add_scalevar_7pt(weights, events.LHEScaleWeight)
-                        add_scalevar_3pt(weights, events.LHEScaleWeight)
-                    else:
-                        add_scalevar_7pt(weights,[])
-                        add_scalevar_3pt(weights,[])
+                # if self._systematics:
+                #     # Jennet adds theory variations                                                                               
+                #     add_ps_weight(weights, events.PSWeight)
+                #     if "LHEPdfWeight" in events.fields:
+                #         add_pdf_weight(weights,events.LHEPdfWeight)
+                #     else:
+                #         add_pdf_weight(weights,[])
+                #     if "LHEScaleWeight" in events.fields:
+                #         add_scalevar_7pt(weights, events.LHEScaleWeight)
+                #         add_scalevar_3pt(weights, events.LHEScaleWeight)
+                #     else:
+                #         add_scalevar_7pt(weights,[])
+                #         add_scalevar_3pt(weights,[])
 
             add_pileup_weight(weights, events.Pileup.nPU, self._year)
             bosons = getBosons(events.GenPart)

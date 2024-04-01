@@ -1,5 +1,5 @@
 '''
-Submit jobs for muon control region
+To submit processing jobs, do:
 
 ssh -L 8787:localhost:8787 dhoang@cmslpc128.fnal.gov
 grid-proxy-init -valid 1000:00
@@ -25,7 +25,7 @@ sys.path.append('/srv')
 from boostedhiggs import VHBB_MuonCR_Processor
 tag = "vhbb_v7"
 syst = True
-run_list = ['SingleMuonData']
+ignore_list = ['QCDbEnriched', 'QCDBGenFilter', 'JetHT2016Data', 'HtoBB'] #Sample to ignore processing for now
 
 from distributed import Client
 from lpcjobqueue import LPCCondorCluster
@@ -47,7 +47,6 @@ cluster = LPCCondorCluster(
 )
 
 year = sys.argv[1]
-ignore_list = ['QCDbEnriched', 'QCDBGenFilter', 'JetHT2016Data'] #Sample to ignore processing for now
 
 out_path = "output/coffea/{}/{}/".format(tag,year)
 os.system('mkdir -p  %s' %out_path)
@@ -68,12 +67,16 @@ with Client(cluster) as client:
         for this_file in infiles:
             index = ''.join(this_file.split("_")[1:]).split(".json")[0]
             outfile = out_path + '{}_dask_{}.coffea'.format(year, index)
+            
+            if index in ignore_list:
+                print("{} is in ingore list, skipping ...".format(index))
+                continue
     
             if os.path.isfile(outfile):
                 print("File " + outfile + " already exists. Skipping.")
                 continue 
             
-            if index in run_list:
+            else:
                 print("Begin running " + outfile)
                 print(datetime.now())
 

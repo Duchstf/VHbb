@@ -343,9 +343,9 @@ class VHbbProcessorV7(processor.ProcessorABC):
 
         # Only consider first 4 jets to be consistent with old framework  
         jets = jets[:, :4]
-        dR = abs(jets.delta_r(candidatejet))
-        second_jet_dR = abs(secondjet.delta_r(candidatejet))
-        ak4_away = jets[dR > 0.8]
+        dphi = abs(jets.delta_phi(candidatejet))
+        ak4_away = jets[dphi > 0.8]
+        selection.add('ak4btagMedium08', ak.max(ak4_away.btagDeepB, axis=1, mask_identity=False) > self._btagSF._btagwp) 
         
         #Count the number of ak4 jets that are away
         ak4_jets_events = ak4_jets(events)

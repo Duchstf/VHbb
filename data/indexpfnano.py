@@ -113,8 +113,6 @@ folders_to_index = [
     "/store/user/lpcpfnano/cmantill/v2_3/2018/SingleTop"
     
     # For muon control region.
-    # TODO: Not really sure what's up with these samples, need to check with rahgav
-    # TODO: His original code commented out 2016 and 2017 
     "/store/user/lpcpfnano/dryu/v2_2_1/2016/SingleMu2016",
     "/store/user/lpcpfnano/dryu/v2_2_1/2017/SingleMu2017",
     "/store/user/lpcpfnano/dryu/v2_2/2018/SingleMu2018",
