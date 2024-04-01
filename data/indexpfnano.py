@@ -147,7 +147,7 @@ ignore_subsamples = ["SingleMuon_Run2016B_ver1_HIPM"]
 
 #TODO: Need to check whether I need this whole framework.
 #TODO: Not exactly sure what this is doing here and whether the same thing should be done for VH
-for pyear in ["2016", "2016APV"]:
+for pyear in ["2016", "2016APV", "2017", "2018"]:
     
     print("Processing for year: ", pyear)
     

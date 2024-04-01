@@ -25,6 +25,8 @@ sys.path.append('/srv')
 from boostedhiggs import VHbbProcessorV7 as vhbb_processor
 tag = "vhbb_v7"
 syst = True
+year = sys.argv[1]
+ignore_list = ['QCDbEnriched', 'QCDBGenFilter', 'JetHT2016Data', f'SingleMu{year}Data'] #Sample to ignore processing for now
 
 from distributed import Client
 from lpcjobqueue import LPCCondorCluster
@@ -44,9 +46,6 @@ cluster = LPCCondorCluster(
     memory="8GB"
 #    image="coffeateam/coffea-dask:0.7.11-fastjet-3.3.4.0rc9-ga05a1f8",
 )
-
-year = sys.argv[1]
-ignore_list = ['QCDbEnriched', 'QCDBGenFilter', 'JetHT2016Data'] #Sample to ignore processing for now
 
 out_path = "output/coffea/{}/{}/".format(tag,year)
 os.system('mkdir -p  %s' %out_path)
