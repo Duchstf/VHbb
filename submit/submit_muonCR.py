@@ -8,7 +8,7 @@ grid-proxy-init -valid 1000:00
 
 And then
 
-python submit/submit-dask.py 2017 > dask.out 2>&1
+python submit/submit_muonCR.py 2017 > dask.out 2>&1
 '''
 
 import os, sys
@@ -24,7 +24,7 @@ sys.path.append('/srv')
 #Import processor
 from boostedhiggs import VHBB_MuonCR_Processor
 year = sys.argv[1]
-tag = "vhbb_v7"
+tag = "vhbb_v7_muonCR"
 syst = True
 ignore_list = [ 'HToBB',
                 'QCDbEnriched',

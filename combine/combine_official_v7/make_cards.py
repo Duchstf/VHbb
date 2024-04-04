@@ -13,6 +13,7 @@ from rhalphalib import AffineMorphTemplate, MorphHistW2
 rl.util.install_roofit_helpers()
 
 eps=0.0000001
+do_systematics = True
 do_muon_CR = False
 
 '''
@@ -68,6 +69,54 @@ def get_template(sName, bb_pass, V_bin, obs, syst, muon=False):
         sumw2 += [h.GetBinError(i)*h.GetBinError(i)]
 
     return (np.array(sumw), obs.binning, obs.name, np.array(sumw2))
+
+def shape_to_num(var, nom, clip=1.5):
+    """
+    Don't let any systematics get bigger than 50%
+    """
+    nom_rate = np.sum(nom)
+    var_rate = np.sum(var)
+
+    if abs(var_rate/nom_rate) > clip:
+        var_rate = clip*nom_rate
+
+    if var_rate < 0:
+        var_rate = 0
+
+    return var_rate/nom_rate
+
+def smass(sName):
+    if sName in ['ggF','VBF','WH','ZH','ttH', 'VBFDipoleRecoilOn']:
+        _mass = 125.
+    elif sName in ['Wjets','EWKW','ttbar','singlet','VV']:
+        _mass = 80.379
+    elif sName in ['Zjets','Zjetsbb','EWKZ','EWKZbb']:
+        _mass = 91.
+    else:
+        raise ValueError("What is {}".format(sName))
+    return _mass
+
+def passfailSF(sName, bb_pass, V_bin, obs, mask, SF=1, SF_unc_up=0.1, SF_unc_down=-0.1, muon=False):
+    """
+    Return (SF, SF_unc) for a pass/fail scale factor.
+    """
+    if bb_pass:
+        return SF, 1. + SF_unc_up / SF, 1. + SF_unc_down / SF
+    else:
+        _pass = get_template(sName, 1, V_bin, obs=obs, syst='nominal', muon=muon)
+        _pass_rate = np.sum(_pass[0]*mask)
+
+        _fail = get_template(sName, 0, V_bin, obs=obs, syst='nominal', muon=muon)
+        _fail_rate = np.sum(_fail[0]*mask)
+
+        if _fail_rate > 0:
+            _sf = 1 + (1 - SF) * _pass_rate / _fail_rate
+            _sfunc_up = 1. - SF_unc_up * (_pass_rate / _fail_rate)
+            _sfunc_down = 1. - SF_unc_down * (_pass_rate / _fail_rate)
+
+            return _sf, _sfunc_up, _sfunc_down
+        else:
+            return 1, 1, 1
 
 def vh_rhalphabet(tmpdir):
     """ 
@@ -131,7 +180,7 @@ def vh_rhalphabet(tmpdir):
     
     #Particle Net BB systematics
     #TODO: Put the scale factor and uncertainty into a json file and read it afterwards
-    sys_ParticleNetEffBB = rl.NuisanceParameter('CMS_eff_bb_{}'.format(year), 'lnN')
+    sys_PNeffbb = rl.NuisanceParameter('CMS_eff_bb_{}'.format(year), 'lnN')
     
     #n2 uncertainty, derived
     sys_veff = rl.NuisanceParameter('CMS_hbb_veff_{}'.format(year), 'lnN')
@@ -181,6 +230,9 @@ def vh_rhalphabet(tmpdir):
         
     with open("files/Vmass.json", "r") as f:   # Unpickling
         VmassBins = np.asarray(json.load(f))
+        
+    with open('files/sf.json') as f:
+        SF = json.load(f)
     
     print("Current mass bins: ", VmassBins)
     nVmass = len(VmassBins) - 1
@@ -382,16 +434,90 @@ def vh_rhalphabet(tmpdir):
                 # Doesn't matter since it's defined in combine
                 if sName in sigs: stype = rl.Sample.SIGNAL
                 else: stype = rl.Sample.BACKGROUND
+                
+                #Is there corrections I need to apply to the nomial template 
+                MORPHNOMINAL = True
+                def smorph(templ):      
+                    if templ is None:
+                        return None                  
+                    
+                    # Not applying them for QCD, but anything that has a peak
+                    # Do not apply to data 
+                    # SF was derived in control region with W peak
+                    # We want the shape to be proportional to the peak mass. 
+                    if MORPHNOMINAL and sName not in ['QCD']:
+                        return MorphHistW2(templ).get(shift=SF[year]['shift_SF']/smass('Wjets') * smass(sName),
+                                                        smear=SF[year]['smear_SF'])
+                    else:
+                        return templ
+                templ = smorph(templ)
             
                 sample = rl.TemplateSample(ch.name + '_' + sName, stype, templ)
 
-                # You need one systematic
+                # Experimental systematics #######################################
                 sample.setParamEffect(sys_lumi_uncor, lumi[year]['uncorrelated'])
                 sample.setParamEffect(sys_lumi_cor_161718, lumi[year]['correlated'])
                 sample.setParamEffect(sys_lumi_cor_1718, lumi[year]['correlated_20172018'])
+                
+                if do_systematics:
+
+                        sample.autoMCStats(lnN=True) 
+                            
+                        sample.setParamEffect(sys_eleveto, 1.005) #scafe factors, up and down are same in 1 number
+                        sample.setParamEffect(sys_muveto, 1.005)
+                        sample.setParamEffect(sys_tauveto, 1.05)
+                        
+                        for sys in exp_systs:
+                            
+                            # Apply these systematics as if they are constant in the softdrop mass.
+                            # Can have different sizes of the uncertainty in Vmass bin, could be they are flat as well.
+                            syst_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst=sys+'Up')[0]
+                            syst_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst=sys+'Down')[0]
+
+                            eff_up = shape_to_num(syst_up,nominal)
+                            eff_do = shape_to_num(syst_do,nominal)
+
+                            sample.setParamEffect(sys_dict[sys], eff_up, eff_do) #can also use eff_up, eff_do
+                            
+                        # Scale and Smear
+                        mtempl = AffineMorphTemplate(templ) #Ask andrzej 
+
+                        if sName not in ['QCD']:
+                            # shift
+                            realshift = SF[year]['shift_SF_ERR']/smass('Wjets') * smass(sName)
+                            _up = mtempl.get(shift=realshift)
+                            _down = mtempl.get(shift=-realshift)
+                            if badtemp_ma(_up[0]) or badtemp_ma(_down[0]):
+                                print("Skipping sample {}, scale systematic would be empty".format(sName))
+                            else:
+                                sample.setParamEffect(sys_scale, _up, _down, scale=1)
+
+                            # smear
+                            _up = mtempl.get(smear=1 + SF[year]['smear_SF_ERR'])
+                            _down = mtempl.get(smear=1 - SF[year]['smear_SF_ERR'])
+                            if badtemp_ma(_up[0]) or badtemp_ma(_down[0]):
+                                print("Skipping sample {}, scale systematic would be empty".format(sName))
+                            else:
+                                sample.setParamEffect(sys_smear, _up, _down)             
+                # END if do_systematics
+                
+                # Add ParticleNetSFs last!
+                if sName in ['ggF','VBF','WH','ZH','ggZH','ttH','Zjetsbb']:
+                    sf, sfunc_up, sfunc_down = passfailSF(sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, mask=mask,
+                                                          SF=1, SF_unc_up=SF[year]['BB_SF_UP'], SF_unc_down=SF[year]['BB_SF_DOWN'])
+                    sample.scale(sf)
+                    if do_systematics:
+                        sample.setParamEffect(sys_PNeffbb, sfunc_up, sfunc_down)
+
+                # N2DDT SF (V SF)                                                     
+                sample.scale(SF[year]['V_SF'])
+                if do_systematics:
+                    effect = 1.0 + SF[year]['V_SF_ERR'] / SF[year]['V_SF']
+                    sample.setParamEffect(sys_veff,effect)
 
                 ch.addSample(sample)
-
+                # END Experimental systematics #######################################
+                 
             data_obs = get_template(sName='data', bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='nominal')
             ch.setObservation(data_obs, read_sumw2=True)
     

@@ -58,7 +58,7 @@ def ak4_jets(events):
     return jets
 
 
-class VHbbProcessorV7(processor.ProcessorABC):
+class VHBB_MuonCR_Processor(processor.ProcessorABC):
     
     def __init__(self,
                  year='2017',
@@ -460,7 +460,7 @@ class VHbbProcessorV7(processor.ProcessorABC):
             
         #!LIST OF THE SELECTIONS APPLIED
         regions = {
-            'signal': ['trigger', 'lumimask', 'metfilter', 'jet1kin', 'jet2kin', 'jetid', 'jetacceptance', 'n2ddt', 'met', 'noleptons'],
+            #'signal': ['trigger', 'lumimask', 'metfilter', 'jet1kin', 'jet2kin', 'jetid', 'jetacceptance', 'n2ddt', 'met', 'noleptons'],
             'muoncontrol': ['muontrigger','lumimask','metfilter','minjetkinmu', 'jetid', 'n2ddt','ak4btagMedium08', 'onemuon', 'muonkin', 'muonDphiAK8'],
         }
 
