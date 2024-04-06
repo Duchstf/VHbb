@@ -172,10 +172,15 @@ void draw(int Vmass_bin, bool bb_pass,  bool log=true){
   Zjetsbb->SetFillColor(kBlue-9);
 
   /* W + jets */
-  TH1D* Wjets = (TH1D*)f->Get((hist_dir+"Wjets").c_str());
-  Wjets->Scale(mc_scale);
-  Wjets->SetLineColor(kBlack);
-  Wjets->SetFillColor(kRed+1);
+  TH1D* WjetsUM = (TH1D*)f->Get((hist_dir+"WjetsUM").c_str());
+  WjetsUM->Scale(mc_scale);
+  WjetsUM->SetLineColor(kBlack);
+  WjetsUM->SetFillColor(kGreen-8);
+
+  TH1D* WjetsQQ = (TH1D*)f->Get((hist_dir+"WjetsQQ").c_str());
+  WjetsQQ->Scale(mc_scale);
+  WjetsQQ->SetLineColor(kBlack);
+  WjetsQQ->SetFillColor(kRed+1);
 
   /* ttbar */
   TH1D* ttbar = (TH1D*)f->Get((hist_dir+"ttbar").c_str());
@@ -212,14 +217,16 @@ void draw(int Vmass_bin, bool bb_pass,  bool log=true){
     bkg->Add(Zjets);
     bkg->Add(Zjetsbb);
     bkg->Add(ttbar);
-    bkg->Add(Wjets);
+    bkg->Add(WjetsUM);
+    bkg->Add(WjetsQQ);
     bkg->Add(qcd);
   }
   else{
     bkg->Add(qcd);
     bkg->Add(ttbar);
     bkg->Add(VV);
-    bkg->Add(Wjets);
+    bkg->Add(WjetsUM);
+    bkg->Add(WjetsQQ);
     bkg->Add(Zjets);
     bkg->Add(Zjetsbb);
     bkg->Add(singlet);
@@ -227,7 +234,8 @@ void draw(int Vmass_bin, bool bb_pass,  bool log=true){
   }
 
   cout << "QCD: "     << qcd->Integral()     << endl;
-  cout << "Wjets: "   << Wjets->Integral()   << endl;
+  cout << "Wjets UnMatched: "   << WjetsUM->Integral()   << endl;
+  cout << "Wjets QQ: "   << WjetsQQ->Integral()   << endl;
   cout << "Zjets: "   << Zjets->Integral()   << endl;
   cout << "Zjetsbb: "   << Zjetsbb->Integral()   << endl;
   cout << "ttbar: "   << ttbar->Integral()   << endl;
@@ -249,7 +257,7 @@ void draw(int Vmass_bin, bool bb_pass,  bool log=true){
   data_obs->Draw("pesame");
   data_obs->Draw("axissame");
   
-  double x1=.6, y1=.88;
+  double x1=.57, y1=.88;
   TLegend* leg = new TLegend(x1,y1,x1+.3,y1-.3);
   leg->SetBorderSize(0);
   leg->SetFillStyle(0);
@@ -259,7 +267,8 @@ void draw(int Vmass_bin, bool bb_pass,  bool log=true){
   leg->AddEntry(data_obs,"Data","p");
   leg->AddEntry(TotalBkg,"Bkg. Unc.","f");
   leg->AddEntry(qcd,"QCD","f");
-  leg->AddEntry(Wjets,"W","f");
+  leg->AddEntry(WjetsUM,"W(unmatched)","f");
+  leg->AddEntry(WjetsQQ,"W(qq)","f");
   leg->AddEntry(ttbar,"t#bar{t}","f");
   leg->AddEntry(Zjets,"Z(qq)","f");
   leg->AddEntry(Zjetsbb,"Z(bb)","f");

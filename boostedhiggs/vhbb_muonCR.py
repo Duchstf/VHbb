@@ -136,10 +136,9 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
                 hist.Cat('region', 'Region'),
                 hist.Cat('systematic', 'Systematic'),
                 hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
-                hist.Bin('msd2', r'Jet 2 $m_{sd}$', [40., 68.,  75.,  82.,  89.,  96., 103., 110., 201.]),
                 hist.Bin('bb1', r'Jet 1 Paticle Net B Score', bb_bins),
                 hist.Bin('genflavor1', 'Gen. jet 1 flavor', [1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
-                hist.Bin('pt1', r'Jet 1 pt', [0, 250, 450, 650]),
+                hist.Bin('pt1', r'Jet 1 pt', [400, 450, 650, 1200]),
                 hist.Bin('njets', r'Number of AK4 Jets', [0, 5, 6, 25]),
             )
         }
@@ -307,13 +306,12 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
             & (secondjet.pt < 1200)
             & (secondjet.msdcorr < 201.)
         )
+        
         selection.add('jetid',
                       candidatejet.isTight
-                      & secondjet.isTight
         )
         selection.add('n2ddt',
-                      (candidatejet.n2ddt < 0.)
-                      & (secondjet.n2ddt < 0.)
+                      candidatejet.n2ddt < 0.
         )
 
         # Selections for muon control region
@@ -487,7 +485,6 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
                 region=region,
                 systematic=sname,
                 msd1=normalize(msd1_matched, cut),
-                msd2=normalize(msd2_matched, cut),
                 bb1=normalize(bb1, cut),
                 genflavor1=normalize(genflavor1, cut),
                 pt1=normalize(candidatejet.pt, cut),

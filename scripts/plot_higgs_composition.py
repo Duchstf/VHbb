@@ -2,9 +2,9 @@ from imports import *
 
 def main():
     
-    pickle_path = '/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/pickle/vhbb_official_v4/2017/ParticleNet_msd.pkl' #Need to be defined manually
-    sig_0 =  pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('systematic', 'nominal').sum('genflavor1', 'msd1', overflow='all')
-    sig = sig_0.integrate('pt1', int_range=slice(450., None), overflow='over').integrate('msd2',int_range=slice(68.,103.))
+    pickle_path = '/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/pickle/vhbb_v7/2017/ParticleNet_msd.pkl' #Need to be defined manually
+    sig_0 =  pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('systematic', 'nominal').sum('genflavor1', 'msd1', overflow='under')
+    sig = sig_0.integrate('pt1', int_range=slice(450., None), overflow='over').integrate('msd2',int_range=slice(68.,110.)).integrate('njets', int_range=slice(0,5.))
     
     bbthr = 0.9870
     

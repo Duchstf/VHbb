@@ -88,7 +88,7 @@ def shape_to_num(var, nom, clip=1.5):
 def smass(sName):
     if sName in ['ggF','VBF','WH','ZH','ttH', 'VBFDipoleRecoilOn']:
         _mass = 125.
-    elif sName in ['Wjets','EWKW','ttbar','singlet','VV']:
+    elif sName in ['Wjets', 'WjetsUM','WjetsQQ','EWKW','ttbar','singlet','VV']:
         _mass = 80.379
     elif sName in ['Zjets','Zjetsbb','EWKZ','EWKZbb']:
         _mass = 91.
@@ -226,7 +226,6 @@ def vh_rhalphabet(tmpdir):
     
     with open("files/samples.json", "r") as f:   # Unpickling
         samples = json.load(f)
-        samples += ['Zjetsbb', 'Wjetsbb']
         
     with open("files/Vmass.json", "r") as f:   # Unpickling
         VmassBins = np.asarray(json.load(f))
