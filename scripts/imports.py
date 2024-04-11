@@ -13,8 +13,8 @@ params = {'legend.fontsize': 'medium',
 pylab.rcParams.update(params)
 
 #line thickness
-import matplotlib as mpl
-mpl.rcParams['lines.linewidth'] = 5
+# import matplotlib as mpl
+# mpl.rcParams['lines.linewidth'] = 5
 
 from coffea import hist
 import pickle
