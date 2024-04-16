@@ -11,7 +11,7 @@ elif [[ "$PWD" == *"2018"* ]]; then
 fi
 
 echo "VH SIGNIFICANCE"
-combine -M Significance -m 125 --signif output/testModel${year}/model_combined.root --cminDefaultMinimizerStrategy 0 -t -1 --redefineSignalPOI rVH --setParameters rVH=1
+combine -M Significance -m 125 --signif output/testModel${year}/model_combined.root --cminDefaultMinimizerStrategy 0 -t -1 --redefineSignalPOI rVH --setParameters rVH=1 --verbose 9
 
 #Maybe freeze the qcd nuisance parameters
 #nuisance parameters make analysis less sensitive

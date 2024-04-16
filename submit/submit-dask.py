@@ -22,8 +22,8 @@ from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
 sys.path.append('/srv')
 
 #Import processor
-from boostedhiggs import VHbbProcessorV9 as vhbb_processor
-tag = "vhbb_v9"
+from boostedhiggs import VHbbProcessorV10 as vhbb_processor
+tag = "vhbb_v10"
 syst = False
 year = sys.argv[1]
 ignore_list = ['QCDbEnriched', 'QCDBGenFilter', 'JetHT2016Data', f'SingleMu{year}Data'] #Sample to ignore processing for now

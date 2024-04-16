@@ -30,6 +30,9 @@ echo "finish cleaning"
 #Just to tie the path for the symbolic link to work
 pickle_dir="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output"
 
+#Insert the qcd threshold into make hists
+sed -i "s/QCD2_THRES =.*/QCD2_THRES = $2/g" make_hists.py
+
 #Make the histograms
 singularity exec -B ${PWD}:/srv -B $pickle_dir --pwd /srv /cvmfs/unpacked.cern.ch/registry.hub.docker.com/coffeateam/coffea-dask:latest python make_hists.py $1
 
@@ -41,6 +44,9 @@ python make_cards.py $1 > out_make_cards.txt
 
 #Run the combine jobs
 cd $1
+ln -s -f ../year_scripts/*.C .
+ln -s -f ../year_scripts/*.sh .
+
 ./make_workspace.sh
-./exp_significance.sh > significance.txt
+./exp_significance.sh > ../significance_files/significance_$2.txt
 

@@ -43,6 +43,8 @@ samples_save = [x for x in samples + ['Zjetsbb', 'WjetsUM', 'WjetsQQ'] if x != '
 
 btag_SF_samples = ['Wjets', 'Zjets']
 
+QCD2_THRES = 0.1002
+
 def check_missing(pickle_hist):
         
     #Print sample names
@@ -98,10 +100,8 @@ def main():
         raise FileNotFoundError("You need to link the pickle file (using absolute paths)")
 
     #Read in the pickle file
-    pickle_hist =  pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('qcd2', slice(0., 0.0802))
+    pickle_hist =  pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('qcd2', slice(0., QCD2_THRES))
     check_missing(pickle_hist)
-    
-    print(pickle_hist)
     
     #Save a list of mass categories to a file to be used in make_cards
     with open("files/Vmass.json", "w") as f:   #Pickling
