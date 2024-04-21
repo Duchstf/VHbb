@@ -39,7 +39,7 @@ samples = ['QCD','WH','ZH','VV',
             ]
 
 #Devide Wjets into unmatched and matched components
-samples_save = [x for x in samples + ['Zjetsbb', 'WjetsUM', 'WjetsQQ'] if x != 'Wjets']
+samples_save = [x for x in samples + ['Zjetsbb', 'WjetsQQ'] if x != 'Wjets']
 
 btag_SF_samples = ['Wjets', 'Zjets']
 
@@ -98,7 +98,7 @@ def main():
         raise FileNotFoundError("You need to link the pickle file (using absolute paths)")
 
     #Read in the pickle file
-    pickle_hist =  pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('pt1', int_range=slice(450., None), overflow='over').integrate('njets', int_range=slice(0,5))
+    pickle_hist =  pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('pt1', int_range=slice(650., None), overflow='over').integrate('njets', int_range=slice(0,5))
     check_missing(pickle_hist)
     
     #Save a list of mass categories to a file to be used in make_cards
@@ -131,23 +131,19 @@ def main():
                         fout[f"Vmass_{i}_fail_{p}_{s}"] = hist.export1d(hfail.integrate('systematic',s))
                 
             elif p == 'Wjets': #Divide Wjets into unmatched and matched
-                hpass_unmatched = sig.integrate('bb1',int_range=slice(bbthr,1.)).integrate('genflavor1', int_range=slice(None,1), overflow='under').integrate('process',p)
-                hfail_unmatched = sig.integrate('bb1',int_range=slice(0.,bbthr)).integrate('genflavor1', int_range=slice(None,1), overflow='under').integrate('process',p)
                 
                 hpass_qq = sig.integrate('bb1',int_range=slice(bbthr,1.)).integrate('genflavor1', int_range=slice(1, None)).integrate('process',p)
                 hfail_qq = sig.integrate('bb1',int_range=slice(0.,bbthr)).integrate('genflavor1', int_range=slice(1, None)).integrate('process',p)
                 
-                for s in hpass_unmatched.identifiers('systematic'):
-                    fout[f"Vmass_{i}_pass_{p + 'UM'}_{s}"] = hist.export1d(hpass_unmatched.integrate('systematic',s))
-                    fout[f"Vmass_{i}_fail_{p + 'UM'}_{s}"] = hist.export1d(hfail_unmatched.integrate('systematic',s))
+                for s in hpass_qq.identifiers('systematic'):
                     
                     fout[f"Vmass_{i}_pass_{p + 'QQ'}_{s}"] = hist.export1d(hpass_qq.integrate('systematic',s))
                     fout[f"Vmass_{i}_fail_{p + 'QQ'}_{s}"] = hist.export1d(hfail_qq.integrate('systematic',s))
                 
             else: #Divide Zjets into Z(qq) and Z(bb)
                 
-                hpass = sig.integrate('genflavor1', int_range=slice(None,3), overflow='under').integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',p)
-                hfail = sig.integrate('genflavor1', int_range=slice(None,3), overflow='under').integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',p)
+                hpass = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',p)
+                hfail = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',p)
                 
                 hpass_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',p)
                 hfail_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',p)

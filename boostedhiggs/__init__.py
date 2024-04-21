@@ -5,6 +5,7 @@ from .vhbb_v9_VQCD import VHbbProcessorV9
 from .vhbb_muonCR import VHBB_MuonCR_Processor
 from .vhbb_ddt_map import DDT
 from .vhbb_v10_2prong_arbitration import VHbbProcessorV10
+from .vhbb_official_v11 import VHbbProcessorV11
 
 __all__ = [
     '__version__',

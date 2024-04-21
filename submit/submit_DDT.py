@@ -1,7 +1,7 @@
 '''
 To submit processing jobs, do something like
 
-ssh -L 8787:localhost:8787 dhoang@cmslpc125.fnal.gov
+ssh -L 8787:localhost:8787 dhoang@cmslpc123.fnal.gov
 grid-proxy-init -valid 1000:00
 
 ./shell

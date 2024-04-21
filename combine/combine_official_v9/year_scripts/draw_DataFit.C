@@ -172,11 +172,6 @@ void draw(int Vmass_bin, bool bb_pass,  bool log=true){
   Zjetsbb->SetFillColor(kBlue-9);
 
   /* W + jets */
-  TH1D* WjetsUM = (TH1D*)f->Get((hist_dir+"WjetsUM").c_str());
-  WjetsUM->Scale(mc_scale);
-  WjetsUM->SetLineColor(kBlack);
-  WjetsUM->SetFillColor(kGreen-8);
-
   TH1D* WjetsQQ = (TH1D*)f->Get((hist_dir+"WjetsQQ").c_str());
   WjetsQQ->Scale(mc_scale);
   WjetsQQ->SetLineColor(kBlack);
@@ -217,7 +212,6 @@ void draw(int Vmass_bin, bool bb_pass,  bool log=true){
     bkg->Add(Zjets);
     bkg->Add(Zjetsbb);
     bkg->Add(ttbar);
-    bkg->Add(WjetsUM);
     bkg->Add(WjetsQQ);
     bkg->Add(qcd);
   }
@@ -225,7 +219,6 @@ void draw(int Vmass_bin, bool bb_pass,  bool log=true){
     bkg->Add(qcd);
     bkg->Add(ttbar);
     bkg->Add(VV);
-    bkg->Add(WjetsUM);
     bkg->Add(WjetsQQ);
     bkg->Add(Zjets);
     bkg->Add(Zjetsbb);
@@ -234,7 +227,6 @@ void draw(int Vmass_bin, bool bb_pass,  bool log=true){
   }
 
   cout << "QCD: "     << qcd->Integral()     << endl;
-  cout << "Wjets UnMatched: "   << WjetsUM->Integral()   << endl;
   cout << "Wjets QQ: "   << WjetsQQ->Integral()   << endl;
   cout << "Zjets: "   << Zjets->Integral()   << endl;
   cout << "Zjetsbb: "   << Zjetsbb->Integral()   << endl;
@@ -267,7 +259,6 @@ void draw(int Vmass_bin, bool bb_pass,  bool log=true){
   leg->AddEntry(data_obs,"Data","p");
   leg->AddEntry(TotalBkg,"Bkg. Unc.","f");
   leg->AddEntry(qcd,"QCD","f");
-  leg->AddEntry(WjetsUM,"W(unmatched)","f");
   leg->AddEntry(WjetsQQ,"W(qq)","f");
   leg->AddEntry(ttbar,"t#bar{t}","f");
   leg->AddEntry(Zjets,"Z(qq)","f");

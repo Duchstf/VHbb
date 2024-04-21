@@ -58,4 +58,6 @@ ln -s -f ../year_scripts/*.sh .
 # #Produce the relevant plots
 root -b -q draw_DataFit.C
 
+combine_postfits -i fitDiagnostics.root -o plots/test_plot --MC --style ../files/style_D.yml --onto qcd --sigs VH --bkgs qcd,ttbar,singlet,WjetsQQ,Zjets,Zjetsbb,VV,H  --rmap 'VH:rVH' --project-signals 3 --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p
+
 cd ../

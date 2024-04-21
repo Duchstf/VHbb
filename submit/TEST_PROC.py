@@ -14,18 +14,18 @@ import os,sys
 sys.path.append('/srv')
 
 fileset = {
-    "ZJetsToQQ_HT-600to800": [
-         "root://cmsxrootd.fnal.gov//store/user/lpcpfnano/rkansal/v2_3/2017/ZJetsToQQ/ZJetsToQQ_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8/ZJetsToQQ_HT-600to800/220705_160538/0000/nano_mc2017_39.root"
+    "QCD_HT300to500": [
+         "root://cmsxrootd.fnal.gov//store/user/lpcpfnano/cmantill/v2_3/2017/QCD/QCD_HT300to500_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT300to500/220808_164621/0000/nano_mc2017_103.root"
     ],
 }
 
 #autoreload forces the kernel to reload the processor to include any new changes
-from boostedhiggs import VHbbProcessorV10
+from boostedhiggs import DDT as vhbb_processor
 
 import time
 tstart = time.time()
 
-p = VHbbProcessorV10(year='2017', jet_arbitration='T_bvc')
+p = vhbb_processor(year='2017', jet_arbitration='T_bvc')
 
 #Run Coffea code using uproot
 dummy = processor.run_uproot_job(
