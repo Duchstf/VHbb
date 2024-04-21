@@ -24,7 +24,7 @@ lumis['2016'] = 35.9
 lumis['2017'] = 41.5
 lumis['2018'] = 59.9
 
-def plot_dist(h):
+def plot_dist(h, year):
     
     #Plot pt distribution
     h_pt = h.sum('qcd', 'rho')
@@ -33,10 +33,7 @@ def plot_dist(h):
     labels_pt[labels_pt.index('None')] = 'QCD' # Modify the labels list as desired
     ax_pt.legend(handles_pt, labels_pt) # Set the new labels
     plt.xlabel(r'Jet 1 $p_T$ [GeV]')
-    # plt.xlim([450,1350])
-    # plt.ylim([0., 2e+6])
-    plt.show()
-    plt.savefig("plots/pt_dist.pdf")
+    plt.savefig(f"plots/{year}_pt_dist.pdf")
     
     #Plot qcd distribution
     plt.figure()
@@ -47,8 +44,7 @@ def plot_dist(h):
     ax_qcd.legend(handles, labels) # Set the new labels
     plt.xlabel(r'ParticleNetMD QCD Scores [GeV]')
     plt.xlim([0,1])
-    plt.show()
-    plt.savefig("plots/qcd_dist.pdf")
+    plt.savefig(f"plots/{year}_qcd_dist.pdf")
     
     #Plot rho distribution
     plt.figure()
@@ -59,8 +55,7 @@ def plot_dist(h):
     ax_rho.legend(handles, labels) # Set the new labels
     plt.xlabel(r"$\rho=ln(m^2_{reg}/p_T^2)$")
     plt.xlim([-7,-0.5])
-    plt.show()
-    plt.savefig("plots/rho_dist.pdf")
+    plt.savefig(f"plots/{year}_rho_dist.pdf")
     
     #Plot 2D distributions of jet pt and qcd scores
     plt.figure()
@@ -68,7 +63,7 @@ def plot_dist(h):
     hist.plot2d(h_pt_qcd, xaxis="qcd")
     plt.ylabel(r'Jet $p_T$ [GeV] ')
     plt.xlabel(r'ParticleNet MD QCD Scores')
-    plt.savefig(f'plots/pt_qcd_dist.pdf', bbox_inches='tight')
+    plt.savefig(f'plots/{year}_pt_qcd_dist.pdf', bbox_inches='tight')
     
     #Plot 2D distributions of jet pt and qcd scores
     plt.figure()
@@ -76,60 +71,47 @@ def plot_dist(h):
     hist.plot2d(h_rho_pt, xaxis="rho")
     plt.ylabel(r'Jet $p_T$ [GeV] ')
     plt.xlabel(r"$\rho=ln(m^2_{reg}/p_T^2)$")
-    plt.savefig(f'plots/pt_rho_dist.pdf', bbox_inches='tight')
+    plt.savefig(f'plots/{year}_pt_rho_dist.pdf', bbox_inches='tight')
 
-def derive_ddt(h):
+def derive_ddt(h, year, eff=0.10):
     print("Total QCD Yield (ignoring overflow): ", h.sum('pt', 'qcd', 'rho').values()[()])
+    qcd_cuts = h.axis('qcd').edges()
+    pt_edges = h.axis('pt').edges()
+    rho_edges = h.axis('rho').edges()
     
-    # qcd_maxval_temp = np.cumsum(val_QCD, axis=2)
-    # qcd_maxval = qcd_maxval_temp[:, :, -1]
-    # norma = qcd_maxval_temp / np.maximum(1e-10, qcd_maxval[:, :, np.newaxis])
-    # hist_y_QCD = deepcopy(ddthist)
-    # template = hist_y_QCD.sum('n2b1', )
-    # hist_y_QCD.clear()
-    # hist_y_QCD._sumw = {():norma}
+    h_values = h.values()[()] #3D array of (rho, pt, and qcd)
+    cdf0 = np.cumsum(h_values, axis=2) #cdf along the qcd cut values
+    qcd_yield = np.sum(h_values, axis=2)[:, :, np.newaxis] #qcd yield in each rho, pt bin
+    cdf = cdf0/qcd_yield #normalize the cdf by the total number of qcd events within that rho, pt bins
+    
+    #Determine the index of the cut that gives QCD eff
+    index_qcd_cut =  np.apply_along_axis(lambda x: x.searchsorted(eff), axis = 2, arr = cdf)
+    index_to_cut_value = lambda x: qcd_cuts[x]
+    qcd_cuts = index_to_cut_value(index_qcd_cut) #This is the ddt map
+    print("Max QCD Cut: ", np.max(qcd_cuts))
+    print("Min QCD Cut: ", np.min(qcd_cuts))
+    
+    #Display the ddt map
+    plt.figure()
+    
+    # Calculate extent: [xmin, xmax, ymin, ymax]
+    # We use x_values[0], x_values[-1], y_values[0], and y_values[-1]
+    # We adjust the max values by adding the step size to align with the pixel edges
+    x_step = rho_edges[1] - rho_edges[0]
+    y_step = pt_edges[1] - pt_edges[0]
+    extent = [rho_edges[0], rho_edges[-1] + x_step, pt_edges[0], pt_edges[-1] + y_step]
+    im = plt.imshow(qcd_cuts, cmap='viridis', aspect='auto', extent=extent, vmin=0., vmax=1.)  # Display the data as an image, 'viridis' is a color map
 
-    # # Since we want to keep 26% of the background, our efficiency is 74%
+    # Add a colorbar to show the color scale
+    plt.colorbar(im, label=f'QCD Cuts at {int(eff*100)} %')
+    
+    # Add labels and title if desired
+    plt.xlabel(r"$\rho=ln(m^2_{reg}/p_T^2)$")
+    plt.ylabel(r'$p_T$ [GeV]')
+    hep.cms.text(f"V(qq)H(bb) DDT Map, {year}")
 
-    # eff=0.26
-    # res = np.apply_along_axis(lambda norma: norma.searchsorted(eff), axis = 2, arr = norma)
-    # res[res>1000]=0
-
-    # def bineval(a):
-    #     return hist_y_QCD.identifiers("n2b1",overflow='allnan')[a].lo
-
-    # binfunc = np.vectorize(bineval)
-    # qmap = binfunc(res)
-
-    # qmap[qmap == -math.inf] = 0
-
-    # template.clear()
-    # template._sumw = {():qmap}
-    # template.label = 'Cut for {}'.format(np.round((1 - eff), 2)) + ' $N_2^1$ efficiency'
-
-    # fig, ax = plt.subplots(figsize=(12, 10))
-
-    # hist.plot2d(template.sum('process'), xaxis = "rho1", ax=ax, patch_opts={'vmax': 0.4, 'vmin': 0.15, 'cmap': 'jet'})
-
-    # template_data = template
-
-    # plt.text(1., 1., f"{year}{mode}",
-    #     horizontalalignment='right',
-    #     verticalalignment='bottom',
-    #     transform=ax.transAxes
-    # )
-
-    # plt.text(0., 1., f"Multijet",
-    #     horizontalalignment='left',
-    #     verticalalignment='bottom',
-    #     transform=ax.transAxes
-    # )
-
-    # ax.set_xlim(-6, -2.1)
-    # ax.set_ylim(450, 1200)
-
-    # fig.savefig(f"../plots/ddt/{era}/png/ddtmap_n2b1_{year}{mode}_{sample}_{update}.png")
-    # fig.savefig(f"../plots/ddt/{era}/pdf/ddtmap_n2b1_{year}{mode}_{sample}_{update}.pdf")
+    # Show the plot
+    plt.savefig(f'plots/{year}_ddt_map.pdf', bbox_inches='tight')
     
 def main():
     
@@ -138,8 +120,8 @@ def main():
     h = pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('process', 'QCD')
     
     #Derive the ddtmap
-    # plot_dist(h)
-    derive_ddt(h)
+    # plot_dist(h, year)
+    derive_ddt(h,year,eff=0.26)
     
 if __name__ == "__main__":
     main()
