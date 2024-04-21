@@ -1,9 +1,20 @@
+'''
+Make DDT MAP Script.
+
+Usage:
+python make_ddt.py 2017 <qcd cut value>
+
+Example:
+python make_ddt.py 2017 0.0541
+'''
 import json
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
 import mplhep as hep
 import sys
 plt.style.use(hep.style.ROOT)
+import scipy.ndimage as sc
+import math
 
 import matplotlib.pylab as pylab
 params = {'legend.fontsize': 'medium',
@@ -53,7 +64,7 @@ def plot_dist(h, year):
     handles, labels = ax_rho.get_legend_handles_labels()
     labels[labels.index('None')] = 'QCD' # Modify the labels list as desired
     ax_rho.legend(handles, labels) # Set the new labels
-    plt.xlabel(r"$\rho=ln(m^2_{reg}/p_T^2)$")
+    plt.xlabel(r"$\rho=ln(m^2_{SD}/p_T^2)$")
     plt.xlim([-7,-0.5])
     plt.savefig(f"plots/{year}_rho_dist.pdf")
     
@@ -70,7 +81,7 @@ def plot_dist(h, year):
     h_rho_pt = h.sum('qcd')
     hist.plot2d(h_rho_pt, xaxis="rho")
     plt.ylabel(r'Jet $p_T$ [GeV] ')
-    plt.xlabel(r"$\rho=ln(m^2_{reg}/p_T^2)$")
+    plt.xlabel(r"$\rho=ln(m^2_{SD}/p_T^2)$")
     plt.savefig(f'plots/{year}_pt_rho_dist.pdf', bbox_inches='tight')
 
 def derive_ddt(h, year, eff=0.10):
@@ -87,9 +98,10 @@ def derive_ddt(h, year, eff=0.10):
     #Determine the index of the cut that gives QCD eff
     index_qcd_cut =  np.apply_along_axis(lambda x: x.searchsorted(eff), axis = 2, arr = cdf)
     index_to_cut_value = lambda x: qcd_cuts[x]
-    qcd_cuts = index_to_cut_value(index_qcd_cut) #This is the ddt map
-    print("Max QCD Cut: ", np.max(qcd_cuts))
-    print("Min QCD Cut: ", np.min(qcd_cuts))
+    ddtmap = index_to_cut_value(index_qcd_cut) #This is the ddt map
+    smooth_ddtmap=sc.filters.gaussian_filter(ddtmap,1,mode='nearest')
+    print("Max QCD Cut: ", np.max(ddtmap))
+    print("Min QCD Cut: ", np.min(ddtmap))
     
     #Display the ddt map
     plt.figure()
@@ -100,28 +112,38 @@ def derive_ddt(h, year, eff=0.10):
     x_step = rho_edges[1] - rho_edges[0]
     y_step = pt_edges[1] - pt_edges[0]
     extent = [rho_edges[0], rho_edges[-1] + x_step, pt_edges[0], pt_edges[-1] + y_step]
-    im = plt.imshow(qcd_cuts, cmap='viridis', aspect='auto', extent=extent, vmin=0., vmax=1.)  # Display the data as an image, 'viridis' is a color map
+    im = plt.imshow(smooth_ddtmap, cmap='viridis', aspect='auto', extent=extent, vmin=0., vmax=0.15)  # Display the data as an image, 'viridis' is a color map
 
     # Add a colorbar to show the color scale
     plt.colorbar(im, label=f'QCD Cuts at {int(eff*100)} %')
     
     # Add labels and title if desired
-    plt.xlabel(r"$\rho=ln(m^2_{reg}/p_T^2)$")
+    plt.xlabel(r"$\rho=ln(m^2_{SD}/p_T^2)$")
     plt.ylabel(r'$p_T$ [GeV]')
     hep.cms.text(f"V(qq)H(bb) DDT Map, {year}")
 
     # Show the plot
     plt.savefig(f'plots/{year}_ddt_map.pdf', bbox_inches='tight')
     
+def find_QCD_eff(h, qcd_cut):
+    print("Finding qcd efficiency")
+    total = h.sum('pt', 'qcd', 'rho').values()[()]
+    remaining = h.integrate('qcd', slice(0.,qcd_cut)).sum('pt', 'rho').values()[()]
+    eff = remaining/total
+    print(f"QCD Efficiency for {qcd_cut}: ", round(eff,4))
+    return eff
+    
 def main():
     
     year = sys.argv[1]
+    cut = sys.argv[2]
     pickle_path = f'../../output/pickle/ddt_map/{year}/h.pkl'
     h = pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('process', 'QCD')
     
     #Derive the ddtmap
-    # plot_dist(h, year)
-    derive_ddt(h,year,eff=0.26)
+    #plot_dist(h, year)
+    eff = find_QCD_eff(h, qcd_cut=float(cut))
+    derive_ddt(h,year,eff=eff)
     
 if __name__ == "__main__":
     main()

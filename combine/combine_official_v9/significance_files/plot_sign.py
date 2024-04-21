@@ -61,7 +61,6 @@ def scan_logs_out(log_dir):
     plt.scatter(qcd2_thres, all_sign)
     plt.xlabel("V ParticleMD QCD Score Cut")
     plt.ylabel(r"2017 $\sigma$")
-    plt.show()
     plt.savefig("scan.png")
     
     print("Max Signifiance: ", max(all_sign))
