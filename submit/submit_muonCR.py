@@ -18,38 +18,26 @@ import uproot
 from coffea import processor, util, hist
 from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
 
+from distributed import Client
+from lpcjobqueue import LPCCondorCluster
+from dask.distributed import performance_report
+from dask_jobqueue import HTCondorCluster, SLURMCluster
+from datetime import datetime
+
 # Add path so the script sees the modules in parent directory
 sys.path.append('/srv')
 
 #Import processor
 from boostedhiggs import VHBB_MuonCR_Processor
 year = sys.argv[1]
-tag = "vhbb_v7_muonCR"
+tag = "muonCR"
 syst = True
-ignore_list = [ 'HToBB',
-                'QCDbEnriched',
-                'QCDBGenFilter',
-                'JetHT2016Data',
-                f'SingleMu{year}Data'] #Sample to ignore processing for now
+memory='8GB'
+ignore_list = ['HToBB','QCDbEnriched', 'QCDBGenFilter', f'JetHT{year}Data', f'SingleMu{year}Data'] #Ignore the duplicates and others 
 
-from distributed import Client
-from lpcjobqueue import LPCCondorCluster
-from dask.distributed import performance_report
-from dask_jobqueue import HTCondorCluster, SLURMCluster
-
-from datetime import datetime
-
-env_extra = [
-    f"export PYTHONPATH=$PYTHONPATH:{os.getcwd()}",
-]
-
-cluster = LPCCondorCluster(
-    shared_temp_directory="/tmp",
-    transfer_input_files=["boostedhiggs"],
-    ship_env=True,
-    memory="8GB"
-#    image="coffeateam/coffea-dask:0.7.11-fastjet-3.3.4.0rc9-ga05a1f8",
-)
+env_extra = [f"export PYTHONPATH=$PYTHONPATH:{os.getcwd()}"]
+cluster = LPCCondorCluster( shared_temp_directory="/tmp", transfer_input_files=["boostedhiggs"], ship_env=True,
+    memory=memory)
 
 out_path = "output/coffea/{}/{}/".format(tag,year)
 os.system('mkdir -p  %s' %out_path)
@@ -86,7 +74,7 @@ with Client(cluster) as client:
                 uproot.open.defaults["xrootd_handler"] = uproot.source.xrootd.MultithreadedXRootDSource
 
                 #RUN MAIN PROCESSOR
-                p = VHBB_MuonCR_Processor(year=year, jet_arbitration='T_bvc' , systematics=syst)
+                p = VHBB_MuonCR_Processor(year=year, jet_arbitration='T_bvq' , systematics=syst)
                 args = {'savemetrics':True, 'schema':NanoAODSchema}
 
                 output = processor.run_uproot_job(
@@ -96,7 +84,6 @@ with Client(cluster) as client:
                     executor=processor.dask_executor,
                     executor_args={
                         "client": client,
-                        "skipbadfiles": 1,
                         "schema": processor.NanoAODSchema,
                         "treereduction": 2,
                         "savemetrics": True,

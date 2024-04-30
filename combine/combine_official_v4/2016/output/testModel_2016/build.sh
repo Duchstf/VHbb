@@ -1,2 +1,0 @@
-combineCards.py ptbin0charmpass2016=ptbin0charmpass2016.txt ptbin0charmfail2016=ptbin0charmfail2016.txt > model_combined.txt
-text2workspace.py model_combined.txt

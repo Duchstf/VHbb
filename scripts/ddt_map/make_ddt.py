@@ -5,7 +5,7 @@ Usage:
 python make_ddt.py 2017 <qcd cut value>
 
 Example:
-python make_ddt.py 2017 0.0541
+python make_ddt.py 2017 0.0922
 '''
 import json
 import matplotlib.pyplot as plt
@@ -15,6 +15,7 @@ import sys
 plt.style.use(hep.style.ROOT)
 import scipy.ndimage as sc
 import math
+import pickle
 
 import matplotlib.pylab as pylab
 params = {'legend.fontsize': 'medium',
@@ -84,6 +85,25 @@ def plot_dist(h, year):
     plt.xlabel(r"$\rho=ln(m^2_{SD}/p_T^2)$")
     plt.savefig(f'plots/{year}_pt_rho_dist.pdf', bbox_inches='tight')
 
+def export_to_coffea_hist(smooth_ddtmap, pt_edges, rho_edges, year):
+    # Define the histogram
+    h = hist.Hist(f"ddt_map_{year}", hist.Bin("rho", "Log(m^2_SD / p_T^2)", rho_edges), hist.Bin("pt", "p_T [GeV]", pt_edges))
+    
+    # Since we are setting the values directly into the histogram, 
+    # we need to ensure the histogram's internal storage matches our data shape
+    # We assume smooth_ddtmap is organized with rho as the first axis and pt as the second axis
+    assert smooth_ddtmap.shape == (len(rho_edges) - 1, len(pt_edges) - 1)
+
+    # Assign values directly to the histogram's storage
+    h.values()[()] = smooth_ddtmap  # Transpose to align the axes correctly with pt as the outer axis
+    
+    #plot to make sure:
+    hist.plot2d(h, xaxis='rho',  patch_opts={'norm': plt.Normalize(vmin=0, vmax=0.15)})
+    plt.xlabel(r"$\rho=\ln(m^2_{SD}/p_T^2)$")
+    plt.ylabel(r"$p_T$ [GeV]")
+    plt.savefig(f'plots/{year}_ddt_map_check.pdf', bbox_inches='tight')
+    # with open(f"../../boostedhiggs/data/ddt_map_{year}.pkl", "wb") as f: pickle.dump(h, f)
+
 def derive_ddt(h, year, eff=0.10):
     print("Total QCD Yield (ignoring overflow): ", h.sum('pt', 'qcd', 'rho').values()[()])
     qcd_cuts = h.axis('qcd').edges()
@@ -124,6 +144,8 @@ def derive_ddt(h, year, eff=0.10):
 
     # Show the plot
     plt.savefig(f'plots/{year}_ddt_map.pdf', bbox_inches='tight')
+    
+    export_to_coffea_hist(smooth_ddtmap, pt_edges, rho_edges, year)
     
 def find_QCD_eff(h, qcd_cut):
     print("Finding qcd efficiency")

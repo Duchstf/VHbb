@@ -47,23 +47,12 @@ folders_to_index = [
     "/store/user/lpcpfnano/cmantill/v2_3/2017/QCD",
     "/store/user/lpcpfnano/cmantill/v2_3/2018/QCD",
     
-    #bEnriched QCD
-    "/store/user/lpcpfnano/duhoang/v2_3/2016/QCD_bEnriched/",
-    "/store/user/lpcpfnano/duhoang/v2_3/2016APV/QCD_bEnriched/",
-    "/store/user/lpcpfnano/duhoang/v2_3/2017/QCD_bEnriched/",
-    "/store/user/lpcpfnano/duhoang/v2_3/2018/QCD_bEnriched/",
-    
-    #BGenFilter QCD
-    "/store/user/lpcpfnano/duhoang/v2_3/2016/QCD_BGenFilter/",
-    "/store/user/lpcpfnano/duhoang/v2_3/2016APV/QCD_BGenFilter/",
-    "/store/user/lpcpfnano/duhoang/v2_3/2017/QCD_BGenFilter/",
-    "/store/user/lpcpfnano/duhoang/v2_3/2018/QCD_BGenFilter/",
-    
     #ttbar
     "/store/user/lpcpfnano/cmantill/v2_3/2016/TTbar",
     "/store/user/lpcpfnano/cmantill/v2_3/2016APV/TTbar",
     "/store/user/lpcpfnano/rkansal/v2_3/2017/TTbar",
     "/store/user/lpcpfnano/cmantill/v2_3/2018/TTbar",
+    
     #
     "/store/group/lpcpfnano/jdickins/v2_3/2016/TTbarBoosted/",
     "/store/group/lpcpfnano/jdickins/v2_3/2016APV/TTbarBoosted/",
