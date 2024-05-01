@@ -20,12 +20,12 @@ fileset = {
 }
 
 #autoreload forces the kernel to reload the processor to include any new changes
-from boostedhiggs import DDT as vhbb_processor
+from boostedhiggs import VHBB_MuonCR_Processor as vhbb_processor
 
 import time
 tstart = time.time()
 
-p = vhbb_processor(year='2017', jet_arbitration='T_bvc')
+p = vhbb_processor(year='2017', jet_arbitration='T_bvq')
 
 #Run Coffea code using uproot
 dummy = processor.run_uproot_job(

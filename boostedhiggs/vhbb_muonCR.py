@@ -34,7 +34,7 @@ from boostedhiggs.corrections import (
 )
 
 #Import the working points
-from WPs import *
+from boostedhiggs.WPs import *
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +50,7 @@ def ak4_jets(events, year):
     jets = jets[(jets.pt > 30.) & (abs(jets.eta) < 5.0) & jets.isTight & (jets.puId > 0)]
         
     # EE noise for 2017                                             
-    if self._year == '2017':
+    if year == '2017':
         jets = jets[
             (jets.pt > 50)
             | (abs(jets.eta) < 2.65)
@@ -66,6 +66,7 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
         self._year = year
         self._jet_arbitration = jet_arbitration
         self._systematics = systematics
+        self._btagSF = BTagCorrector('M', 'deepJet', year)
 
         #Open the trigger files
         with open('files/muon_triggers.json') as f: self._muontriggers = json.load(f)
@@ -73,15 +74,25 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
 
         # https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2
         with open('files/metfilters.json') as f: self._met_filters = json.load(f)
+
+        
             
         #Scan thresholds for bb
         bb_bins = bb_WPs['{}_bb'.format(self._year)]
-        qcd_bins = qcd_WPs['{}_qcd'.format(self._year)]
         
         #Create the histogram.
         self.make_output = lambda: {
             
             'sumw': processor.defaultdict_accumulator(float),
+
+            'cutflow': hist.Hist(
+               'Events',
+               hist.Cat('dataset', 'Dataset'),
+               hist.Cat('region', 'Region'),
+               hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
+               hist.Bin('genflavor', 'Gen. jet flavor', [1, 2, 3, 4]),
+               hist.Bin('cut', 'Cut index', 15, 0, 15),
+           ),
 
             'h': hist.Hist(
                 'Events',
@@ -160,7 +171,6 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
         fatjets = events.FatJet
         fatjets['msdcorr'] = corrected_msoftdrop(fatjets)
         fatjets['qcdrho'] = 2 * np.log(fatjets.msdcorr / fatjets.pt)
-        fatjets['n2ddt'] = fatjets.n2b1 - n2ddt_shift(fatjets, year=self._year)
         fatjets['msdcorr_full'] = fatjets['msdcorr']
 
         candidatejets = fatjets[ (fatjets.pt > 200) & (abs(fatjets.eta) < 2.5)  & fatjets.isTight]  # this is loose in sampleContainer
@@ -169,7 +179,7 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
         #Pick the candidate jet based on different arbitration
         if self._jet_arbitration == 'T_bvq':
             #Order the jets based on particle net scores
-            leadingjets = candidatejet[:, 0:2]
+            leadingjets = candidatejets[:, 0:2]
             
             pnet_bvq = leadingjets.particleNetMD_Xbb / (leadingjets.particleNetMD_Xcc + leadingjets.particleNetMD_Xbb + leadingjets.particleNetMD_Xqq)                                                                                       
             indices = ak.argsort(pnet_bvq, axis=1, ascending = False) #Higher b score for the Higgs candidate (more b like)                                                            
@@ -179,6 +189,7 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
         else: raise RuntimeError("Unknown candidate jet arbitration")
 
         bb1 = candidatejet.particleNetMD_Xbb / (candidatejet.particleNetMD_Xbb + candidatejet.particleNetMD_QCD) #Exact B scores for Higgs candidate
+        selection.add('bbpass', (bb1 >= bb_WPs['{}_bb'.format(self._year)][-2]))
 
         #!Add selections------------------>
         #There is a list at the end which specifies the selections being used  
@@ -186,7 +197,7 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
 
         # Selections for muon control region
         selection.add('minjetkinmu',
-            (candidatejet.pt >= 450)
+            (candidatejet.pt >= 400)
             & (candidatejet.pt < 1200)
             & (candidatejet.msdcorr >= 40.)
             & (candidatejet.msdcorr < 201.)
@@ -195,6 +206,11 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
         #Count the number of ak4 jets that are away
         ak4_jets_events = ak4_jets(events, self._year)
         n_ak4_jets = ak.count(ak4_jets_events.pt, axis=1)
+        
+        jets = ak4_jets_events[:, :4]
+        dphi = abs(jets.delta_phi(candidatejet))
+        ak4_away = jets[dphi > 0.8] 
+        selection.add('ak4btagMedium08', ak.max(ak4_away.btagDeepB, axis=1, mask_identity=False) > self._btagSF._btagwp)
 
         met = events.MET
         selection.add('met', met.pt < 140.)
@@ -226,7 +242,6 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
 
         if isRealData :
             genflavor1 = ak.zeros_like(candidatejet.pt)
-            genflavor2 = ak.zeros_like(secondjet.pt)
         else:
             weights.add('genweight', events.genWeight)
 
@@ -237,17 +252,12 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
 
             #Tight matching
             match_mask1 = (abs(candidatejet.pt - matchedBoson1.pt)/matchedBoson1.pt < 0.5) & (abs(candidatejet.msdcorr - matchedBoson1.mass)/matchedBoson1.mass < 0.3)
-            match_mask2 = (abs(secondjet.pt - matchedBoson2.pt)/matchedBoson2.pt < 0.5) & (abs(secondjet.msdcorr - matchedBoson2.mass)/matchedBoson2.mass < 0.3)
             selmatchedBoson1 = ak.mask(matchedBoson1, match_mask1)
-            selmatchedBoson2 = ak.mask(matchedBoson2, match_mask2)
-            
             genflavor1 = bosonFlavor(selmatchedBoson1)
-            genflavor2 = bosonFlavor(selmatchedBoson2)
 
             genBosonPt = ak.fill_none(ak.firsts(bosons.pt), 0)
             add_VJets_kFactors(weights, events.GenPart, dataset)
 
-            add_jetTriggerSF(weights, ak.firsts(fatjets), self._year, selection)
             add_muonSFs(weights, leadingmuon, self._year, selection)
 
             if self._year in ("2016APV", "2016", "2017"): weights.add("L1Prefiring", events.L1PreFiringWeight.Nom, events.L1PreFiringWeight.Up, events.L1PreFiringWeight.Dn)
@@ -255,7 +265,6 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
             logger.debug("Weight statistics: %r" % weights.weightStatistics)
 
         msd1_matched = candidatejet.msdcorr * (genflavor1 > 0) + candidatejet.msdcorr * (genflavor1 == 0)
-        msd2_matched = secondjet.msdcorr * (genflavor2 > 0) + secondjet.msdcorr * (genflavor2 == 0)
         
         def normalize(val, cut):
             '''not actually normalizing, just fill in the values after cuts'''
@@ -266,13 +275,36 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
         import time
         tic = time.time()
         #----------------
+
+        #!LIST OF THE SELECTIONS APPLIED
+        regions = { 'muoncontrol': ['muontrigger','lumimask','metfilter','minjetkinmu', 'jetid', 'onemuon', 'muonkin', 'ak4btagMedium08','muonDphiAK8']}
+        
+        #Create the cutflow table
+        if shift_name is None:
+            for region, cuts in regions.items():
+                allcuts = set([])
+                cut = selection.all(*allcuts)
+
+                output['cutflow'].fill(dataset=dataset,
+                                        region=region,
+                                        msd1=normalize(msd1_matched,cut),
+                                        genflavor=normalize(genflavor1, None),
+                                        cut=0,
+                                        weight=weights.weight())
+
+                for i, cut in enumerate(cuts + ['bbpass']):
+                    allcuts.add(cut)
+                    cut = selection.all(*allcuts)
+                    output['cutflow'].fill(dataset=dataset,
+                                            region=region,
+                                            genflavor=normalize(genflavor1, cut),
+                                            msd1=normalize(msd1_matched,cut),
+                                            cut=i + 1,
+                                            weight=weights.weight()[cut])
         
         if shift_name is None: systematics = [None] + list(weights.variations)
         else: systematics = [shift_name]
             
-        #!LIST OF THE SELECTIONS APPLIED
-        regions = { 'muoncontrol': ['muontrigger','lumimask','metfilter','minjetkinmu', 'jetid', 'onemuon', 'muonkin', 'muonDphiAK8']}
-
         def fill(region, systematic, wmod=None):
             
             #Get the selection from above
@@ -298,8 +330,6 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
                 msd1=normalize(msd1_matched, cut),
                 bb1=normalize(bb1, cut),
                 genflavor1=normalize(genflavor1, cut),
-                pt1=normalize(candidatejet.pt, cut),
-                njets=normalize(n_ak4_jets, cut),
                 weight=weight,
             )
 

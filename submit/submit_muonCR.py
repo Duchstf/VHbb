@@ -31,9 +31,10 @@ sys.path.append('/srv')
 from boostedhiggs import VHBB_MuonCR_Processor
 year = sys.argv[1]
 tag = "muonCR"
-syst = True
+syst = False
 memory='8GB'
 ignore_list = ['HToBB','QCDbEnriched', 'QCDBGenFilter', f'JetHT{year}Data', f'SingleMu{year}Data'] #Ignore the duplicates and others 
+ignore_list += ['VBFHToBBDipoleRecoilOn', 'WJetsToLNu']
 
 env_extra = [f"export PYTHONPATH=$PYTHONPATH:{os.getcwd()}"]
 cluster = LPCCondorCluster( shared_temp_directory="/tmp", transfer_input_files=["boostedhiggs"], ship_env=True,

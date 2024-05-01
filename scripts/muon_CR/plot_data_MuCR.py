@@ -1,4 +1,5 @@
 from imports import *
+import copy
 
 WPs = {
     
@@ -8,13 +9,13 @@ WPs = {
     '2018_bb1':  0.9880,
 }
 
-mass_range = [40., 68., 110., 201.]
-
 samples = ['data', 'QCD', 'WH','ZH', 'VV', 'Wjets', 'Zjets', 'VBFDipoleRecoilOn', 'ggF', 'singlet', 'ttH', 'ttbar']
 
-def plot_h(h, labels, name=''):
-    
+def plot_h(h, labels, name, year):
+
+    labels = copy.copy(labels)
     mc = list(labels.values())
+    figtext = f'BB PASS, {year}' if name == 'bb_pass' else f'BB FAIL, {year}'
     
     fig = plt.figure()
 
@@ -24,12 +25,13 @@ def plot_h(h, labels, name=''):
     # Plot stacked hist                                                                                                   
     hist.plot1d(h, overlay='process', order=mc, stack=True, fill_opts={'edgecolor':'black'})
     
-        # Overlay data                                                                                                            
+    # Overlay data                                                                                                            
     hist.plot1d(h.integrate('process','muondata'),error_opts={'marker':'o','color':'k','markersize':5}) 
-    # labels = labels + ['Data']
-    
-    ax1.get_xaxis().set_visible(False)                                                                                               
-    plt.legend(labels=labels,bbox_to_anchor=(1.05, 1), loc='upper left')                                                     
+    ax1.get_xaxis().set_visible(False)    
+
+    labels['Data'] = 'muondata'                                                                                           
+    plt.legend(labels=labels, bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.text(0.95, 0.95, figtext, horizontalalignment='right', verticalalignment='top', transform=plt.gca().transAxes)                                          
 
     allweights =  hist.export1d(h.integrate('process','muondata')).numpy()[0]                                                                              
 
@@ -52,9 +54,8 @@ def main():
     bbthr = WPs[f'{year}_bb1']
     print(f'BB1 {year} Threshold: ', bbthr)
     
-    pickle_path = '../output/pickle/vhbb_v7_muonCR/{}/ParticleNet_msd.pkl'.format(year)
-    pickle_hist = pickle.load(open(pickle_path,'rb')).integrate('region','muoncontrol').integrate('systematic', 'nominal').integrate('pt1', int_range=slice(400., None), overflow='over').integrate('njets', int_range=slice(0,None)).sum('genflavor1', overflow='all')
-    #print(pickle_hist.sum('msd1', 'bb1').integrate('process', 'ttbar').values())
+    pickle_path = f'../../output/pickle/muonCR/{year}/h.pkl'
+    pickle_hist = pickle.load(open(pickle_path,'rb')).integrate('region','muoncontrol').integrate('systematic', 'nominal').sum('genflavor1', overflow='all')
     
     #Process each region    
     sig = pickle_hist
@@ -67,32 +68,21 @@ def main():
         'Z + jets':'Zjets',
         # 'Bkg H': ['ggF', 'ttH', 'VBFDipoleRecoilOn'],
         'ttbar': 'ttbar',
-        'Single T': 'singlet',    
+        # 'Boosted ttbar': 'ttbarBoosted',
+        'Single T': 'singlet',  
     }
-        
-   
     
     # colors=['purple']
     
     colors = ['hotpink','gray','deepskyblue','sienna','darkorange','gold']
 
     #Split into Jet 1 score b-tag passing/failing region. 
-    hpass= sig.integrate('bb1',int_range=slice(0.,1.))
+    hpass= sig.integrate('bb1',int_range=slice(bbthr,1.))
     hfail= sig.integrate('bb1',int_range=slice(0.,bbthr))
     
-    print(hpass.integrate('process', 'QCD').sum('msd1').values())
-    
-    print("Compare ttbar")
-    print(hpass.integrate('process', 'ttbar').sum('msd1').values())
-    print(hpass.integrate('process', 'muondata').sum('msd1').values())
-    
-    print("Compare singletop")
-    print(hpass.integrate('process', 'singlet').sum('msd1').values())
-    print(hpass.integrate('process', 'muondata').sum('msd1').values())
-    
     #print(hpass.axis('process').identifiers())
-    
-    plot_h(hpass, labels, name='bb_pass')
+    plot_h(hpass, labels, 'bb_pass', year)
+    plot_h(hfail, labels, 'bb_fail', year)
 
 if __name__ == "__main__":
     main()
