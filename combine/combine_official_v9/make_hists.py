@@ -43,7 +43,7 @@ samples_save = [x for x in samples + ['Zjetsbb', 'WjetsQQ'] if x != 'Wjets']
 
 btag_SF_samples = ['Wjets', 'Zjets']
 
-QCD2_THRES = 1.
+QCD2_THRES = 1.0
 
 def check_missing(pickle_hist):
         

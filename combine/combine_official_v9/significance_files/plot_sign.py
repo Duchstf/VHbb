@@ -57,11 +57,15 @@ def scan_logs_out(log_dir):
             if len(local_sign) > 0:
                     qcd2_thres += [x for x in local_thres]
                     all_sign += local_sign
-                    
-    plt.scatter(qcd2_thres, all_sign)
+    
+    qcd2_thres = np.asarray(qcd2_thres)
+    all_sign = np.asarray(all_sign)
+
+    sorted_index = np.argsort(qcd2_thres) 
+    plt.scatter(qcd2_thres[sorted_index][5:], all_sign[sorted_index][5:])
     plt.xlabel("V ParticleMD QCD Score Cut")
     plt.ylabel(r"2017 $\sigma$")
-    plt.savefig("scan.png")
+    plt.savefig("scan.pdf", bbox_inches='tight')
     
     print("Max Signifiance: ", max(all_sign))
     print("QCD Threshold: ", qcd2_thres[np.argmax(np.asarray(all_sign))])
@@ -69,7 +73,7 @@ def scan_logs_out(log_dir):
     d = {'QCD2': np.asarray(qcd2_thres), 'significance':np.asarray(all_sign)}
     df = pd.DataFrame(data=d)
     
-    df_print = df[(df['significance'] > 1.15)]
+    df_print = df[(df['significance'] > 1.09)]
 
     for i in range(len(df_print)):
         print("---------")

@@ -92,7 +92,6 @@ with Client(cluster) as client:
                     executor=processor.dask_executor,
                     executor_args={
                         "client": client,
-                        "skipbadfiles": 1,
                         "schema": processor.NanoAODSchema,
                         "treereduction": 2,
                         "savemetrics": True,

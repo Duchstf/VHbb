@@ -9,41 +9,56 @@ WPs = {
     '2018_bb1':  0.9880,
 }
 
+#Dataset parameters
+lumis = {}
+lumis['2016'] = 35.9
+lumis['2017'] = 41.5
+lumis['2018'] = 59.9
+
 samples = ['data', 'QCD', 'WH','ZH', 'VV', 'Wjets', 'Zjets', 'VBFDipoleRecoilOn', 'ggF', 'singlet', 'ttH', 'ttbar']
 
 def plot_h(h, labels, name, year):
 
     labels = copy.copy(labels)
+    figtext = f'BB PASS' if name == 'bb_pass' else f'BB FAIL'
+    if name == 'bb_pass': del labels['QCD'] #Delete QCD in the bb passing region
     mc = list(labels.values())
-    figtext = f'BB PASS, {year}' if name == 'bb_pass' else f'BB FAIL, {year}'
     
+    #Plot now
     fig = plt.figure()
 
     ax1 = fig.add_subplot(4,1,(1,3))
     plt.subplots_adjust(hspace=0)
     
-    # Plot stacked hist                                                                                                   
-    hist.plot1d(h, overlay='process', order=mc, stack=True, fill_opts={'edgecolor':'black'})
+    # Plot stacked hist
+    colors = ['#94a4a2','#832db6','#bd1f01','sandybrown']
+    colors = colors[:-1] if name == 'bb_pass' else colors
+
+    hist.plot1d(h, overlay='process', order=mc, stack=True, fill_opts={'edgecolor':'black', 'color':colors})
     
-    # Overlay data                                                                                                            
+    # Overlay data
+    # Overall - both left and right annotation
+    hep.cms.label('Preliminary', lumi=lumis[year], data=True, year=year)                                                                                                      
     hist.plot1d(h.integrate('process','muondata'),error_opts={'marker':'o','color':'k','markersize':5}) 
     ax1.get_xaxis().set_visible(False)    
 
     labels['Data'] = 'muondata'                                                                                           
     plt.legend(labels=labels, bbox_to_anchor=(1.05, 1), loc='upper left')
-    plt.text(0.95, 0.95, figtext, horizontalalignment='right', verticalalignment='top', transform=plt.gca().transAxes)                                          
+
+    if name == 'bb_pass': plt.text(0.05, 0.95, figtext, horizontalalignment='left', verticalalignment='top', transform=plt.gca().transAxes)       
+    else: plt.text(0.95, 0.95, figtext, horizontalalignment='right', verticalalignment='top', transform=plt.gca().transAxes)                                          
 
     allweights =  hist.export1d(h.integrate('process','muondata')).numpy()[0]                                                                              
 
     # ratio                                                                                                                   
     ax2 = fig.add_subplot(4,1,(4,4))
     hist.plotratio(num=h.integrate('process','muondata'),denom=h.integrate('process',mc),ax=ax2,unc='num',error_opts={'marker':'o','color':'k','markersize':5},guide_opts={})
-    ax2.set_ylabel('Ratio')    
-    ax2.set_xlabel('') 
+    ax2.set_ylabel(r'$\frac{Data - Bkg}{\sigma_{data}}$')    
+    ax2.set_xlabel('Jet Mass [GeV]') 
     ax2.set_xlim(ax1.get_xlim())
     
-    plt.savefig(f'plots/muCR_{name}.pdf', bbox_inches='tight')
-    plt.savefig(f'plots/muCR_{name}.png', bbox_inches='tight')
+    plt.savefig(f'plots/{year}_muCR_{name}.pdf', bbox_inches='tight')
+    plt.savefig(f'plots/{year}_muCR_{name}.png', bbox_inches='tight')
     
 
 def main():
@@ -55,26 +70,18 @@ def main():
     print(f'BB1 {year} Threshold: ', bbthr)
     
     pickle_path = f'../../output/pickle/muonCR/{year}/h.pkl'
-    pickle_hist = pickle.load(open(pickle_path,'rb')).integrate('region','muoncontrol').integrate('systematic', 'nominal').sum('genflavor1', overflow='all')
+    pickle_hist = pickle.load(open(pickle_path,'rb')).integrate('region','muoncontrol').integrate('systematic', 'nominal').integrate('genflavor1', slice(None,4), overflow='under')
     
     #Process each region    
     sig = pickle_hist
         
     labels = {
-        'QCD':'QCD',
-        # 'VH': ['WH','ZH'],
-        'VV': 'VV',
-        'W + jets':'Wjets',
-        'Z + jets':'Zjets',
-        # 'Bkg H': ['ggF', 'ttH', 'VBFDipoleRecoilOn'],
-        'ttbar': 'ttbar',
-        # 'Boosted ttbar': 'ttbarBoosted',
-        'Single T': 'singlet',  
+        'TTbar': 'ttbar',
+        'Single T': 'singlet',
+        'W(Lep.)':'Wjets',
+        # 'Z + jets':'Zjets', #'#2ca02c'
+        'QCD':'QCD',  
     }
-    
-    # colors=['purple']
-    
-    colors = ['hotpink','gray','deepskyblue','sienna','darkorange','gold']
 
     #Split into Jet 1 score b-tag passing/failing region. 
     hpass= sig.integrate('bb1',int_range=slice(bbthr,1.))

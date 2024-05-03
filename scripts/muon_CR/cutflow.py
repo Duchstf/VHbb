@@ -7,7 +7,7 @@ def main():
     cuts = ['muontrigger','lumimask','metfilter','minjetkinmu', 'jetid', 'onemuon', 'muonkin', 'ak4btagMedium08','muonDphiAK8', 'bbpass']
 
     pickle_path = f'../../output/pickle/muonCR/{year}/cutflow.pkl'
-    pickle_hist = pickle.load(open(pickle_path,'rb')).sum('msd1').sum('genflavor', overflow='all').integrate('region', 'muoncontrol')
+    pickle_hist = pickle.load(open(pickle_path,'rb')).sum('msd1').integrate('genflavor', slice(None,1) ,overflow='under').integrate('region', 'muoncontrol')
     
     #Process each region    
     sig = pickle_hist

@@ -71,11 +71,7 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
         #Open the trigger files
         with open('files/muon_triggers.json') as f: self._muontriggers = json.load(f)
         with open('files/triggers.json') as f: self._triggers = json.load(f)
-
-        # https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2
-        with open('files/metfilters.json') as f: self._met_filters = json.load(f)
-
-        
+        with open('files/metfilters.json') as f: self._met_filters = json.load(f) # https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2
             
         #Scan thresholds for bb
         bb_bins = bb_WPs['{}_bb'.format(self._year)]
@@ -210,9 +206,9 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
         jets = ak4_jets_events[:, :4]
         dphi = abs(jets.delta_phi(candidatejet))
         ak4_away = jets[dphi > 0.8] 
-        selection.add('ak4btagMedium08', ak.max(ak4_away.btagDeepB, axis=1, mask_identity=False) > self._btagSF._btagwp)
+        selection.add('ak4btagMedium08', ak.max(ak4_away.btagDeepFlavB, axis=1, mask_identity=False) > self._btagSF._btagwp)
 
-        met = events.MET
+        met = events.MET 
         selection.add('met', met.pt < 140.)
 
         #Lepton vetos
@@ -240,15 +236,13 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
         selection.add('muonkin', (leadingmuon.pt > 55.) & (abs(leadingmuon.eta) < 2.1))
         selection.add('muonDphiAK8', abs(leadingmuon.delta_phi(candidatejet)) > 2*np.pi/3)
 
-        if isRealData :
-            genflavor1 = ak.zeros_like(candidatejet.pt)
+        if isRealData: genflavor1 = ak.zeros_like(candidatejet.pt)
         else:
             weights.add('genweight', events.genWeight)
 
             add_pileup_weight(weights, events.Pileup.nPU, self._year)
             bosons = getBosons(events.GenPart)
             matchedBoson1 = candidatejet.nearest(bosons, axis=None, threshold=0.8)
-            matchedBoson2 = secondjet.nearest(bosons, axis=None, threshold=0.8)
 
             #Tight matching
             match_mask1 = (abs(candidatejet.pt - matchedBoson1.pt)/matchedBoson1.pt < 0.5) & (abs(candidatejet.msdcorr - matchedBoson1.mass)/matchedBoson1.mass < 0.3)
@@ -256,12 +250,11 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
             genflavor1 = bosonFlavor(selmatchedBoson1)
 
             genBosonPt = ak.fill_none(ak.firsts(bosons.pt), 0)
-            add_VJets_kFactors(weights, events.GenPart, dataset)
 
+            add_VJets_kFactors(weights, events.GenPart, dataset)
             add_muonSFs(weights, leadingmuon, self._year, selection)
 
             if self._year in ("2016APV", "2016", "2017"): weights.add("L1Prefiring", events.L1PreFiringWeight.Nom, events.L1PreFiringWeight.Up, events.L1PreFiringWeight.Dn)
-
             logger.debug("Weight statistics: %r" % weights.weightStatistics)
 
         msd1_matched = candidatejet.msdcorr * (genflavor1 > 0) + candidatejet.msdcorr * (genflavor1 == 0)
