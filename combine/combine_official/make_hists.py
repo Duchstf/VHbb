@@ -1,7 +1,7 @@
 #!/usr/bin/python  
 
 '''
-Make histograms for charm and light regions.
+Make histograms for different mass bins regions.
 
 python make_hists.py [year]
 
@@ -16,65 +16,40 @@ import uproot3
 from coffea import hist
 import pickle
 
-with open('files/lumi.json') as f:
-    lumis = json.load(f)
-    
-WPs = {
-    
-    '2016APV_bb1': 0.9883,
-    '2016_bb1': 0.9883,
-    '2017_bb1': 0.9870,
-    '2018_bb1':  0.9880,
-}
-
+with open('files/lumi.json') as f: lumis = json.load(f)
+bb_WPs = { '2016APV_bb1': 0.9883, '2016_bb1': 0.9883, '2017_bb1': 0.9870, '2018_bb1':  0.9880}
+qcd_WPs = { '2016APV_qcd2': 0.0, '2016_qcd2': 0.0, '2017_qcd2': 0.0922, '2018_qcd2':  0.0}
 mass_range = [40., 68., 110., 201.]
 
 #Same in make_cards.py
-samples = ['QCD','WH','ZH','VV',
-            'Wjets', 'Zjets',
-            'VBFDipoleRecoilOn','ggF','ttH',
-            'singlet',
-            'ttbar',
-            'data', #!DATA MISSING FOR EACH YEAR
-            ]
+samples = ['QCD','VV','Wjets', 'Zjets',
+            'VBFDipoleRecoilOn','ggF','ttH', 'WH','ZH',
+            'singlet', 'ttbar',
+            'data']
 
-#Devide Wjets into unmatched and matched components
 samples_save = [x for x in samples + ['Zjetsbb', 'WjetsQQ'] if x != 'Wjets']
-
 btag_SF_samples = ['Wjets', 'Zjets']
-
-QCD2_THRES = 0.0922
 
 def check_missing(pickle_hist):
         
     #Print sample names
     hist_samples = [x.name for x in pickle_hist.identifiers('process')]
     print("Available samples: ", hist_samples)
-    print("Checking available samples ... ")
-    
-    # Find items in samples that are not in hist_samples
+
     missing_items = [item for item in samples if item not in hist_samples]
+    if missing_items: raise ValueError(f"Missing items: {missing_items}")
     
-    # Check if there are any missing items
-    if missing_items:
-        # Raise an error and include information about the missing items
-        raise ValueError(f"Missing items: {missing_items}")
-    
-    #Save the sample here and then load it in make_cards.py
-    with open("files/samples.json", "w") as f:   #Pickling
-        json.dump(samples_save, f)
-        
+    #Save the sample & systematics and massrange here and then load it in make_cards.py
+    with open("files/samples.json", "w") as f: json.dump(samples_save, f)
     sys_list = [x.name for x in pickle_hist.identifiers('systematic')]
-    
-    #Save the systematics here
-    with open("files/sys_list.json", "w") as f:   #Pickling
-        json.dump(sys_list, f)
+    with open("files/sys_list.json", "w") as f: json.dump(sys_list, f)
+    with open("files/Vmass.json", "w") as f:json.dump(mass_range, f)
     
 # Main method
 def main():
 
     if len(sys.argv) < 2:
-        print("Enter year")
+        print("Enter year!")
         return
     
     elif len(sys.argv) > 2:
@@ -85,8 +60,11 @@ def main():
     year = sys.argv[1]
     
     #Define the score threshold
-    bbthr = WPs[f'{year}_bb1']
+    bbthr = bb_WPs[f'{year}_bb1']
     print(f'BB1 {year} Threshold: ', bbthr)
+
+    qcdthr = qcd_WPs[f'{year}_qcd2']
+    print(f'QCD 2 {year} Threshold: ', qcdthr)
     
     pickle_path = '{}/{}.pkl'.format(year, 'ParticleNet_msd') #Need to be defined manually
     out_path = '{}/signalregion.root'.format(year)
@@ -94,18 +72,12 @@ def main():
     #If file already exists remove it and create a new file
     if os.path.isfile(out_path): os.remove(out_path)
     fout = uproot3.create(out_path)
-    
-    #Check if pickle exists     
-    if not os.path.isfile(pickle_path):
-        raise FileNotFoundError("You need to link the pickle file (using absolute paths)")
+
+    if not os.path.isfile(pickle_path): raise FileNotFoundError("You need to link the pickle file (using absolute paths)")
 
     #Read in the pickle file
-    pickle_hist =  pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('qcd2', slice(0., QCD2_THRES))
+    pickle_hist =  pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('qcd2', slice(0., qcdthr))
     check_missing(pickle_hist)
-    
-    #Save a list of mass categories to a file to be used in make_cards
-    with open("files/Vmass.json", "w") as f:   #Pickling
-        json.dump(mass_range, f)
 
     #Process each region
     for i in range(len(mass_range)-1):

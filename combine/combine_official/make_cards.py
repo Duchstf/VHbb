@@ -473,8 +473,10 @@ def vh_rhalphabet(tmpdir):
                     sample.scale(sf)
                     sample.setParamEffect(sys_PNetEffBB, sfunc_up, sfunc_down)
                 
-                #Add ParticleNet SF here
+                #TODO: Add ParticleNet 2-prong SF here
                 ch.addSample(sample)
+
+        
     #-------------------------END MUON CONTROL REGION-------------------------------
 
     with open(os.path.join(str(tmpdir), 'testModel_'+year+'.pkl'), 'wb') as fout: pickle.dump(model, fout)
