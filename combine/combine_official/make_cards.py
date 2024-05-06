@@ -2,8 +2,6 @@ from __future__ import print_function, division
 import sys, os
 import json
 import numpy as np
-from scipy.interpolate import interp1d
-import scipy.stats
 import pickle
 import ROOT
 
