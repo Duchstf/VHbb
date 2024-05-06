@@ -18,22 +18,14 @@ import pickle
 def main():
     
     #Load all the files
-    with open('../../files/xsec.json') as f:
-        xs = json.load(f)
-            
-    with open('../../files/pmap.json') as f:
-        pmap = json.load(f)
-
-    with open('../../files/lumi.json') as f:
-        lumis = json.load(f)
-
-    # Take in the year and tag
-    if len(sys.argv) < 3:
-        raise Exception("Enter both year and tag.")
+    with open('../../files/xsec.json') as f: xs = json.load(f)     
+    with open('../../files/pmap.json') as f: pmap = json.load(f)
+    with open('../../files/lumi.json') as f: lumis = json.load(f)
+    if len(sys.argv) < 3: raise Exception("Enter both year and tag.") # Take in the year and tag
 
     year = sys.argv[1]
     tag = sys.argv[2]
-    hist_name = 'h' #You need to define this manually, usually just keep it as "templates"
+    hist_name = 'ParticleNet_msd' #You need to define this manually, usually just keep it as "templates"
             
     indir = "../coffea/{}/{}/".format(tag, year)
     infiles = subprocess.getoutput("ls "+indir+year+"_dask_*.coffea").split()

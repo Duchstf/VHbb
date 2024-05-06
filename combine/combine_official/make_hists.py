@@ -30,6 +30,8 @@ samples = ['QCD','VV','Wjets', 'Zjets',
 samples_save = [x for x in samples + ['Zjetsbb', 'WjetsQQ'] if x != 'Wjets']
 btag_SF_samples = ['Wjets', 'Zjets']
 
+muonCR_samples = ['QCD', 'singlet', 'ttbar', 'WLNu', "muondata"]
+
 def check_missing(pickle_hist):
         
     #Print sample names
@@ -44,39 +46,17 @@ def check_missing(pickle_hist):
     sys_list = [x.name for x in pickle_hist.identifiers('systematic')]
     with open("files/sys_list.json", "w") as f: json.dump(sys_list, f)
     with open("files/Vmass.json", "w") as f:json.dump(mass_range, f)
-    
-# Main method
-def main():
 
-    if len(sys.argv) < 2:
-        print("Enter year!")
-        return
-    
-    elif len(sys.argv) > 2:
-        print("Incorrect number of arguments")
-        return
+def make_hists_signal(year, bbthr, qcdthr, signal_pickle_path, signal_out_path):
 
-    #Define the most basic parameters
-    year = sys.argv[1]
-    
-    #Define the score threshold
-    bbthr = bb_WPs[f'{year}_bb1']
-    print(f'BB1 {year} Threshold: ', bbthr)
-
-    qcdthr = qcd_WPs[f'{year}_qcd2']
-    print(f'QCD 2 {year} Threshold: ', qcdthr)
-    
-    pickle_path = '{}/{}.pkl'.format(year, 'ParticleNet_msd') #Need to be defined manually
-    out_path = '{}/signalregion.root'.format(year)
-    
     #If file already exists remove it and create a new file
-    if os.path.isfile(out_path): os.remove(out_path)
-    fout = uproot3.create(out_path)
+    if os.path.isfile(signal_out_path): os.remove(signal_out_path)
+    fout = uproot3.create(signal_out_path)
 
-    if not os.path.isfile(pickle_path): raise FileNotFoundError("You need to link the pickle file (using absolute paths)")
+    if not os.path.isfile(signal_pickle_path): raise FileNotFoundError("You need to link the pickle file (using absolute paths)")
 
     #Read in the pickle file
-    pickle_hist =  pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('qcd2', slice(0., qcdthr))
+    pickle_hist =  pickle.load(open(signal_pickle_path,'rb')).integrate('region','signal').integrate('qcd2', slice(0., qcdthr))
     check_missing(pickle_hist)
 
     #Process each region
@@ -128,6 +108,64 @@ def main():
                     fout[f"Vmass_{i}_pass_{p + 'bb'}_{s}"] = hist.export1d(hpass_bb.integrate('systematic',s))
                     fout[f"Vmass_{i}_fail_{p + 'bb'}_{s}"] = hist.export1d(hfail_bb.integrate('systematic',s))
 
+def make_hists_muonCR(year, bbthr, muonCR_pickle_path, muonCR_out_path):
+
+    print(f"Making hists in muon CR {year} ...")
+
+    #If file already exists remove it and create a new file
+    if os.path.isfile(muonCR_out_path): os.remove(muonCR_out_path)
+    fout = uproot3.create(muonCR_out_path)
+
+    if not os.path.isfile(muonCR_pickle_path): raise FileNotFoundError("You need to link the pickle file (using absolute paths)")
+    with open("files/muonCRsamples.json", "w") as f:json.dump(muonCR_samples, f) #Save the muonCR samples
+
+    #Read in the pickle file
+    h = pickle.load(open(muonCR_pickle_path,'rb')).integrate('region','muoncontrol').sum('genflavor1', overflow='all')
+
+    #Split the muon CR into pass and fail region
+    for p in muonCR_samples:
+        print('Processing sample: ', p)
+
+        hpass = h.integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',p)
+        hfail = h.integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',p)
+                
+        #No systematics for now
+        for s in hfail.identifiers('systematic'):
+            fout[f"muonCR_pass_{p}_{s}"] = hist.export1d(hpass.integrate('systematic',s))
+            fout[f"muonCR_fail_{p}_{s}"] = hist.export1d(hfail.integrate('systematic',s))
+
+    return
+
+# Main method
+def main():
+
+    if len(sys.argv) < 2:
+        print("Enter year!")
+        return
+    
+    elif len(sys.argv) > 2:
+        print("Incorrect number of arguments")
+        return
+
+    #Define the most basic parameters
+    year = sys.argv[1]
+    
+    #Define the score threshold
+    bbthr = bb_WPs[f'{year}_bb1']
+    print(f'BB1 {year} Threshold: ', bbthr)
+
+    qcdthr = qcd_WPs[f'{year}_qcd2']
+    print(f'QCD 2 {year} Threshold: ', qcdthr)
+    
+    signal_pickle_path = '{}/{}.pkl'.format(year, 'ParticleNet_msd')
+    signal_out_path = '{}/signalregion.root'.format(year)
+
+    muonCR_pickle_path = '{}/{}.pkl'.format(year, 'h')
+    muonCR_out_path = '{}/muonCRregion.root'.format(year)
+
+    #Make the hists for signal region and muon CR
+    make_hists_signal(year, bbthr, qcdthr, signal_pickle_path, signal_out_path)
+    make_hists_muonCR(year, bbthr, muonCR_pickle_path, muonCR_out_path)
     
     return
 
