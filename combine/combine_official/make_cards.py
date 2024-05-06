@@ -14,6 +14,7 @@ rl.util.install_roofit_helpers()
 
 eps=0.0000001
 do_muon_CR = True
+do_systematics = False
 
 '''
 python make_cards.py [year]
@@ -32,7 +33,7 @@ def badtemp_ma(hvalues, mask=None):
     if (tot < eps) or (count_nonzeros < 2): return True
     else: return False
 
-def PassFailSF(sName, bb_pass, V_bin, obs, mask,
+def passfailSF(sName, bb_pass, V_bin, obs, mask,
                 SF=1, SF_unc_up=0.1, SF_unc_down=-0.1,
                 muon=False):
     """
@@ -63,7 +64,7 @@ def get_template(sName, bb_pass, V_bin, obs, syst, muon=False):
     Read msd template from root file
     """
     f = ROOT.TFile.Open('{}/signalregion.root'.format(year))
-    if muon: f = ROOT.TFile.Open('{}/muonCR.root'.format(year))
+    if muon: f = ROOT.TFile.Open('{}/muonCRregion.root'.format(year))
 
     #Jet 1 ParticleNet bb pass/failing region
     name_bb = 'pass' if bb_pass else 'fail'
@@ -99,7 +100,6 @@ def vh_rhalphabet(tmpdir):
     tqqeffSF = rl.IndependentParameter('tqqeffSF_{}'.format(year), 1., 0, 2) 
     tqqnormSF = rl.IndependentParameter('tqqnormSF_{}'.format(year), 1., 0, 2) 
 
-    
     # Simple lumi systematics, changes event yields, onstraints applied to overall likelihood                                                                                                                                                        
     sys_lumi_uncor = rl.NuisanceParameter('CMS_lumi_13TeV_{}'.format(year), 'lnN') #lnN: Log Normal
     sys_lumi_cor_161718 = rl.NuisanceParameter('CMS_lumi_13TeV_correlated', 'lnN')
@@ -132,7 +132,7 @@ def vh_rhalphabet(tmpdir):
     sys_dict['L1Prefiring'] = rl.NuisanceParameter('CMS_L1Prefiring_{}'.format(year),'lnN')
     
     #No jet trigger in muon control region systematics
-    mu_exp_systs = [x for x in exp_systs if x is not 'jet_trigger']
+    mu_exp_systs = [x for x in exp_systs if x != 'jet_trigger']
     mu_exp_systs += ['muon_ID_{}_value'.format(yearstr), 'muon_ISO_{}_value'.format(yearstr), 'muon_TRIGNOISO_{}_value'.format(yearstr)]
     
     print("Experimental systematics: ",  exp_systs) 
@@ -393,6 +393,14 @@ def vh_rhalphabet(tmpdir):
                 sample.setParamEffect(sys_lumi_cor_161718, lumi[year]['correlated'])
                 sample.setParamEffect(sys_lumi_cor_1718, lumi[year]['correlated_20172018'])
 
+                if do_systematics:
+
+                    sample.autoMCStats(lnN=True) 
+
+                    sample.setParamEffect(sys_eleveto, 1.005)
+                    sample.setParamEffect(sys_muveto, 1.005)
+                    sample.setParamEffect(sys_tauveto, 1.05)
+
                 ch.addSample(sample)
 
             data_obs = get_template(sName='data', bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='nominal')
@@ -430,10 +438,11 @@ def vh_rhalphabet(tmpdir):
             model.addChannel(ch)
 
             isPass = bb_region == 'pass'
-            print(f"Muon CR Region: {bb_region}")
+            print("Muon CR Region: {}".format(bb_region))
 
             for sName in samps:
-                templates[sName] = get_template(sName, isPass, -1, 'muonCR', obs=msd, syst='nominal', muon=True)
+                if (sName == 'QCD') & isPass: continue #Skip QCD in the muon passing region
+                templates[sName] = get_template(sName=sName,bb_pass=isPass, V_bin='muonCR', obs=msd, syst='nominal', muon=True)
                 nominal = templates[sName][0]
 
                 stype = rl.Sample.BACKGROUND
@@ -444,43 +453,73 @@ def vh_rhalphabet(tmpdir):
                 sample.setParamEffect(sys_lumi_cor_161718, lumi[year[:4]]['correlated'])
                 sample.setParamEffect(sys_lumi_cor_1718, lumi[year[:4]]['correlated_20172018'])
 
-                sample.autoMCStats(lnN=True)
-                
-                sample.setParamEffect(sys_eleveto, 1.005)
-                sample.setParamEffect(sys_tauveto, 1.05)
+                if do_systematics:
 
-                #These are all the systematics for QCD
-                if sName == 'QCD':
-                    ch.addSample(sample)
-                    continue 
-                
-                #TODO: THESE SYSTEMATICS ARE NOT PROCESSED FOR NOW
-                # for sys in mu_exp_systs:
-                #     syst_up = one_bin(sName, isPass, -1, '', obs=msd, syst=sys+'Up', muon=True)[0]
-                #     syst_do = one_bin(sName, isPass, -1, '', obs=msd, syst=sys+'Down', muon=True)[0]
-            
-                #     eff_up = shape_to_num(syst_up,nominal)
-                #     eff_do = shape_to_num(syst_do,nominal)
+                    sample.autoMCStats(lnN=True)
+                    
+                    sample.setParamEffect(sys_eleveto, 1.005)
+                    sample.setParamEffect(sys_tauveto, 1.05)
 
-                #     sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
+                    #These are all the systematics for QCD
+                    if sName == 'QCD':
+                        ch.addSample(sName)
+                        continue 
+                
+                    #TODO: THESE SYSTEMATICS ARE NOT PROCESSED FOR NOW
+                    # for sys in mu_exp_systs:
+                    #     syst_up = one_bin(sName, isPass, -1, '', obs=msd, syst=sys+'Up', muon=True)[0]
+                    #     syst_do = one_bin(sName, isPass, -1, '', obs=msd, syst=sys+'Down', muon=True)[0]
+                
+                    #     eff_up = shape_to_num(syst_up,nominal)
+                    #     eff_do = shape_to_num(syst_do,nominal)
+
+                    #     sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
 
                 #PaticleNet Xbb Scale Factor
                 if sName in ['ggF','VBF','WH','ZH','ggZH','ttH','Zjetsbb']:
-                    sf, sfunc_up, sfunc_down = passfailSF(sName, bb_pass=isPass, V_bin='MuonCR', obs=msd, mask=mask,
-                                                        SF=SF[year]['hp']['ptbin0']['central'],
-                                                        SF_unc_up=SF[year]['hp']['ptbin0']['up'],
-                                                        SF_unc_down=SF[year]['hp']['ptbin0']['down'], muon = True)
+                    sf, sfunc_up, sfunc_down = passfailSF(sName, bb_pass=isPass, V_bin='muonCR', obs=msd, mask=mask,
+                                                        SF=PnetSF[year]['hp']['ptbin0']['central'],
+                                                        SF_unc_up=PnetSF[year]['hp']['ptbin0']['up'],
+                                                        SF_unc_down=PnetSF[year]['hp']['ptbin0']['down'], muon = True)
                     sample.scale(sf)
-                    sample.setParamEffect(sys_PNetEffBB, sfunc_up, sfunc_down)
+                    if do_systematics: sample.setParamEffect(sys_PNetEffBB, sfunc_up, sfunc_down)
                 
-                #TODO: Add ParticleNet 2-prong SF here
+                # TODO: Add ParticleNet 2-prong SF here
+                # sample.scale(SF[year]['V_SF'])
+
                 ch.addSample(sample)
 
+            # End loop over samples and start loading data
+            muon_data_obs = get_template(sName='muondata', bb_pass=isPass, V_bin='muonCR', obs=msd, syst='nominal', muon=True)
+            ch.setObservation(muon_data_obs, read_sumw2=True) #WTF is read_sumw2?
+
+        #END LOOP OVER DIFFERENT BB REGIONS
+        tqqpass = model['muonCRpass{}_ttbar'.format(year)]
+        tqqfail = model['muonCRfail{}_ttbar'.format(year)]
+        sumPass = tqqpass.getExpectation(nominal=True).sum()
+        sumFail = tqqfail.getExpectation(nominal=True).sum()
+
+        stqqpass = model['muonCRpass{}_singlet'.format(year)]
+        stqqfail = model['muonCRfail{}_singlet'.format(year)]
+        sumPass += stqqpass.getExpectation(nominal=True).sum()
+        sumFail += stqqfail.getExpectation(nominal=True).sum()
+
+        tqqPF =  sumPass / sumFail
+
+        stqqpass.setParamEffect(tqqeffSF, 1 * tqqeffSF)
+        stqqfail.setParamEffect(tqqeffSF, (1 - tqqeffSF) * tqqPF + 1)
+        stqqpass.setParamEffect(tqqnormSF, 1 * tqqnormSF)
+        stqqfail.setParamEffect(tqqnormSF, 1 * tqqnormSF)
         
+        tqqpass.setParamEffect(tqqeffSF, 1 * tqqeffSF)
+        tqqfail.setParamEffect(tqqeffSF, (1 - tqqeffSF) * tqqPF + 1)
+        tqqpass.setParamEffect(tqqnormSF, 1 * tqqnormSF)
+        tqqfail.setParamEffect(tqqnormSF, 1 * tqqnormSF)
+
     #-------------------------END MUON CONTROL REGION-------------------------------
 
-    with open(os.path.join(str(tmpdir), 'testModel_'+year+'.pkl'), 'wb') as fout: pickle.dump(model, fout)
-    model.renderCombine(os.path.join(str(tmpdir), 'testModel_'+year))
+    with open(os.path.join(str(tmpdir), 'testModel_{}.pkl'.format(year)), 'wb') as fout: pickle.dump(model, fout)
+    model.renderCombine(os.path.join(str(tmpdir), 'testModel_{}'.format(year)))
 
 
 def main():

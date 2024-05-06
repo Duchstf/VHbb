@@ -53,7 +53,7 @@ def ak4_jets(events, year):
     jets = jets[(jets.pt > 30.) & (abs(jets.eta) < 5.0) & jets.isTight & (jets.puId > 0)]
         
     # EE noise for 2017                                             
-    if self._year == '2017':
+    if year == '2017':
         jets = jets[
             (jets.pt > 50)
             | (abs(jets.eta) < 2.65)
@@ -103,9 +103,12 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
                 hist.Cat('systematic', 'Systematic'),
                 hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
                 hist.Bin('msd2', r'Jet 2 $m_{sd}$', [40., 68.,  75.,  82.,  89.,  96., 103., 110., 201.]),
+
                 hist.Bin('bb1', r'Jet 1 Paticle Net B Score', bb_bins),
                 hist.Bin('qcd2', r'Jet 2 Paticle Net QCD Score', qcd_bins),
+
                 hist.Bin('genflavor1', 'Gen. jet 1 flavor', [1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
+                hist.Bin('pt1', 'Jet 1 pT', [450, 500, 600])
             )
         }
 
@@ -346,9 +349,7 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
         else: systematics = [shift_name]
             
         #!LIST OF THE SELECTIONS APPLIED
-        regions = {'signal': ['trigger', 'lumimask', 'metfilter',
-                              'jet1kin', 'jet2kin', 'jetid', 'jetacceptance',
-                              'met', 'noleptons','njets'],}
+        regions = {'signal': ['trigger', 'lumimask', 'metfilter', 'jet1kin', 'jet2kin', 'jetid', 'jetacceptance', 'met', 'noleptons','njets'],}
 
         def fill(region, systematic, wmod=None):
             
@@ -371,9 +372,12 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
                 systematic=sname,
                 msd1=normalize(msd1_matched, cut),
                 msd2=normalize(msd2_matched, cut),
+
                 bb1=normalize(bb1, cut),
                 qcd2=normalize(qcd2, cut),
+
                 genflavor1=normalize(genflavor1, cut),
+                pt1=normalize(candidatejet.pt1, cut),
                 weight=weight,
             )
 
