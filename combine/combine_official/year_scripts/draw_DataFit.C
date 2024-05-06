@@ -36,7 +36,7 @@ void draw(int Vmass_bin, bool bb_pass,  bool log=true){
   }
 
   //Fit root file
-  string filename = "fitDiagnostics.root";
+  string filename = "fitDiagnosticsTest.root";
 
   string bb_region = (bb_pass) ? "pass" : "fail";
 

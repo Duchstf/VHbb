@@ -43,27 +43,22 @@ echo "finish cleaning and symbolic linking"
 singularity exec -B ${PWD}:/srv -B $pkl_dir --pwd /srv /cvmfs/unpacked.cern.ch/registry.hub.docker.com/coffeateam/coffea-dask:latest python make_hists.py $1
 
 # Produce combine cards
-python make_cards.py $1 > out_make_cards.txt
+conda run -n combine --no-capture-output python make_cards.py $1 > out_make_cards.txt
 
 # Run the combine jobs
-# cd $1
+cd $1
 
-# mkdir -p plots
+mkdir -p plots
 
-# ln -s -f ../year_scripts/*.C .
-# ln -s -f ../year_scripts/*.sh .
+ln -s -f ../year_scripts/*.C .
+ln -s -f ../year_scripts/*.sh .
 
-# ./make_workspace.sh
-
-# # ./exp_shapes_VV.sh 
-# # ./exp_significance_VV.sh > significance_VV.txt
-
-# ./exp_shapes.sh 
-# ./exp_significance.sh > significance.txt
+conda run -n combine --no-capture-output ./make_workspace.sh > out_make_workspace.txt
+conda run -n combine --no-capture-output ./exp_shapes.sh > out_exp_shapes.txt
+conda run -n combine --no-capture-output ./exp_significance.sh > significance.txt
 
 # Produce the relevant plots
-# root -b -q draw_DataFit.C
+conda run -n combine --no-capture-output root -b -q draw_DataFit.C
+conda run -n plot --no-capture-output combine_postfits -i fitDiagnosticsTest.root -o plots/test_plot --MC --style ../files/style_D.yml --onto qcd --sigs VH --bkgs QCD,qcd,ttbar,singlet,WjetsQQ,Zjets,Zjetsbb,VV,H,WLNu  --rmap 'VH:rVH' --project-signals 3 --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p
 
-# combine_postfits -i fitDiagnostics.root -o plots/test_plot --MC --style ../files/style_D.yml --onto qcd --sigs VH --bkgs QCD,qcd,ttbar,singlet,WjetsQQ,Zjets,Zjetsbb,VV,H,WLNu  --rmap 'VH:rVH' --project-signals 3 --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p
-
-# cd ../
+cd ../
