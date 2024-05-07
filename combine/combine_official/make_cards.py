@@ -198,6 +198,8 @@ def vh_rhalphabet(tmpdir):
     Vmass_scaled = (Vmass_pts - 40.0) / (201.0 - 40.0)
     Hmass_scaled = (Hmass_pts - 40.0) / (201.0 - 40.0)
 
+    print(Hmass_scaled)
+
     validbins = Hmass_scaled < 3000 #All True (3 by 23)
     
     while fitfailed_qcd < 5: #Fail if choose bad initial values, start from where the fits fail. 
@@ -357,7 +359,8 @@ def vh_rhalphabet(tmpdir):
 
             #Could be used to blind the Higgs mass window
             mask = validbins[iBin]
-            mask_pass = ~mask #For blinding the data in the passing region, using -t -1 for now
+            mask_pass = validbins[iBin] #For blinding the data in the bb passing region, using -t -1 for now
+            if (bb_region == 'pass') & (iBin == 1): mask_pass[9:14] = False
             
             failCh.mask = mask
             passCh.mask = mask_pass
