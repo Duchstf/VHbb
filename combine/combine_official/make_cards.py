@@ -484,9 +484,6 @@ def vh_rhalphabet(tmpdir):
                                                         SF_unc_down=PnetSF[year]['hp']['ptbin0']['down'], muon = True)
                     sample.scale(sf)
                     if do_systematics: sample.setParamEffect(sys_PNetEffBB, sfunc_up, sfunc_down)
-                
-                # TODO: Add ParticleNet 2-prong SF here
-                # sample.scale(SF[year]['V_SF'])
 
                 ch.addSample(sample)
 

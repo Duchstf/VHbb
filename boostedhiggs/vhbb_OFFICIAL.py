@@ -35,7 +35,7 @@ from boostedhiggs.corrections import (
 )
 
 #Import the working points
-from WPs import *
+from boostedhiggs.WPs import *
 
 logger = logging.getLogger(__name__)
 
@@ -64,19 +64,12 @@ def ak4_jets(events, year):
 
 class VHbbProcessorOfficial(processor.ProcessorABC):
     
-    def __init__(self,
-                 year='2017',
-                 jet_arbitration='T_bvq',
-                 skipJER=False,
-                 tightMatch=True,
-                 ewkHcorr=True,
-                 systematics=True
-                 ):
+    def __init__(self, year='2017', jet_arbitration='T_bvq',
+                 tightMatch=True, ewkHcorr=True, systematics=True):
         
         self._year = year
         self._ewkHcorr = ewkHcorr
         self._jet_arbitration = jet_arbitration
-        self._skipJER = skipJER
         self._tightMatch = tightMatch
         self._systematics = systematics
 
@@ -147,7 +140,6 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
 
         dataset = events.metadata['dataset']
         isRealData = not hasattr(events, "genWeight")
-        isQCDMC = 'QCD' in dataset
         selection = PackedSelection()
         weights = Weights(len(events), storeIndividual=True)
         output = self.make_output()
@@ -190,7 +182,7 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
 
         #Fat jets processing
         fatjets = events.FatJet
-        fatjets['msdcorr'] = corrected_msoftdrop(fatjets)
+        fatjets['msdcorr'] = corrected_msoftdrop(fatjets, self._year)
         fatjets['qcdrho'] = 2 * np.log(fatjets.msdcorr / fatjets.pt)
         fatjets['n2ddt'] = fatjets.n2b1 - n2ddt_shift(fatjets, year=self._year)
         fatjets['msdcorr_full'] = fatjets['msdcorr']
@@ -227,20 +219,9 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
         )
 
         selection.add('jetid', candidatejet.isTight & secondjet.isTight)
-
-        #Count the number of ak4 jets that are away
-        ak4_jets_events = ak4_jets(events, self._year)
-        n_ak4_jets = ak.count(ak4_jets_events.pt, axis=1)
-
-
-        # Only consider first 4 jets to be consistent with old framework  
-        jets = jets[:, :4]
-        dR = abs(jets.delta_r(candidatejet))
-        second_jet_dR = abs(secondjet.delta_r(candidatejet))
-        ak4_away = jets[dR > 0.8]
         
         #Count the number of ak4 jets that are away
-        ak4_jets_events = ak4_jets(events)
+        ak4_jets_events = ak4_jets(events, self._year)
         n_ak4_jets = ak.count(ak4_jets_events.pt, axis=1)
         selection.add('njets', n_ak4_jets < 5.)
 
@@ -366,7 +347,7 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
             else: weight = weights.weight()[cut] * wmod[cut]
 
             #! FILL THE HISTOGRAM
-            output['ParticleNet_msd'].fill(
+            output['h'].fill(
                 dataset=dataset,
                 region=region,
                 systematic=sname,
@@ -377,7 +358,7 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
                 qcd2=normalize(qcd2, cut),
 
                 genflavor1=normalize(genflavor1, cut),
-                pt1=normalize(candidatejet.pt1, cut),
+                pt1=normalize(candidatejet.pt, cut),
                 weight=weight,
             )
 

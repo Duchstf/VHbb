@@ -22,11 +22,12 @@ for year in ["2016APV", "2016", "2017","2018"]:
     lookup = dense_lookup(h.view(), (h.axes[0].edges, h.axes[1].edges))
     ddt_dict[year] = lookup
 
-# Updated for UL
-with importlib.resources.path("boostedhiggs.data", "msdcorr.json") as filename:
-    msdcorr = correctionlib.CorrectionSet.from_file(str(filename))
+# Msd correction for all years, 2016 used for both 2016, 2016 APV.
+msdcorr = {}
+for year in ["2016", "2017","2018"]:
+    with importlib.resources.path("boostedhiggs.data", "msdcorr_{}.json".format(year)) as filename: msdcorr[year] = correctionlib.CorrectionSet.from_file(str(filename))
 
-def corrected_msoftdrop(fatjets):
+def corrected_msoftdrop(fatjets, year):
     msdraw = np.sqrt(
         np.maximum(
             0.0,
@@ -36,11 +37,12 @@ def corrected_msoftdrop(fatjets):
     msoftdrop = fatjets.msoftdrop
     msdfjcorr = msdraw / (1 - fatjets.rawFactor)
 
-    corr = msdcorr["msdfjcorr"].evaluate(
+    corr = msdcorr[year]["msdfjcorr"].evaluate(
         np.array(ak.flatten(msdfjcorr / fatjets.pt)),
         np.array(ak.flatten(np.log(fatjets.pt))),
         np.array(ak.flatten(fatjets.eta)),
     )
+
     corr = ak.unflatten(corr, ak.num(fatjets))
     corrected_mass = msdfjcorr * corr
 
