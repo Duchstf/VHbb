@@ -25,7 +25,7 @@ def main():
 
     year = sys.argv[1]
     tag = sys.argv[2]
-    hist_name = 'ParticleNet_msd' #You need to define this manually, usually just keep it as "templates"
+    hist_name = 'h' #You need to define this manually, usually just keep it as "templates"
             
     indir = "../coffea/{}/{}/".format(tag, year)
     infiles = subprocess.getoutput("ls "+indir+year+"_dask_*.coffea").split()
@@ -37,7 +37,7 @@ def main():
     os.system('mkdir -p  %s' %outdir)
 
     # Templates file is the collection of all processed histogram
-    picklename = outdir  + '/{}.pkl'.format(hist_name) 
+    picklename = outdir  + '/h.pkl'
     if os.path.isfile(picklename):
         os.remove(picklename)
 

@@ -1,7 +1,7 @@
 '''
 To submit processing jobs, do:
 
-ssh -L 8787:localhost:8787 dhoang@cmslpc210.fnal.gov
+ssh -L 8787:localhost:8787 dhoang@cmslpc243.fnal.gov
 grid-proxy-init -valid 10000:00
 
 ./shell
@@ -15,8 +15,8 @@ import os, sys
 import subprocess
 import uproot
 
-from coffea import processor, util, hist
-from coffea.nanoevents import NanoEventsFactory, NanoAODSchema
+from coffea import processor, util
+from coffea.nanoevents import NanoAODSchema
 
 # Add path so the script sees the modules in parent directory
 sys.path.append('/srv')
@@ -26,7 +26,8 @@ from boostedhiggs import VHbbProcessorOfficial as vhbb_processor
 tag = "vhbb_official"
 syst = True
 year = sys.argv[1]
-ignore_list = ['QCDbEnriched', 'QCDBGenFilter', 'JetHT2016Data', f'SingleMu{year}Data'] #Sample to ignore processing for now
+ignore_list = ['QCDbEnriched', 'QCDBGenFilter', f'SingleMu{year}Data',
+               'SingleMuData', 'TTbarBoosted', 'JetHT2016Data'] #Sample to ignore processing
 
 from distributed import Client
 from lpcjobqueue import LPCCondorCluster
@@ -85,6 +86,8 @@ with Client(cluster) as client:
                 p = vhbb_processor(year=year, jet_arbitration='T_bvq' , systematics=syst)
                 args = {'savemetrics':True, 'schema':NanoAODSchema}
 
+                #Safe to skip bad files for MC, not safe for data
+                skipBadFiles = 0 if 'Data' in index else 1
                 output = processor.run_uproot_job(
                     this_file,
                     treename="Events",
@@ -95,6 +98,7 @@ with Client(cluster) as client:
                         "schema": processor.NanoAODSchema,
                         "treereduction": 2,
                         "savemetrics": True,
+                        "skipbadfiles": skipBadFiles,
                     },
                     chunksize=50000,
                 )
