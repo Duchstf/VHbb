@@ -31,7 +31,7 @@ sys.path.append('/srv')
 from boostedhiggs import VHBB_MuonCR_Processor
 year = sys.argv[1]
 tag = "muonCR"
-syst = False
+syst = True
 memory='6GB'
 CR_list = ['WJetsToLNu', 'WJetsToQQ', 'ZJetsToQQ' 'TTbar', 'QCD']
 

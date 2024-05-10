@@ -18,7 +18,7 @@ import pickle
 
 with open('files/lumi.json') as f: lumis = json.load(f)
 bb_WPs = { '2016APV_bb1': 0.9883, '2016_bb1': 0.9883, '2017_bb1': 0.9870, '2018_bb1':  0.9880}
-qcd_WPs = { '2016APV_qcd2': 0.0, '2016_qcd2': 0.0, '2017_qcd2': 0.0922, '2018_qcd2':  0.0}
+qcd_WPs = { '2016APV_qcd2': 0.0, '2016_qcd2': 0.0, '2017_qcd2': 0.0541, '2018_qcd2':  0.0}
 mass_range = [40., 68., 110., 201.]
 
 #Same in make_cards.py

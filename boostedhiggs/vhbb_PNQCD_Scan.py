@@ -28,8 +28,6 @@ from boostedhiggs.corrections import (
 from boostedhiggs.WPs import *
 
 logger = logging.getLogger(__name__)
-
-
 def update(events, collections):
     """Return a shallow copy of events array with some collections swapped out"""
     out = events
@@ -52,7 +50,7 @@ def ak4_jets(events, year):
     return jets
 
 
-class VHbbProcessorOfficial(processor.ProcessorABC):
+class VhbbPNQCDScan(processor.ProcessorABC):
     
     def __init__(self, year='2017', jet_arbitration='T_bvq',
                  tightMatch=True, ewkHcorr=True, systematics=True):
@@ -72,7 +70,7 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
         
         #Scan thresholds for bb
         bb_bins = bb_WPs['{}_bb'.format(self._year)]
-        qcd_bins = qcd_WPs['{}_qcd'.format(self._year)]
+        qcd_bins = [round(x,4) for x in list(np.linspace(0.,1.,500))]
         
         #Create the histogram.
         self.make_output = lambda: {
@@ -90,8 +88,7 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
                 hist.Bin('bb1', r'Jet 1 Paticle Net B Score', bb_bins),
                 hist.Bin('qcd2', r'Jet 2 Paticle Net QCD Score', qcd_bins),
 
-                hist.Bin('genflavor1', 'Gen. jet 1 flavor', [1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
-                hist.Bin('pt1', 'Jet 1 pT', [450, 500, 600])
+                hist.Bin('genflavor1', 'Gen. jet 1 flavor', [1, 2, 3, 4]) #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
             )
         }
 
@@ -348,7 +345,6 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
                 qcd2=normalize(qcd2, cut),
 
                 genflavor1=normalize(genflavor1, cut),
-                pt1=normalize(candidatejet.pt, cut),
                 weight=weight,
             )
 

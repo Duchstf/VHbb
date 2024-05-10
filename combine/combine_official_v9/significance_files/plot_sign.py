@@ -34,9 +34,9 @@ def open_file_and_extract(file_path):
         if x.startswith('Significance:'): significance.append(float(x[14:]))
         if "Minimization success! status=0" in x: status = True
     
-    print("Threshold: {}. Length: {}".format(threshold,len(threshold)))
-    print("Significance: ", significance)
-    print("Status: {}".format(status))
+    # print("Threshold: {}. Length: {}".format(threshold,len(threshold)))
+    # print("Significance: ", significance)
+    # print("Status: {}".format(status))
         
     if status: return threshold, significance
     else: return threshold, [0]
@@ -63,8 +63,8 @@ def scan_logs_out(log_dir):
 
     sorted_index = np.argsort(qcd2_thres) 
     plt.scatter(qcd2_thres[sorted_index][5:], all_sign[sorted_index][5:])
-    plt.xlabel("V ParticleMD QCD Score Cut")
-    plt.ylabel(r"2017 $\sigma$")
+    plt.xlabel(r"V $PN_{MD}^{QCD}$ Cut")
+    plt.ylabel(r"2017 Significance ($\sigma$)")
     plt.savefig("scan.pdf", bbox_inches='tight')
     
     print("Max Signifiance: ", max(all_sign))

@@ -165,7 +165,7 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
         del metfilter
 
         fatjets = events.FatJet
-        fatjets['msdcorr'] = corrected_msoftdrop(fatjets)
+        fatjets['msdcorr'] = corrected_msoftdrop(fatjets, self._year)
         fatjets['qcdrho'] = 2 * np.log(fatjets.msdcorr / fatjets.pt)
         fatjets['msdcorr_full'] = fatjets['msdcorr']
 
@@ -222,11 +222,15 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
         ntaus = ak.sum(
             (
                 (events.Tau.pt > 20)
+                & (abs(events.Tau.dz) < 0.2)
                 & (abs(events.Tau.eta) < 2.3)
-                & (events.Tau.rawIso < 5)
-                & (events.Tau.idDeepTau2017v2p1VSjet)
-                & ak.all(events.Tau.metric_table(events.Muon[goodmuon]) > 0.4, axis=2)
-                & ak.all(events.Tau.metric_table(events.Electron[goodelectron]) > 0.4, axis=2)
+                & (events.Tau.decayMode > 0)
+                & (events.Tau.decayMode != 5)
+                & (events.Tau.decayMode != 6)
+                & (events.Tau.decayMode != 7)
+                & (events.Tau.idDeepTau2017v2p1VSe >= 2)
+                & (events.Tau.idDeepTau2017v2p1VSjet >= 16)
+                & (events.Tau.idDeepTau2017v2p1VSmu >= 8)
             ),
             axis=1,
         )
