@@ -19,7 +19,7 @@ fi
 pkl_dir="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/pickle"
 
 #Define the pickling directory
-signal_pkl="$pkl_dir/vhbb_v11/$1/ParticleNet_msd.pkl"
+signal_pkl="$pkl_dir/vhbb_official/$1/h.pkl"
 muonCR_pkl="$pkl_dir/muonCR/$1/h.pkl"
 
 # Clean everything except for the pickle file
@@ -31,8 +31,8 @@ rm -rf plots
 rm -rf output
 
 #Symbolic linking the pickle files to save space
-ln -s ${signal_pkl} .
-ln -s ${muonCR_pkl} .
+ln -s ${signal_pkl} signal.pkl
+ln -s ${muonCR_pkl} muonCR.pkl
 
 #Return to the main directory
 cd ..
@@ -54,11 +54,17 @@ ln -s -f ../year_scripts/*.C .
 ln -s -f ../year_scripts/*.sh .
 
 conda run -n combine --no-capture-output ./make_workspace.sh > out_make_workspace.txt
-conda run -n combine --no-capture-output ./exp_shapes.sh > out_exp_shapes.txt
-conda run -n combine --no-capture-output ./exp_significance.sh > significance.txt
+conda run -n combine --no-capture-output ./exp_shapes.sh > out_exp_shapes.txt $2
+conda run -n combine --no-capture-output ./exp_significance.sh > significance.txt $2
+
 
 # Produce the relevant plots
 conda run -n combine --no-capture-output root -b -q draw_DataFit.C
-conda run -n plot --no-capture-output combine_postfits -i fitDiagnosticsTest.root -o plots/test_plot --MC --style ../files/style_D.yml --onto qcd --sigs VH --bkgs QCD,qcd,ttbar,singlet,WjetsQQ,Zjets,Zjetsbb,VV,H,WLNu  --rmap 'VH:rVH' --project-signals 3 --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p 
+
+if [ "$1" == "unblind" ]; then
+    conda run -n plot --no-capture-output combine_postfits -i fitDiagnosticsTest.root -o plots/test_plot --data --style ../files/style_D.yml --onto qcd --sigs VH --bkgs QCD,qcd,ttbar,singlet,WjetsQQ,Zjets,Zjetsbb,VV,H,WLNu  --rmap 'VH:rVH' --project-signals 3 --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p 
+else
+    conda run -n plot --no-capture-output combine_postfits -i fitDiagnosticsTest.root -o plots/test_plot --data --style ../files/style_D.yml --onto qcd --sigs VH --bkgs QCD,qcd,ttbar,singlet,WjetsQQ,Zjets,Zjetsbb,VV,H,WLNu  --rmap 'VH:rVH' --project-signals 3 --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p 
+fi
 
 cd ../

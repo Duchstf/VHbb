@@ -56,7 +56,7 @@ def make_hists_signal(year, bbthr, qcdthr, signal_pickle_path, signal_out_path):
     if not os.path.isfile(signal_pickle_path): raise FileNotFoundError("You need to link the pickle file (using absolute paths)")
 
     #Read in the pickle file
-    pickle_hist =  pickle.load(open(signal_pickle_path,'rb')).integrate('region','signal').integrate('qcd2', slice(0., qcdthr))
+    pickle_hist =  pickle.load(open(signal_pickle_path,'rb')).integrate('region','signal').integrate('qcd2', slice(0., qcdthr)).integrate('pt1', slice(450, None), overflow='over')
     check_missing(pickle_hist)
 
     #Process each region
@@ -157,10 +157,10 @@ def main():
     qcdthr = qcd_WPs[f'{year}_qcd2']
     print(f'QCD 2 {year} Threshold: ', qcdthr)
     
-    signal_pickle_path = '{}/{}.pkl'.format(year, 'ParticleNet_msd')
+    signal_pickle_path = '{}/{}.pkl'.format(year, 'signal')
     signal_out_path = '{}/signalregion.root'.format(year)
 
-    muonCR_pickle_path = '{}/{}.pkl'.format(year, 'h')
+    muonCR_pickle_path = '{}/{}.pkl'.format(year, 'muonCR')
     muonCR_out_path = '{}/muonCRregion.root'.format(year)
 
     #Make the hists for signal region and muon CR

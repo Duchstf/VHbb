@@ -31,6 +31,32 @@ def badtemp_ma(hvalues, mask=None):
     if (tot < eps) or (count_nonzeros < 2): return True
     else: return False
 
+def shape_to_num(var, nom, clip=1.5):
+    """
+    Don't get any systematics get bigger than 50%
+    """
+    nom_rate = np.sum(nom)
+    var_rate = np.sum(var)
+
+    if abs(var_rate/nom_rate) > clip:
+        var_rate = clip*nom_rate
+
+    if var_rate < 0:
+        var_rate = 0
+
+    return var_rate/nom_rate
+
+def smass(sName):
+    if sName in ['ggF','VBF','WH','ZH','ttH', 'VBFDipoleRecoilOn']:
+        _mass = 125.
+    elif sName in ['Wjets', 'WjetsUM','WjetsQQ','EWKW','ttbar','singlet','VV']:
+        _mass = 80.379
+    elif sName in ['Zjets','Zjetsbb','EWKZ','EWKZbb']:
+        _mass = 91.
+    else:
+        raise ValueError("What is {}".format(sName))
+    return _mass
+
 def passfailSF(sName, bb_pass, V_bin, obs, mask,
                 SF=1, SF_unc_up=0.1, SF_unc_down=-0.1,
                 muon=False):
@@ -182,7 +208,8 @@ def vh_rhalphabet(tmpdir):
     with open('files/lumi.json') as f: lumi = json.load(f)
     with open("files/samples.json", "r") as f: samples = json.load(f)
     with open("files/Vmass.json", "r") as f: VmassBins = np.asarray(json.load(f))
-    with open('files/pnet-b.json', "r") as f: PnetSF = json.load(f)
+    with open('files/pnet-b.json', "r") as f: PnetSF = json.load(f)[year]['hp']['mutag']['ptbin0']
+    with open('files/sf.json') as f: SF = json.load(f)
     
     print("Current mass bins: ", VmassBins)
     nVmass = len(VmassBins) - 1
@@ -246,25 +273,14 @@ def vh_rhalphabet(tmpdir):
         tf_MCtempl_params = qcdeff * tf_MCtempl(Vmass_scaled, Hmass_scaled)
         
         for iBin in range(nVmass):
-            
-            #TODO: Get observation from qcd model built before?
             failCh = qcdmodel["VBin%dfail%s" % (iBin, year)]
             passCh = qcdmodel["VBin%dpass%s" % (iBin, year)]
             
             failObs = failCh.getObservation()
-            
-            #TODO: What is this for?
             qcdparams = np.array([rl.IndependentParameter("qcdparam_VBin%d_HBin%d_%s" % (iBin, i, year), 0) for i in range(msd.nbins)])
             sigmascale = 10.0
             scaledparams = failObs * (1 + sigmascale / np.maximum(1.0, np.sqrt(failObs))) ** qcdparams
             
-            #TODO: what is scaleparams[0] here???????
-            #TODO: Looking like a list of two of the same thing???
-            # for i in range(len(scaledparams)):
-            #     print("--------------------------------------------------------------")
-            #     print(scaledparams[i])
-            
-            #TODO: What are ParametericSample and TransferFactorSample, what are they used for?
             fail_qcd = rl.ParametericSample("VBin%dfail%s_qcd" % (iBin, year), rl.Sample.BACKGROUND, msd, scaledparams[0])
             failCh.addSample(fail_qcd)
             pass_qcd = rl.TransferFactorSample("VBin%dpass%s_qcd" % (iBin, year), rl.Sample.BACKGROUND, tf_MCtempl_params[iBin, :], fail_qcd)
@@ -347,9 +363,8 @@ def vh_rhalphabet(tmpdir):
     # Fill actual fit model with the expected fit value for every process except for QCD
     # Model need to know the signal, and background
     # Different background have different uncertainties
-    # Don't treat the QCD like everything else
-    # Take the QCD expectation from previous fit.
-    # Take expectation from MC
+    # Don't treat the QCD like everything else, take the QCD expectation from previous fit.
+    # Take the process expectation from MC
     for iBin in range(nVmass):
         Vmass_bin = 'Vmass_{}'.format(iBin)
         
@@ -357,13 +372,8 @@ def vh_rhalphabet(tmpdir):
 
             print('Vmass Bin: {}, BB region: {}'.format(iBin, bb_region))
 
-            #Could be used to blind the Higgs mass window
-            mask = validbins[iBin]
-            mask_pass = validbins[iBin] #For blinding the data in the bb passing region, using -t -1 for now
-            if (bb_region == 'pass') & (iBin == 1): mask_pass[9:14] = False
-            
-            failCh.mask = mask
-            passCh.mask = mask_pass
+            #Could be used to blind the data in the Higgs mass window
+            mask=validbins[iBin]
             
             ch = rl.Channel('VBin%d%s%s' % (iBin, bb_region, year))
             model.addChannel(ch)
@@ -398,9 +408,58 @@ def vh_rhalphabet(tmpdir):
 
                     sample.autoMCStats(lnN=True) 
 
+                    ##--------------------Experimental Systematics---------------------
                     sample.setParamEffect(sys_eleveto, 1.005)
                     sample.setParamEffect(sys_muveto, 1.005)
                     sample.setParamEffect(sys_tauveto, 1.05)
+
+                    for sys in exp_systs:
+    
+                        syst_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst=sys+'Up')[0]
+                        syst_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst=sys+'Down')[0]
+
+                        eff_up = shape_to_num(syst_up,nominal)
+                        eff_do = shape_to_num(syst_do,nominal)
+
+                        sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
+
+                        # Scale and Smear
+                        mtempl = AffineMorphTemplate(templ)
+
+                        if sName not in ['QCD']:
+                            # shift
+                            realshift = SF[year]['shift_SF_ERR']/smass('Wjets') * smass(sName)
+                            _up = mtempl.get(shift=realshift)
+                            _down = mtempl.get(shift=-realshift)
+                            if badtemp_ma(_up[0]) or badtemp_ma(_down[0]):
+                                print("Skipping sample {}, scale systematic would be empty".format(sName))
+                            else:
+                                sample.setParamEffect(sys_scale, _up, _down, scale=1)
+
+                            # smear
+                            _up = mtempl.get(smear=1 + SF[year]['smear_SF_ERR'])
+                            _down = mtempl.get(smear=1 - SF[year]['smear_SF_ERR'])
+                            if badtemp_ma(_up[0]) or badtemp_ma(_down[0]):
+                                print("Skipping sample {}, scale systematic would be empty".format(sName))
+                            else:
+                                sample.setParamEffect(sys_smear, _up, _down)    
+
+                    ##--------------------END Experimental Systematics---------------------
+                                
+                # Add ParticleNetSFs last!
+                if sName in ['ggF','VBF','WH','ZH','ggZH','ttH','Zjetsbb']:
+                    sf, sfunc_up, sfunc_down = passfailSF(sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, mask=mask,
+                                                          SF=PnetSF['central'], SF_unc_up=PnetSF['up'], SF_unc_down=PnetSF['down'],
+                                                          muon = False)
+                    sample.scale(sf)
+                    if do_systematics: sample.setParamEffect(sys_PNetEffBB, sfunc_up, sfunc_down)
+
+                # V SF
+                # if sName in ['VV','WH','ZH']:                                                 
+                    # sample.scale(SF[year]['V_SF'])
+                    # if do_systematics:
+                    #     effect = 1.0 + SF[year]['V_SF_ERR'] / SF[year]['V_SF']
+                    #     sample.setParamEffect(sys_veff,effect)
 
                 ch.addSample(sample)
 
@@ -475,15 +534,6 @@ def vh_rhalphabet(tmpdir):
                     #     eff_do = shape_to_num(syst_do,nominal)
 
                     #     sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
-
-                #PaticleNet Xbb Scale Factor
-                if sName in ['ggF','VBF','WH','ZH','ggZH','ttH','Zjetsbb']:
-                    sf, sfunc_up, sfunc_down = passfailSF(sName, bb_pass=isPass, V_bin='muonCR', obs=msd, mask=mask,
-                                                        SF=PnetSF[year]['hp']['ptbin0']['central'],
-                                                        SF_unc_up=PnetSF[year]['hp']['ptbin0']['up'],
-                                                        SF_unc_down=PnetSF[year]['hp']['ptbin0']['down'], muon = True)
-                    sample.scale(sf)
-                    if do_systematics: sample.setParamEffect(sys_PNetEffBB, sfunc_up, sfunc_down)
 
                 ch.addSample(sample)
 
