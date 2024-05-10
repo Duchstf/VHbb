@@ -156,8 +156,8 @@ def vh_rhalphabet(tmpdir):
     sys_dict['L1Prefiring'] = rl.NuisanceParameter('CMS_L1Prefiring_{}'.format(year),'lnN')
     
     #No jet trigger in muon control region systematics
-    mu_exp_systs = [x for x in exp_systs if x != 'jet_trigger']
-    mu_exp_systs += ['muon_ID_{}_value'.format(yearstr), 'muon_ISO_{}_value'.format(yearstr), 'muon_TRIGNOISO_{}_value'.format(yearstr)]
+    # mu_exp_systs = [x for x in exp_systs if x != 'jet_trigger']
+    mu_exp_systs = ['muon_ID_{}_value'.format(yearstr), 'muon_ISO_{}_value'.format(yearstr), 'muon_TRIGNOISO_{}_value'.format(yearstr)]
     
     print("Experimental systematics: ",  exp_systs) 
     print("Muon CR systematics: ", mu_exp_systs)
@@ -166,7 +166,7 @@ def vh_rhalphabet(tmpdir):
     #TODO: Put the scale factor and uncertainty into a json file and read it afterwards
     sys_PNetEffBB = rl.NuisanceParameter('CMS_eff_bb_{}'.format(year), 'lnN')
     
-    #n2 uncertainty, derived
+    #V scake factor uncertainty, derived
     sys_veff = rl.NuisanceParameter('CMS_hbb_veff_{}'.format(year), 'lnN')
     
     #All derived from muon control region, shape systematics in all the masses.
@@ -224,12 +224,9 @@ def vh_rhalphabet(tmpdir):
     Vmass_pts, Hmass_pts = np.meshgrid(VmassBins[:-1] + 0.5 * np.diff(VmassBins), msdbins[:-1] + 0.5 * np.diff(msdbins), indexing="ij")
     Vmass_scaled = (Vmass_pts - 40.0) / (201.0 - 40.0)
     Hmass_scaled = (Hmass_pts - 40.0) / (201.0 - 40.0)
-
-    print(Hmass_scaled)
-
     validbins = Hmass_scaled < 3000 #All True (3 by 23)
     
-    while fitfailed_qcd < 5: #Fail if choose bad initial values, start from where the fits fail. 
+    while fitfailed_qcd < fitfailed_limit: #Fail if choose bad initial values, start from where the fits fail. 
    
         # Build qcd MC pass+fail model and fit to polynomial
         qcdmodel = rl.Model("qcdmodel")
@@ -526,14 +523,14 @@ def vh_rhalphabet(tmpdir):
                         continue 
                 
                     #TODO: THESE SYSTEMATICS ARE NOT PROCESSED FOR NOW
-                    # for sys in mu_exp_systs:
-                    #     syst_up = one_bin(sName, isPass, -1, '', obs=msd, syst=sys+'Up', muon=True)[0]
-                    #     syst_do = one_bin(sName, isPass, -1, '', obs=msd, syst=sys+'Down', muon=True)[0]
+                    for sys in mu_exp_systs:
+                        syst_up = get_template(sName=sName,bb_pass=isPass, V_bin='muonCR', obs=msd, syst=sys+'Up', muon=True)[0]
+                        syst_do = get_template(sName=sName,bb_pass=isPass, V_bin='muonCR', obs=msd, syst=sys+'Down', muon=True)[0]
                 
-                    #     eff_up = shape_to_num(syst_up,nominal)
-                    #     eff_do = shape_to_num(syst_do,nominal)
+                        eff_up = shape_to_num(syst_up,nominal)
+                        eff_do = shape_to_num(syst_do,nominal)
 
-                    #     sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
+                        sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
 
                 ch.addSample(sample)
 
