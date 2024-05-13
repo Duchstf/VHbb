@@ -37,6 +37,7 @@ def corrected_msoftdrop(fatjets, year):
     msoftdrop = fatjets.msoftdrop
     msdfjcorr = msdraw / (1 - fatjets.rawFactor)
 
+    if year=='2016APV': year='2016'
     corr = msdcorr[year]["msdfjcorr"].evaluate(
         np.array(ak.flatten(msdfjcorr / fatjets.pt)),
         np.array(ak.flatten(np.log(fatjets.pt))),

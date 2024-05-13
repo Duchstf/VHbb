@@ -396,7 +396,7 @@ def vh_rhalphabet(tmpdir):
 
                 ch.addSample(sample)
 
-            data_obs = get_template(sName='data', bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='nominal')
+            data_obs = get_template(sName='QCD', bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='nominal')
             ch.setObservation(data_obs, read_sumw2=True)
     
     #Fill in the QCD in the actual fit model. 

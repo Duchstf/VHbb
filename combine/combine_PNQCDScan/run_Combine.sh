@@ -51,6 +51,8 @@ cd $1
 ln -s -f ../year_scripts/*.sh .
 
 conda run -n combine --no-capture-output ./make_workspace.sh > out_make_workspace.txt
+
+mkdir -p ../significance_files_$1
 conda run -n combine --no-capture-output ./exp_significance.sh > ../significance_files_$1/significance_$2.txt
 
 cd ../

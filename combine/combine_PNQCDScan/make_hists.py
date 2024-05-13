@@ -35,7 +35,7 @@ samples = ['QCD','WH','ZH','VV',
             'VBFDipoleRecoilOn','ggF','ttH',
             'singlet',
             'ttbar',
-            'data', #!DATA MISSING FOR EACH YEAR
+            # 'data', #!DATA MISSING FOR EACH YEAR
             ]
 
 #Devide Wjets into unmatched and matched components
@@ -43,7 +43,7 @@ samples_save = [x for x in samples + ['Zjetsbb', 'WjetsQQ'] if x != 'Wjets']
 
 btag_SF_samples = ['Wjets', 'Zjets']
 
-QCD2_THRES = 1.0
+QCD2_THRES = 0.0762
 
 def check_missing(pickle_hist):
         
