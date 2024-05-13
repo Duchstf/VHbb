@@ -1,14 +1,14 @@
 '''
 To submit processing jobs, do:
 
-ssh -L 8787:localhost:8787 dhoang@cmslpc244.fnal.gov
+ssh -L 8787:localhost:8787 dhoang@cmslpc329.fnal.gov
 grid-proxy-init -valid 10000:00
 
 ./shell
 
 And then
 
-python submit/submit-PNQCDscan.py 2018 > dask.out 2>&1
+python submit/submit-PNQCDscan.py 2016APV > dask.out 2>&1
 '''
 
 import os, sys

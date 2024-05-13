@@ -6,5 +6,6 @@ array=(0.002 0.004 0.006 0.008 0.01 0.012 0.014 0.016 0.018 0.02 0.022 0.024 0.0
 # Iterate the string array using for loop
 for i in "${array[@]}"
 do
+   mkdir -p $1
    ./run_Combine.sh $1 $i
 done
