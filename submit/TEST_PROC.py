@@ -13,9 +13,18 @@ import os,sys
 # Add path so the script sees the modules in parent directory
 sys.path.append('/srv')
 
+# env_extra = [
+#     "export XRD_RUNFORKHANDLER=1",
+#     f"export X509_USER_PROXY=/uscms/home/dhoang/x509up_u55495",
+#     # f'export X509_CERT_DIR={os.environ["X509_CERT_DIR"]}',
+# ]
+
+# for cmd in env_extra:
+#     os.system(cmd)
+
 fileset = {
-    "QCD_HT300to500": [
-         "root://cmsxrootd.fnal.gov//store/user/lpcpfnano/cmantill/v2_3/2017/QCD/QCD_HT300to500_TuneCP5_PSWeights_13TeV-madgraph-pythia8/QCD_HT300to500/220808_164621/0000/nano_mc2017_103.root"
+    "QCD_HT500to700": [
+         "root://cmsxrootd.fnal.gov//store/mc/RunIISummer20UL16NanoAODAPVv9/QCD_HT500to700_TuneCP5_PSWeights_13TeV-madgraph-pythia8/NANOAODSIM/106X_mcRun2_asymptotic_preVFP_v11-v1/260000/375B26F4-A772-2C47-8433-1427395A2EE4.root"
     ],
 }
 

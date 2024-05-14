@@ -6,7 +6,7 @@ Except for ones in custom_list
 python make_infiles.py
 """
 
-custom_list = ['VBFHToBB_DipoleRecoilOn']
+custom_list = ['VBFDipoleRecoilOn']
 
 import os
 import json
@@ -21,23 +21,23 @@ for year in ['2016','2016APV', '2017', '2018']:
     for k, val in pmap.items():
 
         # one infile per pmap key
-        outfilename = f'infiles/{year}/{year}_{k}.json'
+        if k in custom_list: continue
 
+        outfilename = f'infiles/{year}/{year}_{k}.json'
         filesets = {}
         for v in val:
 
-            if v in custom_list: continue
-
             if 'data' in k:
                 if year == '2016APV' and not ('2016' in v and 'HIPM' in v): continue
-                elif year not in v: continue
                 elif year == "2016" and "HIPM" in v: continue
+                elif year not in v and year != '2016APV': continue
+               
 
             filesets[v] = []
             for d in datasets[v]:
                 longstring = os.popen("dasgoclient --query=\"file dataset="+d+"\"").read()
                 files_no_redirector = longstring.split('\n')
-                filesets[v] += ["root://cmsxrootd.fnal.gov//store/test/xrootd/T1_US_FNAL" + f for f in files_no_redirector if len(f) > 0]
+                filesets[v] += ["root://cmsxrootd-site.fnal.gov/" + f for f in files_no_redirector if len(f) > 0]
 
             print(v, len(filesets[v]))
            

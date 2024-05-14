@@ -1,7 +1,7 @@
 '''
 To submit processing jobs, do:
 
-ssh -L 8787:localhost:8787 dhoang@cmslpc325.fnal.gov
+ssh -L 8787:localhost:8787 dhoang@cmslpc326.fnal.gov
 grid-proxy-init -valid 10000:00
 
 ./shell
@@ -26,8 +26,7 @@ from boostedhiggs import VhbbPNQCDScan as vhbb_processor
 tag = "vhbb_PNQCDScan"
 syst = False
 year = sys.argv[1]
-ignore_list = ['QCDbEnriched', 'QCDBGenFilter', f'SingleMu{year}Data',
-               'SingleMuData', 'TTbarBoosted', 'JetHT2016Data'] #Sample to ignore processing
+ignore_list = ['muondata', 'WW_NLO', 'WZ_NLO', 'ZZ_NLO'] #Sample to ignore processing
 
 from distributed import Client
 from lpcjobqueue import LPCCondorCluster
@@ -62,7 +61,7 @@ with Client(cluster) as client:
     with performance_report(filename="dask-report.html"):
         
         #Input PF nano for the year
-        infiles = subprocess.getoutput("ls data/infiles/{}/{}_*.json".format(year, year)).split()
+        infiles = subprocess.getoutput("ls datasets/infiles/{}/{}_*.json".format(year, year)).split()
     
         for this_file in infiles:
             index = ''.join(this_file.split("_")[1:]).split(".json")[0]
