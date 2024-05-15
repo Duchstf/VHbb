@@ -72,36 +72,36 @@ xs['ST_tW_top_5f_inclusiveDecays'] = 3.245e+01
 xs['ST_tW_top_5f_NoFullyHadronicDecays'] = 3.245e+01 * BR_TLeptonic
 
 # W+jets W(qq)
-xs['WJetsToQQ_HT-200to400'] = 2549.0
-xs['WJetsToQQ_HT-400to600'] = 2.770e+02 
-xs['WJetsToQQ_HT-600to800'] = 5.906e+01 
-xs['WJetsToQQ_HT-800toInf'] = 2.875e+01 
+xs['WJetsToQQ_HT200to400'] = 2549.0
+xs['WJetsToQQ_HT400to600'] = 2.770e+02 
+xs['WJetsToQQ_HT600to800'] = 5.906e+01 
+xs['WJetsToQQ_HT800toInf'] = 2.875e+01 
     
 # W+jets W(lv)
-xs['WJetsToLNu_HT-70To100'] = 1.270e+03
-xs['WJetsToLNu_HT-100To200'] = 1.252e+03 
-xs['WJetsToLNu_HT-200To400'] = 3.365e+02 
-xs['WJetsToLNu_HT-400To600'] = 4.512e+01 
-xs['WJetsToLNu_HT-600To800'] = 1.099e+01 
-xs['WJetsToLNu_HT-800To1200'] = 4.938e+00 
-xs['WJetsToLNu_HT-1200To2500'] = 1.155e+00 
-xs['WJetsToLNu_HT-2500ToInf'] = 2.625e-02 
+xs['WJetsToLNu_HT70to100'] = 1.270e+03
+xs['WJetsToLNu_HT100to200'] = 1.252e+03 
+xs['WJetsToLNu_HT200to400'] = 3.365e+02 
+xs['WJetsToLNu_HT400to600'] = 4.512e+01 
+xs['WJetsToLNu_HT600to800'] = 1.099e+01 
+xs['WJetsToLNu_HT800to1200'] = 4.938e+00 
+xs['WJetsToLNu_HT1200to2500'] = 1.155e+00 
+xs['WJetsToLNu_HT2500toInf'] = 2.625e-02 
 
 # Z+jets Z(qq)
-xs['ZJetsToQQ_HT-200to400'] = 1012.0
-xs['ZJetsToQQ_HT-400to600'] = 1.145e+02
-xs['ZJetsToQQ_HT-600to800'] = 2.541e+01
-xs['ZJetsToQQ_HT-800toInf'] = 1.291e+01
+xs['ZJetsToQQ_HT200to400'] = 1012.0
+xs['ZJetsToQQ_HT400to600'] = 1.145e+02
+xs['ZJetsToQQ_HT600to800'] = 2.541e+01
+xs['ZJetsToQQ_HT800toInf'] = 1.291e+01
         
 # DY+jets
-xs['DYJetsToLL_M-50_HT-70to100'] = 1.399e+02
-xs['DYJetsToLL_M-50_HT-100to200'] = 1.401e+02
-xs['DYJetsToLL_M-50_HT-200to400'] = 3.835e+01
-xs['DYJetsToLL_M-50_HT-400to600'] = 5.217e+00
-xs['DYJetsToLL_M-50_HT-600to800'] = 1.267e+00
-xs['DYJetsToLL_M-50_HT-800to1200'] = 5.682e-01
-xs['DYJetsToLL_M-50_HT-1200to2500'] = 1.332e-01
-xs['DYJetsToLL_M-50_HT-2500toInf'] = 2.978e-03
+xs['DYJetsToLL_HT70to100'] = 1.399e+02
+xs['DYJetsToLL_HT100to200'] = 1.401e+02
+xs['DYJetsToLL_HT200to400'] = 3.835e+01
+xs['DYJetsToLL_HT400to600'] = 5.217e+00
+xs['DYJetsToLL_HT600to800'] = 1.267e+00
+xs['DYJetsToLL_HT800to1200'] = 5.682e-01
+xs['DYJetsToLL_HT1200to2500'] = 1.332e-01
+xs['DYJetsToLL_HT2500toInf'] = 2.978e-03
 
 xs['DYJetsToLL_Pt-50To100'] = 3.941e+02
 xs['DYJetsToLL_Pt-100To250'] = 9.442e+01
