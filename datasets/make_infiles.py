@@ -14,7 +14,7 @@ import subprocess, sys
 
 with open('../files/pmap.json', 'r') as f: pmap = json.load(f)
 
-for year in ['2016','2016APV', '2017', '2018']:
+for year in ['2016APV']:
 
     with open(f'nano_list/datasets_{year}.json', 'r') as f: datasets = json.load(f)
 
@@ -37,7 +37,9 @@ for year in ['2016','2016APV', '2017', '2018']:
             for d in datasets[v]:
                 longstring = os.popen("dasgoclient --query=\"file dataset="+d+"\"").read()
                 files_no_redirector = longstring.split('\n')
-                filesets[v] += ["root://cmsxrootd-site.fnal.gov/" + f for f in files_no_redirector if len(f) > 0]
+
+                if ('ttbar' in k) or ('data' in k): filesets[v] += ["root://cmsxrootd-site.fnal.gov//store/test/xrootd/T1_US_FNAL" + f for f in files_no_redirector if len(f) > 0]
+                else: filesets[v] += ["root://cmsxrootd-site.fnal.gov/" + f for f in files_no_redirector if len(f) > 0]
 
             print(v, len(filesets[v]))
            

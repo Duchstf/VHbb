@@ -23,9 +23,8 @@ sys.path.append('/srv')
 #     os.system(cmd)
 
 fileset = {
-    "QCD_HT500to700": [
-         "root://cmsxrootd.fnal.gov//store/mc/RunIISummer20UL16NanoAODAPVv9/QCD_HT500to700_TuneCP5_PSWeights_13TeV-madgraph-pythia8/NANOAODSIM/106X_mcRun2_asymptotic_preVFP_v11-v1/260000/375B26F4-A772-2C47-8433-1427395A2EE4.root"
-    ],
+    "JetHT_Run2016B_ver1_HIPM": [
+          "root://cmsxrootd-site.fnal.gov//store/test/xrootd/T1_US_FNAL/store/data/Run2016F/JetHT/NANOAOD/HIPM_UL2016_MiniAODv2_NanoAODv9-v2/40000/617DDB59-9383-4A4E-A257-CA658B0EE08B.root"]
 }
 
 #autoreload forces the kernel to reload the processor to include any new changes
