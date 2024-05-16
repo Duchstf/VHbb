@@ -61,9 +61,10 @@ def main():
 
             del out
 
-    # print(outsum['sumw'].items())
+    print(outsum['sumw'].items())
     scale_lumi = {k: xs[k] * 1000 * lumis[year] / w for k, w in outsum['sumw'].items()} 
 
+    print(scale_lumi)
     # Scale the output with luminosity
     outsum[hist_name].scale(scale_lumi, 'dataset')
     print(outsum[hist_name].identifiers('dataset'))
