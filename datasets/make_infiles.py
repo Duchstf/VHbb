@@ -14,7 +14,7 @@ import subprocess, sys
 
 with open('../files/pmap.json', 'r') as f: pmap = json.load(f)
 
-for year in ['2016']:
+for year in ['2016', '2016APV', '2017', '2018']:
 
     with open(f'nano_list/datasets_{year}.json', 'r') as f: datasets = json.load(f)
 
