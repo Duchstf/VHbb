@@ -2,7 +2,7 @@
 
 cd $1 #go to the year directory
 
-for pt in {0..1}
+for pt in {0..2}
 do
     for rho in {0..3}
     do

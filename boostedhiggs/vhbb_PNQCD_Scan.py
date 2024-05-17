@@ -181,8 +181,8 @@ class VhbbPNQCDScan(processor.ProcessorABC):
             #Order the jets based on particle net scores
             leadingjets = candidatejets[:, 0:2]
     
-            pnet_bvc = leadingjets.particleNetMD_Xbb / (leadingjets.particleNetMD_Xcc + leadingjets.particleNetMD_Xbb)                                                                                 
-            indices = ak.argsort(pnet_bvc, axis=1, ascending = False) #Higher b score for the Higgs candidate (more b like)               
+            pnet_bvq = leadingjets.particleNetMD_Xbb / (leadingjets.particleNetMD_Xcc + leadingjets.particleNetMD_Xbb + leadingjets.particleNetMD_Xqq)                                                                                 
+            indices = ak.argsort(pnet_bvq, axis=1, ascending = False) #Higher b score for the Higgs candidate (more b like)               
             candidatejet = ak.firsts(leadingjets[indices[:, 0:1]])  # candidate jet is more b-like (higher BvC score)                                                              
             secondjet = ak.firsts(leadingjets[indices[:, 1:2]]) # second jet is more charm-like (larger BvC score) 
             

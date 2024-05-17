@@ -194,8 +194,8 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
             #Order the jets based on particle net scores
             leadingjets = candidatejets[:, 0:2]
     
-            pnet_bvc = leadingjets.particleNetMD_Xbb / (leadingjets.particleNetMD_Xcc + leadingjets.particleNetMD_Xbb)                                                                                 
-            indices = ak.argsort(pnet_bvc, axis=1, ascending = False) #Higher b score for the Higgs candidate (more b like)               
+            pnet_bvq = leadingjets.particleNetMD_Xbb / (leadingjets.particleNetMD_Xcc + leadingjets.particleNetMD_Xbb + leadingjets.particleNetMD_Xqq)                                                                                
+            indices = ak.argsort(pnet_bvq, axis=1, ascending = False) #Higher b score for the Higgs candidate (more b like)               
             candidatejet = ak.firsts(leadingjets[indices[:, 0:1]])  # candidate jet is more b-like (higher BvC score)                                                              
             secondjet = ak.firsts(leadingjets[indices[:, 1:2]]) # second jet is more charm-like (larger BvC score) 
             
@@ -228,30 +228,25 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
         met = events.MET
         selection.add('met', met.pt < 140.)
 
-        goodmuon = (
-            (events.Muon.pt > 10)
-            & (abs(events.Muon.eta) < 2.4)
-            & (events.Muon.pfRelIso04_all < 0.25)
-            & events.Muon.looseId
-        )
+        goodmuon = ((events.Muon.pt > 10) & (abs(events.Muon.eta) < 2.4) & (events.Muon.pfRelIso04_all < 0.25) & events.Muon.looseId)
         nmuons = ak.sum(goodmuon, axis=1)
         leadingmuon = ak.firsts(events.Muon[goodmuon])
 
-        goodelectron = (
-            (events.Electron.pt > 10)
-            & (abs(events.Electron.eta) < 2.5)
-            & (events.Electron.cutBased >= events.Electron.LOOSE)
-        )
+        goodelectron = ((events.Electron.pt > 10) & (abs(events.Electron.eta) < 2.5) & (events.Electron.cutBased >= events.Electron.LOOSE))
         nelectrons = ak.sum(goodelectron, axis=1)
 
         ntaus = ak.sum(
             (
                 (events.Tau.pt > 20)
+                & (abs(events.Tau.dz) < 0.2)
                 & (abs(events.Tau.eta) < 2.3)
-                & (events.Tau.rawIso < 5)
-                & (events.Tau.idDeepTau2017v2p1VSjet)
-                & ak.all(events.Tau.metric_table(events.Muon[goodmuon]) > 0.4, axis=2)
-                & ak.all(events.Tau.metric_table(events.Electron[goodelectron]) > 0.4, axis=2)
+                & (events.Tau.decayMode > 0)
+                & (events.Tau.decayMode != 5)
+                & (events.Tau.decayMode != 6)
+                & (events.Tau.decayMode != 7)
+                & (events.Tau.idDeepTau2017v2p1VSe >= 2)
+                & (events.Tau.idDeepTau2017v2p1VSjet >= 16)
+                & (events.Tau.idDeepTau2017v2p1VSmu >= 8)
             ),
             axis=1,
         )

@@ -7,46 +7,52 @@ mkdir -p ftests
 cd ftests
 
 #Make the directory for baseline and alternative hypothesis
-tag=pt${pt}rho${rho}_vs_pt${pt}rho$((${rho}+1))
+test1=pt${pt}rho${rho}_vs_pt${pt}rho$((${rho}+1))
+test2=pt${pt}rho${rho}_vs_pt${pt+1}rho${rho}
+
 jobs_dir=/eos/uscms/store/user/dhoang/vh_ftests/MCTF/$year
 
 #Remove the compare directory if it exists
-if [ -d $tag ]
-then
-    rm -rf $tag
-fi
+for dir in "$test1" "$test2"
+do
+    if [ -d "$dir" ]
+    then
+        rm -rf "$dir"
+    fi
 
-#Make the compare directory
-mkdir $tag
-cd $tag
+    mkdir "$dir"
 
-# Copy the necessary files from the jobs
-if [ `ls *GoodnessOfFit*.root | wc -l` -lt 1 ] # if there are no files in the directory
-then
-    cp $jobs_dir/*/${tag}*/*GoodnessOfFit*.root .
-fi
+    cd "$dir"
 
-# Check if there are any files matching the pattern *total.root
-if ls *total.root 1> /dev/null 2>&1; then
-    # If such files are found, remove them
-    rm *total.root
-fi
+    # Copy the necessary files from the jobs
+    if [ `ls *GoodnessOfFit*.root | wc -l` -lt 1 ] # if there are no files in the directory
+    then
+        cp $jobs_dir/*/${dir}*/*GoodnessOfFit*.root .
+    fi
 
-conda run -n combine --no-capture-output hadd higgsCombineToys.baseline.GoodnessOfFit.mH125.total.root higgsCombineToys.baseline.GoodnessOfFit.mH125.*.root
-conda run -n combine --no-capture-output hadd higgsCombineToys.alternative.GoodnessOfFit.mH125.total.root higgsCombineToys.alternative.GoodnessOfFit.mH125.*.root
+    # Check if there are any files matching the pattern *total.root, if such files are found, remove them
+    if ls *total.root 1> /dev/null 2>&1; then
+        rm *total.root
+    fi
 
-tag1=`echo $tag | sed 's/_vs_.*//'`
-tag2=`echo $tag | sed 's/.*_vs_//'`
+    conda run -n combine --no-capture-output hadd higgsCombineToys.baseline.GoodnessOfFit.mH125.total.root higgsCombineToys.baseline.GoodnessOfFit.mH125.*.root
+    conda run -n combine --no-capture-output hadd higgsCombineToys.alternative.GoodnessOfFit.mH125.total.root higgsCombineToys.alternative.GoodnessOfFit.mH125.*.root
 
-echo $tag1
-echo $tag2
+    tag1=`echo $dir | sed 's/_vs_.*//'`
+    tag2=`echo $dir | sed 's/.*_vs_//'`
 
-pwd
-cp ../../$tag1/higgsCombineObserved.GoodnessOfFit.mH125.root baseline_obs.root
-cp ../../$tag2/higgsCombineObserved.GoodnessOfFit.mH125.root alternative_obs.root
 
-ln -s ../../../scripts/plot_ftests.py .
-conda run -n combine --no-capture-output python plot_ftests.py
+    echo $tag1
+    echo $tag2
 
-#Go back to OG directory
-cd ../../../
+    cp ../../$tag1/higgsCombineObserved.GoodnessOfFit.mH125.root baseline_obs.root
+    cp ../../$tag2/higgsCombineObserved.GoodnessOfFit.mH125.root alternative_obs.root
+
+    ln -s ../../../scripts/plot_ftests.py .
+    conda run -n combine --no-capture-output python plot_ftests.py
+
+    cd ../
+
+done
+
+cd ../../
