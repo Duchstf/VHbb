@@ -21,50 +21,47 @@ def GoF(infile, ntoys, seed=123456):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='F-test')
-    parser.add_argument('-p','--pt',nargs='+',help='pt of ggf baseline')
-    parser.add_argument('-r','--rho',nargs='+',help='rho of ggf baseline')
-    parser.add_argument('-n','--ntoys',nargs='+',help='number of toys')
-    parser.add_argument('-i','--index',nargs='+',help='index for random seed')
+    parser.add_argument('-p','--pt',  type=int, help='pt of vh baseline')
+    parser.add_argument('-r','--rho',  type=int, help='rho of vh baseline')
+    parser.add_argument('-n','--ntoys', type=int, help='number of toys')
+    parser.add_argument('-i','--index', type=int, help='index for random seed')
     args = parser.parse_args()
 
-    pt = int(args.pt[0])
-    rho = int(args.rho[0])
-    ntoys = int(args.ntoys[0])
-    seed = 123456+int(args.index[0])*100+31
+    pt = args.pt
+    rho = args.rho
+    ntoys = args.ntoys
+    seed = 123456+args.index*100+31
     
-    baseline = "pt"+str(pt)+"rho"+str(rho)
+    baseline = "pt{}rho{}".format(pt, rho)
     alternatives = []
     pvalues = []
 
 #    alternatives += ["pt"+str(pt+1)+"rho"+str(rho)]
-    alternatives += ["pt"+str(pt)+"rho"+str(rho+1)]
-    
+    alternatives += ["pt{}rho{}".format(pt, rho+1)]
     alternatives = list(set(alternatives))
 
     for i,alt in enumerate(alternatives):
 
         pt_alt = int(alt.split("rho")[0].split("pt")[1])
         rho_alt = int(alt.split("rho")[1])
-        print(pt_alt, rho_alt)
-        
-        print(alt)
-        thedir = baseline+"_vs_"+alt
+        print("(pt, rho) alternative: {},{}".format(pt_alt, rho_alt))
 
+        thedir = "{}_vs_{}".format(baseline, alt)
         os.mkdir(thedir)
         os.chdir(thedir)
 
         # Copy what we need
-        os.system("cp ../"+baseline+"/higgsCombineSnapshot.MultiDimFit.mH125.root baseline.root")
-        os.system("cp ../"+alt+"/higgsCombineSnapshot.MultiDimFit.mH125.root alternative.root")
+        os.system("cp ../{}/higgsCombineSnapshot.MultiDimFit.mH125.root baseline.root".format(baseline))
+        os.system("cp ../{}/higgsCombineSnapshot.MultiDimFit.mH125.root alternative.root".format(alt))
 
         gen_toys("baseline.root", ntoys,seed=seed)
 
         # run baseline gof                                                                                                                              
         GoF("baseline.root", ntoys,seed=seed)
-        os.system('mv higgsCombineToys.GoodnessOfFit.mH125.'+str(seed)+'.root higgsCombineToys.baseline.GoodnessOfFit.mH125.'+str(seed)+'.root')
+        os.system('mv higgsCombineToys.GoodnessOfFit.mH125.{}.root higgsCombineToys.baseline.GoodnessOfFit.mH125.{}.root'.format(seed, seed))
 
         # run alternative gof                                                                                                                           
         GoF("alternative.root", ntoys,seed=seed)
-        os.system('mv higgsCombineToys.GoodnessOfFit.mH125.'+str(seed)+'.root higgsCombineToys.alternative.GoodnessOfFit.mH125.'+str(seed)+'.root')
+        os.system('mv higgsCombineToys.GoodnessOfFit.mH125.{}.root higgsCombineToys.alternative.GoodnessOfFit.mH125.{}.root'.format(seed, seed))
 
         os.chdir('../')

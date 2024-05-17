@@ -32,9 +32,6 @@ def main():
     #Make logs directory
     tag=f"pt{pt}rho{rho}"
 
-    #Link all the necessary scripts to this directory
-    os.system('ln -s scripts/')
-
     #Condor working directory
     workdir = f'/eos/uscms/store/user/dhoang/vh_ftests/MCTF/{year}/'
     os.system(f'mkdir -p {workdir}')
@@ -66,7 +63,7 @@ def main():
         #Go to the directory and submit the jobs
         og_dir = os.getcwd()
         os.chdir(year)
-        # os.system('condor_submit %s' % f"{prefix}.condor") #submit jobs
+        os.system('condor_submit %s' % f"{prefix}.condor") #submit jobs
         os.chdir(og_dir)
 
         condor_templ_file.close()

@@ -24,6 +24,21 @@ if [[ "$1" == "-h" ]]; then
     exit 0
 fi
 
+# Check if the directory $1 exists
+if [ -d "$1" ]; then
+    echo "Directory $1 exists. Do you want to remove it? (y/n)"
+    read -r response
+    if [ "$response" = "y" ]; then
+        rm -rf "$1"
+        echo "Directory $1 removed."
+    else
+        echo "Directory $1 not removed."
+        exit 1
+    fi
+else
+    echo "Directory $1 does not exist."
+fi
+
 SignalRegionDir="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/combine/combine_PNQCDScan"
 
 #Make log dirs
@@ -31,8 +46,8 @@ mkdir -p $1/logs
 
 #Go to the year and link all the necessary files
 cd $1
-ln -s ../scripts/*py .
-ln -s ../templates/*sh .
+ln -s ../scripts/compare.py .
+ln -s ../templates/run_ftest_job.sh .
 ln -s $SignalRegionDir/$1/signalregion.root .
 cd ..
 echo "Finish Linking files!!"
@@ -42,5 +57,9 @@ echo "Making the workspaces ..."
 ./make_ptrho.sh $1
 
 #Now run the f-tests jobs
-python submit.py -y $1 --pt=0 --rho=0 -n 1
-#python submit.py -y $1 --pt=0 --rho=1
+python submit.py -y $1 --pt=0 --rho=0
+python submit.py -y $1 --pt=0 --rho=1
+python submit.py -y $1 --pt=0 --rho=2
+python submit.py -y $1 --pt=1 --rho=0
+python submit.py -y $1 --pt=1 --rho=1
+python submit.py -y $1 --pt=1 --rho=2
