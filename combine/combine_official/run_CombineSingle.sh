@@ -12,8 +12,8 @@ fi
 if [ -d $1 ]; then
     echo "$1 directory exists. Starting cleaning."
 else
-    echo "$1 directory does not exists. Please create the symbolic link."
-    exit 1
+    echo "$1 directory does not exists. Making dir ... "
+    mkdir -p $1
 fi
 
 pkl_dir="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/pickle"

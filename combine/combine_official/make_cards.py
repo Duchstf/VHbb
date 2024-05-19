@@ -11,7 +11,7 @@ from rhalphalib import AffineMorphTemplate, MorphHistW2
 rl.util.install_roofit_helpers()
 
 eps=0.0000001
-do_muon_CR = True
+do_muon_CR = False
 do_systematics = False
 
 '''
@@ -219,7 +219,7 @@ def vh_rhalphabet(tmpdir):
     # Run qcd fit for 5 times
     fitfailed_qcd = 0
     fitfailed_limit = 5 
-    
+
     # Here we derive these all at once with 2D array
     Vmass_pts, Hmass_pts = np.meshgrid(VmassBins[:-1] + 0.5 * np.diff(VmassBins), msdbins[:-1] + 0.5 * np.diff(msdbins), indexing="ij")
     Vmass_scaled = (Vmass_pts - 40.0) / (201.0 - 40.0)

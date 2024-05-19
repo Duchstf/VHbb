@@ -1,7 +1,7 @@
 '''
 To submit processing jobs, do:
 
-ssh -L 8787:localhost:8787 dhoang@cmslpc335.fnal.gov
+ssh -L 8787:localhost:8787 dhoang@cmslpc325.fnal.gov
 grid-proxy-init -valid 10000:00
 
 ./shell
@@ -43,7 +43,7 @@ cluster = LPCCondorCluster(
     shared_temp_directory="/tmp",
     transfer_input_files=["boostedhiggs"],
     ship_env=True,
-    memory="8GB"
+    memory="6GB"
 #    image="coffeateam/coffea-dask:0.7.11-fastjet-3.3.4.0rc9-ga05a1f8",
 )
 
