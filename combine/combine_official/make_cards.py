@@ -263,7 +263,7 @@ def vh_rhalphabet(tmpdir):
         # Initial values
         # {"initial_vals":[[1,1]]} in json file (1st pt and 1st in rho)                                                               
         print('Initial fit values read from file initial_vals*')
-        with open('files/initial_vals.json') as f: initial_vals = np.array(json.load(f)['initial_vals'])
+        with open(f'files/initial_vals_TFMC_{year}.json') as f: initial_vals = np.array(json.load(f)['initial_vals'])
         print("Initial fit values: ", initial_vals)
         print("Poly Shape: ", (initial_vals.shape[0]-1, initial_vals.shape[1]-1))
         
@@ -324,8 +324,7 @@ def vh_rhalphabet(tmpdir):
             fitfailed_qcd += 1
 
             new_values = np.array(pvalues).reshape(tf_MCtempl.parameters.shape)
-            with open("files/initial_vals.json", "w") as outfile:
-                json.dump({"initial_vals":new_values.tolist()},outfile)
+            with open(f"files/initial_vals_TFMC_{year}.json", "w") as outfile: json.dump({"initial_vals":new_values.tolist()},outfile)
 
         else:
             print("Fitted!!!")
