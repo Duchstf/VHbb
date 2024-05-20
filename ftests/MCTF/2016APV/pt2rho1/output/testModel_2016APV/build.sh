@@ -1,2 +1,0 @@
-combineCards.py VBin0pass2016APV=VBin0pass2016APV.txt VBin0fail2016APV=VBin0fail2016APV.txt VBin1pass2016APV=VBin1pass2016APV.txt VBin1fail2016APV=VBin1fail2016APV.txt VBin2pass2016APV=VBin2pass2016APV.txt VBin2fail2016APV=VBin2fail2016APV.txt > model_combined.txt
-text2workspace.py model_combined.txt

@@ -39,7 +39,7 @@ else
     echo "Directory $1 does not exist."
 fi
 
-SignalRegionDir="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/combine/combine_PNQCDScan"
+SignalRegionDir="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/combine/combine_official"
 
 #Make log dirs
 mkdir -p $1/logs
@@ -60,6 +60,3 @@ echo "Making the workspaces ..."
 python submit.py -y $1 --pt=0 --rho=0
 python submit.py -y $1 --pt=0 --rho=1
 python submit.py -y $1 --pt=0 --rho=2
-python submit.py -y $1 --pt=1 --rho=0
-python submit.py -y $1 --pt=1 --rho=1
-python submit.py -y $1 --pt=1 --rho=2

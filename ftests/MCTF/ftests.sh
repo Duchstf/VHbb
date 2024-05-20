@@ -8,12 +8,11 @@ cd ftests
 
 #Make the directory for baseline and alternative hypothesis
 test1=pt${pt}rho${rho}_vs_pt${pt}rho$((${rho}+1))
-test2=pt${pt}rho${rho}_vs_pt${pt+1}rho${rho}
 
 jobs_dir=/eos/uscms/store/user/dhoang/vh_ftests/MCTF/$year
 
 #Remove the compare directory if it exists
-for dir in "$test1" "$test2"
+for dir in "$test1"
 do
     if [ -d "$dir" ]
     then

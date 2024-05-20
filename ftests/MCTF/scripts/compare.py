@@ -36,7 +36,6 @@ if __name__ == '__main__':
     alternatives = []
     pvalues = []
 
-    alternatives += ["pt{}rho{}".format(pt+1, rho)]
     alternatives += ["pt{}rho{}".format(pt, rho+1)]
     alternatives = list(set(alternatives))
 

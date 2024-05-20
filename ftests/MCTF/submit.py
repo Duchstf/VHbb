@@ -19,7 +19,7 @@ def main():
     parser.add_argument('-y', '--year', type=str, help='Year as a string')
     parser.add_argument('-p', '--pt', type=int, help='pt of baseline as an integer')
     parser.add_argument('-r','--rho', type=int, help='rho of baseline')
-    parser.add_argument('-n','--njobs', type=int, help='number of 100 toy jobs to submit', default=10)
+    parser.add_argument('-n','--njobs', type=int, help='number of 100 toy jobs to submit', default=20)
     args = parser.parse_args()
 
     pt = args.pt
@@ -46,7 +46,7 @@ def main():
         #Fill in the condor template
         condor_templ_file = open("templates/submit.templ.condor")
 
-        files_transfer = f"compare.py, pt{pt}rho{rho}, pt{pt+1}rho{rho}, pt{pt}rho{rho+1}" #Files to transfer
+        files_transfer = f"compare.py, pt{pt}rho{rho}, pt{pt}rho{rho+1}" #Files to transfer
         submit_args = f"{pt} {rho} {outdir} {i}"
     
         local_condor = f"{year}/{prefix}.condor"

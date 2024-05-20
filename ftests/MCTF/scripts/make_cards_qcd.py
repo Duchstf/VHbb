@@ -55,11 +55,19 @@ def vh_rhalphabet(tmpdir, year):
     fitfailed_qcd = 0
     fitfailed_limit = 5 
     
-    # Here we derive these all at once with 2D array
-    Vmass_pts, Hmass_pts = np.meshgrid(VmassBins[:-1] + 0.5 * np.diff(VmassBins), msdbins[:-1] + 0.5 * np.diff(msdbins), indexing="ij")
-    Vmass_scaled = (Vmass_pts - 40.0) / (201.0 - 40.0)
-    Hmass_scaled = (Hmass_pts - 40.0) / (201.0 - 40.0)
-    validbins = Hmass_scaled < 3000 #All True (3 by 23)
+    # QCD Transfer Factors are dependent on pt and rho
+    ptbins = np.array([450, 1200])
+    n_ptbins = ptbins.shape[0] - 1
+
+    ptpts, msdpts = np.meshgrid(ptbins[:-1] + 0.3 * np.diff(ptbins), msdbins[:-1] + 0.5 * np.diff(msdbins), indexing="ij")
+    rhopts = 2 * np.log(msdpts / ptpts)
+
+    ptscaled = (ptpts - 450.0) / (1200.0 - 450.0)
+    rhoscaled = (rhopts - (-6)) / ((-2.1) - (-6))
+
+    validbins = (rhoscaled >= 0) & (rhoscaled <= 1)
+    rhoscaled[~validbins] = 1
+    validbins = validbins[0] #validbin is a 1D array of 23 bins
 
     while fitfailed_qcd < fitfailed_limit: #Fail if choose bad initial values, start from where the fits fail. 
    
@@ -88,7 +96,7 @@ def vh_rhalphabet(tmpdir, year):
         print('Inclusive P/F from Monte Carlo: ', str(qcdeff))
         
         # Initial values
-        # {"initial_vals":[[1,1]]} in json file (1st Vmass and 1st in Hmass)                                                               
+        # {"initial_vals":[[1,1]]} in json file (1st pt and 1st in rho)                                                               
         print('Initial fit values read from file initial_vals*')
         with open('initial_vals.json') as f: initial_vals = np.array(json.load(f)['initial_vals'])
         print("Initial fit values: ", initial_vals)
@@ -96,13 +104,13 @@ def vh_rhalphabet(tmpdir, year):
         
         tf_MCtempl = rl.BasisPoly("tf_MCtempl_{}".format(year),
                                 (initial_vals.shape[0]-1,initial_vals.shape[1]-1), #shape
-                                ["Vmass", "Hmass"], #variable names
+                                ["pt", "rho"], #variable names
                                 basis='Bernstein', #type of polys
                                 init_params=initial_vals, #initial values
                                 limits=(0, 10), #limits on poly coefficients
                                 coefficient_transform=None)
         
-        tf_MCtempl_params = qcdeff * tf_MCtempl(Vmass_scaled, Hmass_scaled)
+        tf_MCtempl_params = qcdeff * tf_MCtempl(ptscaled, rhoscaled)
         
         for iBin in range(nVmass):
             failCh = qcdmodel["VBin%dfail%s" % (iBin, year)]
@@ -115,11 +123,11 @@ def vh_rhalphabet(tmpdir, year):
             
             fail_qcd = rl.ParametericSample("VBin%dfail%s_qcd" % (iBin, year), rl.Sample.BACKGROUND, msd, scaledparams[0])
             failCh.addSample(fail_qcd)
-            pass_qcd = rl.TransferFactorSample("VBin%dpass%s_qcd" % (iBin, year), rl.Sample.BACKGROUND, tf_MCtempl_params[iBin, :], fail_qcd)
+            pass_qcd = rl.TransferFactorSample("VBin%dpass%s_qcd" % (iBin, year), rl.Sample.BACKGROUND, tf_MCtempl_params[n_ptbins-1, :], fail_qcd)
             passCh.addSample(pass_qcd)
 
-            failCh.mask = validbins[iBin]
-            passCh.mask = validbins[iBin]
+            failCh.mask = validbins
+            passCh.mask = validbins
 
         #Run the fit for qcd mc pass/fail
         qcdfit_ws = ROOT.RooWorkspace("qcdfit_ws")
@@ -165,18 +173,18 @@ def vh_rhalphabet(tmpdir, year):
     param_names = [p.name for p in tf_MCtempl.parameters.reshape(-1)]
     decoVector = rl.DecorrelatedNuisanceVector.fromRooFitResult(tf_MCtempl.name + "_deco", qcdfit, param_names)
     tf_MCtempl.parameters = decoVector.correlated_params.reshape(tf_MCtempl.parameters.shape)
-    tf_MCtempl_params_final = tf_MCtempl(Vmass_scaled, Hmass_scaled)
+    tf_MCtempl_params_final = tf_MCtempl(ptscaled, rhoscaled)
 
     # Fitting ratio of the data and the MC prediction
     tf_dataResidual = rl.BasisPoly("tf_dataResidual_{}".format(year),
                                     (0,0), 
-                                    ['Vmass', 'Hmass'],
+                                    ['pt', 'rho'],
                                     basis='Bernstein',
                                     init_params=np.array([[1]]),
                                     limits=(0,20),
                                     coefficient_transform=None)
 
-    tf_dataResidual_params = tf_dataResidual(Vmass_scaled, Hmass_scaled)
+    tf_dataResidual_params = tf_dataResidual(ptscaled, rhoscaled)
     tf_params = qcdeff * tf_MCtempl_params_final * tf_dataResidual_params
     
     # Build actual fit model which would go into the workspace.
@@ -231,7 +239,7 @@ def vh_rhalphabet(tmpdir, year):
             
             fail_qcd = rl.ParametericSample("VBin%dfail%s_qcd" % (iBin, year), rl.Sample.BACKGROUND, msd, scaledparams)
             failCh.addSample(fail_qcd)
-            pass_qcd = rl.TransferFactorSample("VBin%dpass%s_qcd" % (iBin, year), rl.Sample.BACKGROUND, tf_params[iBin, :], fail_qcd)
+            pass_qcd = rl.TransferFactorSample("VBin%dpass%s_qcd" % (iBin, year), rl.Sample.BACKGROUND, tf_params[n_ptbins-1, :], fail_qcd)
             passCh.addSample(pass_qcd)
     
     with open(os.path.join(str(tmpdir), 'testModel_{}.pkl'.format(year)), 'wb') as fout: pickle.dump(model, fout)
