@@ -38,7 +38,7 @@ for year in ['2016']:
                 longstring = os.popen("dasgoclient --query=\"file dataset="+d+"\"").read()
                 files_no_redirector = longstring.split('\n')
 
-                if ('ttbar' in k) or ('data' in k): filesets[v] += ["root://cmsxrootd-site.fnal.gov//store/test/xrootd/T1_US_FNAL" + f for f in files_no_redirector if len(f) > 0]
+                if ('data' in k): filesets[v] += ["root://cmsxrootd.fnal.gov//store/test/xrootd/T1_US_FNAL" + f for f in files_no_redirector if len(f) > 0]
                 else: filesets[v] += ["root://cmsxrootd-site.fnal.gov/" + f for f in files_no_redirector if len(f) > 0]
 
             print(v, len(filesets[v]))
