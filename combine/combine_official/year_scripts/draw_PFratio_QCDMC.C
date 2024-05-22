@@ -10,8 +10,8 @@ using namespace RooStats;
 
 void draw_PFratio_QCDMC(){
 
-  // Get the year from the running directory                                     
-  string thisdir = gSystem->pwd();
+	// Get the year from the running directory                                     
+	string thisdir = gSystem->pwd();
 
 	string year = "";
 	string year_string = "137/fb, Run 2";
@@ -33,19 +33,14 @@ void draw_PFratio_QCDMC(){
 		year_string = "59.2/fb, 2018";
 	}
 
-
-  vector<string> procs = {"charm"};
-  vector<int> nptbins = {1,1};
-
-  for(int j=0; j<procs.size(); j++){
-    for(int i=0; i<nptbins.at(j); i++){
+	for (int i = 0; i <= 2; ++i) {
 	
-	TFile* f = new TFile(("output/testModel_qcdfit_"+procs.at(j)+"_"+year+".root").c_str());
+	TFile* f = new TFile(("output/testModel_qcdfit_"+year+".root").c_str());
 	RooWorkspace* w = (RooWorkspace*)(f->Get("w"));
 	RooStats::ModelConfig* mc = (RooStats::ModelConfig*)(w->obj("ModelConfig"));
 	
-	RooDataSet* data_pass = (RooDataSet*)w->data(("ptbin"+to_string(i)+procs.at(j)+"pass"+year+"_data_obs").c_str());
-	RooDataSet* data_fail = (RooDataSet*)w->data(("ptbin"+to_string(i)+procs.at(j)+"fail"+year+"_data_obs").c_str());
+	RooDataSet* data_pass = (RooDataSet*)w->data(("VBin"+to_string(i)+"pass"+year+"_data_obs").c_str());
+	RooDataSet* data_fail = (RooDataSet*)w->data(("VBin"+to_string(i)+"fail"+year+"_data_obs").c_str());
 	
 	TCanvas *c1 = new TCanvas(("c_"+procs.at(j)+"_"+to_string(i)).c_str(), 
 				  ("c_"+procs.at(j)+"_"+to_string(i)).c_str(), 600, 600);
@@ -113,9 +108,8 @@ void draw_PFratio_QCDMC(){
 	
 	c1->SaveAs(("plots/"+bin+".png").c_str());
 	c1->SaveAs(("plots/"+bin+".pdf").c_str());
-    }
-  }
-  
+	}
+
   return 0;
 
 }
