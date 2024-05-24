@@ -1,0 +1,15 @@
+#!/usr/bin/env condor_submit
+
+executable              = run_ftest_job.sh
+arguments               = 0 0 /eos/uscms/store/user/dhoang/vh_ftests/MCTF/2016/pt0rho0 18
+should_transfer_files   = YES
+transfer_input_files    = compare.py, pt0rho0, pt0rho1
+when_to_transfer_output = ON_EXIT_OR_EVICT
+request_memory          = 2000
++ApptainerImage = "/cvmfs/singularity.opensciencegrid.org/cmssw/cms:rhel7"
+
+output                  = logs/pt0rho0_18.out
+error                   = logs/pt0rho0_18.err
+log                     = logs/pt0rho0_18.log
+
+Queue 1 

@@ -3,6 +3,8 @@ import math
 import numpy as np
 import ROOT
 import matplotlib.pyplot as plt
+import mplhep as hep
+plt.style.use(hep.style.ROOT)
 from scipy.stats import f
 #fig, ax = plt.subplots(1, 1)
 
@@ -12,17 +14,10 @@ def Ftest(lambda1,lambda2,p1,p2,nbins):
     '''
     Compare the goodness of fit between the two models
     '''
-
-    # Fail fit, Goodness of fit is not better with the higher polynomial
-    # Might happen more than you think
-    if lambda1 < lambda2: return -2 
-    
-    numerator = -2.0*(lambda1-lambda2)/(p2-p1)
-    denominator = -2.0*lambda2/(nbins-p2)
-
-    if math.isnan(numerator/denominator): return -1
-
-    return numerator/denominator
+    with np.errstate(divide='ignore'):
+        numerator = -2.0 * np.log(float(lambda1) / float(lambda2)) / float(p2 - p1)
+        denominator = -2.0 * np.log(float(lambda2)) / float(nbins - p2)
+        return numerator / denominator
 
 if __name__ == '__main__':
 
@@ -98,19 +93,25 @@ if __name__ == '__main__':
     ashist = plt.hist(f_dist,bins=np.linspace(0,maxval,25),histtype='step',color='black')
     ymax = 1.2*max(ashist[0])
 
-    plt.errorbar((ashist[1][:-1]+ashist[1][1:])/2., ashist[0], yerr=np.sqrt(ashist[0]),linestyle='',color='black',marker='o',label=str(ntoys_good) +" toys")
-    plt.plot([f_obs,f_obs],[0,ymax],color='red',label="observed = {:.2f}".format(f_obs))
+    #Add Results
+    baseline_order = [int(char) for char in baseline if char in '0123']
+    baseline_label = 'TF({},{})'.format(baseline_order[0], baseline_order[1])
+
+    alt_order = [int(char) for char in alt if char in '0123']
+    alt_label = 'TF({},{})'.format(alt_order[0], alt_order[1])
+    plt.plot([],[], color ='none', label=baseline_label + " vs. " + alt_label)
+    plt.plot([],[], color = 'none', label="p-value = {:.2f}".format(pvalue))
+
+    plt.errorbar((ashist[1][:-1]+ashist[1][1:])/2., ashist[0], yerr=np.sqrt(ashist[0]),linestyle='',color='black',marker='o',label= "Toys, N = {}".format(ntoys_good))
+    plt.plot([f_obs,f_obs],[0,ymax],color='red',label="Observed = {:.2f}".format(f_obs))
     plt.ylim(0,ymax)
 
     x = np.linspace(0,maxval,250)
-    print(ntoys_good)
     plt.plot(x, ntoys_good*0.2*f.pdf(x, p2-p1, nbins-p2),color='blue', label='F pdf')
 
-    plt.text(3,ymax*0.9,year, fontsize='large')
-    plt.text(3,ymax*0.8,baseline + " vs. " + alt,fontsize='large')
-    plt.text(3,ymax*0.7,"p-value = {:.2f}".format(pvalue),fontsize='large')
-
-    plt.legend(loc='center right',frameon=False)
+    hep.cms.label('Preliminary', data=True, year=year)  
+    plt.legend(loc='best',frameon=True)
+    plt.ylabel("Pseudo-experiments")
     plt.xlabel("F-statistic")
 
     plt.savefig(thisdir+".png",bbox_inches='tight')

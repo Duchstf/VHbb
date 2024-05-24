@@ -10,3 +10,7 @@
 ```
 
 Start from pT=0,rho=0. If the F-test statistic has p-value < 5%, take the higher order polynomial as baseline and repeat. Stop when the higher order polynomials all have p-value > 5%. 
+
+3. After determining the optimal order, fo into `plot_PrePostFit.sh` and plug in the year, pt, rho you want to plot. 
+
+Repeat for all years.

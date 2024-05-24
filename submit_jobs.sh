@@ -7,6 +7,4 @@ python submit/submit_muonCR.py $year > dask.out 2>&1
 python submit/submit_muonCR.py $year > dask.out 2>&1
 python submit/submit_muonCR.py $year > dask.out 2>&1
 python submit/submit_muonCR.py $year > dask.out 2>&1
-python submit/submit_muonCR.py $year > dask.out 2>&1
-python submit/submit_muonCR.py $year > dask.out 2>&1
 

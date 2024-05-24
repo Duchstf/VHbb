@@ -40,7 +40,6 @@ do
     tag1=`echo $dir | sed 's/_vs_.*//'`
     tag2=`echo $dir | sed 's/.*_vs_//'`
 
-
     echo $tag1
     echo $tag2
 
@@ -48,7 +47,7 @@ do
     cp ../../$tag2/higgsCombineObserved.GoodnessOfFit.mH125.root alternative_obs.root
 
     ln -s ../../../scripts/plot_ftests.py .
-    conda run -n combine --no-capture-output python plot_ftests.py
+    conda run -n plot --no-capture-output python plot_ftests.py
 
     cd ../
 

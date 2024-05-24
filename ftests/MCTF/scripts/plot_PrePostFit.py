@@ -73,15 +73,30 @@ def parse_data(fit_data, TreeName):
 
 if __name__ == "__main__":
 
+    # Create the parser
+    parser = argparse.ArgumentParser(description='Process some integers.')
+
+    # Add the arguments
+    parser.add_argument('--pt', type=int, required=True, help='The pt value')
+    parser.add_argument('--rho', type=int, required=True, help='The rho value')
+    parser.add_argument('--year', type=int, required=True, help='The year value')
+
+    # Parse the arguments
+    args = parser.parse_args()
+
+    # Access the arguments
+    pt = args.pt
+    rho = args.rho
+    year = args.year
+
     #Select year
-    year = sys.argv[1]
     pass_regions = [f'VBin{i}pass{year}' for i in range(3)] # 3 V mass bins regions
 
     #Load the Fit Diagnostic File
-    filepath = f'../{year}/pt0rho0/fitDiagnosticsTest.root'
+    filepath = f'../{year}/pt{pt}rho{rho}/fitDiagnosticsTest.root'
     fit_data = uproot.open(filepath)
     
     for region in pass_regions:
-        prepostplot(*parse_data(fit_data, region), degs=(0,0), reg=region, year=year, savename=f'plots/{region}')
+        prepostplot(*parse_data(fit_data, region), degs=(pt,rho), reg=region, year=year, savename=f'plots/{region}')
     
 

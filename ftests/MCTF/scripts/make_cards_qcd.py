@@ -89,12 +89,14 @@ def vh_rhalphabet(tmpdir, year):
     qcdeff = qcdpass / qcdfail
     print('Inclusive P/F from Monte Carlo: ', str(qcdeff))
 
-    #Define the TF Data
+    #Define the TF Data (the data is true passing QCD in this case)                                                         
+    with open('initial_vals.json') as f: initial_vals = np.asarray(json.load(f)['initial_vals'])
+    print("Poly Shape: ", (initial_vals.shape[0]-1, initial_vals.shape[1]-1))
     tf_dataResidual = rl.BasisPoly("tf_dataResidual_{}".format(year),
-                                    (0,0), 
+                                    (initial_vals.shape[0]-1, initial_vals.shape[1]-1), #shape 
                                     ['pt', 'rho'],
                                     basis='Bernstein',
-                                    init_params=np.array([[1]]),
+                                    init_params=initial_vals,
                                     limits=(0,20),
                                     coefficient_transform=None)
     tf_dataResidual_params = tf_dataResidual(ptscaled, rhoscaled)
