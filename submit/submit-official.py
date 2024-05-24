@@ -8,7 +8,7 @@ grid-proxy-init -valid 10000:00
 
 And then
 
-python submit/submit-official.py 2016APV > dask.out 2>&1
+python submit/submit-official.py $year > dask.out 2>&1
 '''
 
 import os, sys

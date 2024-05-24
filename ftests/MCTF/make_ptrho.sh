@@ -3,7 +3,7 @@
 cd $1 #go to the year directory
 
 pt=0
-for rho in {0..3}
+for rho in {0..0}
 do
     echo "pt: $pt, rho: $rho"
     

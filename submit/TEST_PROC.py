@@ -24,7 +24,7 @@ sys.path.append('/srv')
 
 fileset = {
     "JetHT_Run2016B_ver1_HIPM": [
-          "root://cmsxrootd-site.fnal.gov//store/test/xrootd/T1_US_FNAL/store/data/Run2016F/JetHT/NANOAOD/HIPM_UL2016_MiniAODv2_NanoAODv9-v2/40000/617DDB59-9383-4A4E-A257-CA658B0EE08B.root"]
+          "root://cmsxrootd.fnal.gov//store/test/xrootd/T1_US_FNAL/store/data/Run2016F/JetHT/NANOAOD/UL2016_MiniAODv2_NanoAODv9-v1/70000/F77A6FC2-0D11-6445-880B-5B8509DC4AB2.root"]
 }
 
 #autoreload forces the kernel to reload the processor to include any new changes

@@ -36,7 +36,7 @@ memory='6GB'
 CR_list = ['WLNu', 'Wjets', 'Zjets', 'ttbar', 'QCD', 'singlet']
 
 env_extra = [f"export PYTHONPATH=$PYTHONPATH:{os.getcwd()}"]
-cluster = LPCCondorCluster( shared_temp_directory="/tmp", transfer_input_files=["boostedhiggs"], ship_env=True, emory=memory)
+cluster = LPCCondorCluster( shared_temp_directory="/tmp", transfer_input_files=["boostedhiggs"], ship_env=True, memory=memory)
 
 out_path = "output/coffea/{}/{}/".format(tag,year)
 os.system('mkdir -p  %s' %out_path)
