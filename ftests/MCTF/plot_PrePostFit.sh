@@ -1,7 +1,7 @@
 #Define the poly orders
 pt=0
-rho=1
-year=2016
+rho=0
+year=2018
 
 cd $year/pt${pt}rho${rho}/
 

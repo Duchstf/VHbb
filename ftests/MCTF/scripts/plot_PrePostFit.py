@@ -79,7 +79,7 @@ if __name__ == "__main__":
     # Add the arguments
     parser.add_argument('--pt', type=int, required=True, help='The pt value')
     parser.add_argument('--rho', type=int, required=True, help='The rho value')
-    parser.add_argument('--year', type=int, required=True, help='The year value')
+    parser.add_argument('--year', type=str, required=True, help='The year value')
 
     # Parse the arguments
     args = parser.parse_args()
