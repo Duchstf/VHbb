@@ -5,6 +5,7 @@ import matplotlib
 matplotlib.use("Agg")
 import uproot
 import matplotlib.pyplot as plt
+import hist
 import mplhep as hep
 plt.style.use(hep.style.ROOT)
 import matplotlib.transforms as transforms
@@ -53,16 +54,18 @@ def prepostplot(data, data_errors_low, data_errors_high, prefit_qcd, postfit_qcd
 
 def parse_data(fit_data, TreeName):
 
-    prefit_qcd = fit_data['shapes_prefit/{}/qcd'.format(TreeName)].values()
-    postfit_qcd = fit_data['shapes_fit_s/{}/qcd'.format(TreeName)].values()
+    binwidth = 7.0
+
+    prefit_qcd = fit_data['shapes_prefit/{}/qcd'.format(TreeName)].values()*binwidth
+    postfit_qcd = fit_data['shapes_fit_s/{}/qcd'.format(TreeName)].values()*binwidth
 
     #Take the data and bin centers
     data_hist = fit_data['shapes_fit_s/{}/data'.format(TreeName)]
 
     centers = data_hist.values()[0]
-    data = data_hist.values()[1]
-    data_errors_low = data_hist.errors("low")[1]
-    data_errors_high = data_hist.errors("high")[1]
+    data = data_hist.values()[1]*binwidth
+    data_errors_low = data_hist.errors("low")[1]*binwidth
+    data_errors_high = data_hist.errors("high")[1]*binwidth
 
     bins = fit_data['shapes_prefit/{}/qcd'.format(TreeName)].axis().edges()
     

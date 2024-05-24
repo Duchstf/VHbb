@@ -57,6 +57,6 @@ echo "Making the workspaces ..."
 ./make_ptrho.sh $1
 
 #Now run the f-tests jobs
-# python submit.py -y $1 --pt=0 --rho=0
-# python submit.py -y $1 --pt=0 --rho=1
-# python submit.py -y $1 --pt=0 --rho=2
+python submit.py -y $1 --pt=0 --rho=0
+python submit.py -y $1 --pt=0 --rho=1
+python submit.py -y $1 --pt=0 --rho=2
