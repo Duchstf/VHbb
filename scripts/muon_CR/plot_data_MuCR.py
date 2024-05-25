@@ -1,5 +1,6 @@
 from imports import *
 import copy
+import sys
 
 WPs = {
     
@@ -10,10 +11,12 @@ WPs = {
 }
 
 #Dataset parameters
-lumis = {}
-lumis['2016'] = 35.9
-lumis['2017'] = 41.5
-lumis['2018'] = 59.9
+lumis = {
+    "2016APV": 19.52,
+    "2016": 16.81,
+    "2017": 41.48,
+    "2018": 59.83
+}
 
 samples = ['data', 'QCD', 'WH','ZH', 'VV', 'Wjets', 'Zjets', 'VBFDipoleRecoilOn', 'ggF', 'singlet', 'ttH', 'ttbar']
 
@@ -21,7 +24,7 @@ def plot_h(h, labels, name, year):
 
     labels = copy.copy(labels)
     figtext = f'BB PASS' if name == 'bb_pass' else f'BB FAIL'
-    if name == 'bb_pass': del labels['QCD'] #Delete QCD in the bb passing region
+    # if name == 'bb_pass': del labels['QCD'] #Delete QCD in the bb passing region
     mc = list(labels.values())
     
     #Plot now
@@ -42,13 +45,25 @@ def plot_h(h, labels, name, year):
     hist.plot1d(h.integrate('process','muondata'),error_opts={'marker':'o','color':'k','markersize':5}) 
     ax1.get_xaxis().set_visible(False)    
 
-    labels['Data'] = 'muondata'                                                                                           
-    plt.legend(labels=labels, bbox_to_anchor=(1.05, 1), loc='upper left')
+    labels['Data'] = 'muondata'
 
-    if name == 'bb_pass': plt.text(0.05, 0.95, figtext, horizontalalignment='left', verticalalignment='top', transform=plt.gca().transAxes)       
-    else: plt.text(0.95, 0.95, figtext, horizontalalignment='right', verticalalignment='top', transform=plt.gca().transAxes)                                          
+    ##I'll do anything for legends lol>>>>>>>>>>                                                                                           
+    legend = ax1.legend(labels=labels, bbox_to_anchor=(1.05, 1), loc='upper left')
 
-    allweights =  hist.export1d(h.integrate('process','muondata')).numpy()[0]                                                                              
+    # Get the bounding box of the legend in the figure coordinates
+    legend_box = legend.get_window_extent()
+
+    # Convert the bounding box coordinates from figure to data coordinates
+    inv = ax1.transAxes.inverted()
+    data_bbox = inv.transform(legend_box)
+
+    # Calculate the coordinates to place the text "BB FAIL" above the legend
+    x_text = data_bbox[0][0]
+    y_text = data_bbox[1][1] + 0.02  # Adjust the 0.02 to place the text slightly above the legend
+  
+    plt.text(x_text+0.25, y_text + 0.03, figtext, horizontalalignment='right', verticalalignment='top', transform=plt.gca().transAxes)                                          
+
+     ##<<<<<<<<<<<<<<<<<<<I'll do anything for legends lol                                                      
 
     # ratio                                                                                                                   
     ax2 = fig.add_subplot(4,1,(4,4))
@@ -63,7 +78,7 @@ def plot_h(h, labels, name, year):
 
 def main():
     
-    year = '2017'
+    year = sys.argv[1]
     
     #Define the score threshold
     bbthr = WPs[f'{year}_bb1']

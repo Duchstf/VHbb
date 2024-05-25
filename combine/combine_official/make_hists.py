@@ -165,7 +165,7 @@ def main():
 
     #Make the hists for signal region and muon CR
     make_hists_signal(year, bbthr, qcdthr, signal_pickle_path, signal_out_path)
-    # make_hists_muonCR(year, bbthr, muonCR_pickle_path, muonCR_out_path)
+    make_hists_muonCR(year, bbthr, muonCR_pickle_path, muonCR_out_path)
     
     return
 

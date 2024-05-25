@@ -1,0 +1,28 @@
+# Datacard for <Channel (muonCRpass2016) instance at 0x7fa60dbde910> generated on 2024-05-24 22:42:24.469590
+imax 1 # number of categories ('bins' but here we are using shape templates)
+jmax 3 # number of samples minus 1
+kmax 11 # number of nuisance parameters
+shapes * muonCRpass2016 testModel_2016.root testModel_2016:muonCRpass2016_$PROCESS testModel_2016:muonCRpass2016_$PROCESS_$SYSTEMATIC
+bin muonCRpass2016
+observation 73.000
+bin                                muonCRpass2016  muonCRpass2016  muonCRpass2016  muonCRpass2016
+process                                       QCD            WLNu           ttbar         singlet
+process                                         1               2               3               4
+rate                                        5.343           1.344          96.898           4.257
+CMS_hbb_e_veto_2016 lnN                    1.0050          1.0050          1.0050          1.0050
+CMS_hbb_mu_trigger_2016 lnN                     -   0.9978/1.0022   0.9975/1.0025   0.9972/1.0028
+CMS_hbb_tau_veto_2016 lnN                  1.0500          1.0500          1.0500          1.0500
+CMS_lumi_13TeV_2016 lnN                    1.0100          1.0100          1.0100          1.0100
+CMS_lumi_13TeV_correlated lnN              1.0060          1.0060          1.0060          1.0060
+CMS_mu_id_2016 lnN                              -   0.9991/1.0009   0.9991/1.0009   0.9993/1.0007
+CMS_mu_iso_2016 lnN                             -   0.9997/1.0003   0.9997/1.0003   0.9997/1.0003
+muonCRpass2016_QCD_mcstat lnN              2.0000               -               -               -
+muonCRpass2016_WLNu_mcstat lnN                  -          1.7979               -               -
+muonCRpass2016_singlet_mcstat lnN               -               -               -          1.8350
+muonCRpass2016_ttbar_mcstat lnN                 -               -          1.1127               -
+tqqeffSF_2016 extArg testModel_2016.root:testModel_2016
+tqqnormSF_2016 extArg testModel_2016.root:testModel_2016
+tqqeffSF_2016_effect_muonCRpass2016_ttbar rateParam muonCRpass2016 ttbar (1*@0) tqqeffSF_2016
+tqqeffSF_2016_effect_muonCRpass2016_singlet rateParam muonCRpass2016 singlet (1*@0) tqqeffSF_2016
+tqqnormSF_2016_effect_muonCRpass2016_ttbar rateParam muonCRpass2016 ttbar (1*@0) tqqnormSF_2016
+tqqnormSF_2016_effect_muonCRpass2016_singlet rateParam muonCRpass2016 singlet (1*@0) tqqnormSF_2016

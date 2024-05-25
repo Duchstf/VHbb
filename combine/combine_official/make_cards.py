@@ -11,8 +11,8 @@ from rhalphalib import AffineMorphTemplate, MorphHistW2
 rl.util.install_roofit_helpers()
 
 eps=0.0000001
-do_muon_CR = False
-do_systematics = False
+do_muon_CR = True
+do_systematics = True
 
 '''
 python make_cards.py [year]
@@ -412,7 +412,7 @@ def vh_rhalphabet(tmpdir):
 
                     sample.autoMCStats(lnN=True) 
 
-                    ##--------------------Experimental Systematics---------------------
+                    ##--------------------Experimental Systematics-------------------
                     sample.setParamEffect(sys_eleveto, 1.005)
                     sample.setParamEffect(sys_muveto, 1.005)
                     sample.setParamEffect(sys_tauveto, 1.05)
@@ -427,28 +427,31 @@ def vh_rhalphabet(tmpdir):
 
                         sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
 
-                        # Scale and Smear
-                        mtempl = AffineMorphTemplate(templ)
+                    # Scale and Smear
+                    mtempl = AffineMorphTemplate(templ)
 
-                        if sName not in ['QCD']:
-                            # shift
-                            realshift = SF[year]['shift_SF_ERR']/smass('Wjets') * smass(sName)
-                            _up = mtempl.get(shift=realshift)
-                            _down = mtempl.get(shift=-realshift)
-                            if badtemp_ma(_up[0]) or badtemp_ma(_down[0]):
-                                print("Skipping sample {}, scale systematic would be empty".format(sName))
-                            else:
-                                sample.setParamEffect(sys_scale, _up, _down, scale=1)
+                    if sName not in ['QCD']:
+                        # shift
+                        realshift = SF[year]['shift_SF_ERR']/smass('Wjets') * smass(sName)
+                        _up = mtempl.get(shift=realshift)
+                        _down = mtempl.get(shift=-realshift)
+                        if badtemp_ma(_up[0]) or badtemp_ma(_down[0]):
+                            print("Skipping sample {}, scale systematic would be empty".format(sName))
+                        else:
+                            sample.setParamEffect(sys_scale, _up, _down, scale=1)
 
-                            # smear
-                            _up = mtempl.get(smear=1 + SF[year]['smear_SF_ERR'])
-                            _down = mtempl.get(smear=1 - SF[year]['smear_SF_ERR'])
-                            if badtemp_ma(_up[0]) or badtemp_ma(_down[0]):
-                                print("Skipping sample {}, scale systematic would be empty".format(sName))
-                            else:
-                                sample.setParamEffect(sys_smear, _up, _down)    
+                        # smear
+                        _up = mtempl.get(smear=1 + SF[year]['smear_SF_ERR'])
+                        _down = mtempl.get(smear=1 - SF[year]['smear_SF_ERR'])
+                        if badtemp_ma(_up[0]) or badtemp_ma(_down[0]):
+                            print("Skipping sample {}, scale systematic would be empty".format(sName))
+                        else:
+                            sample.setParamEffect(sys_smear, _up, _down)    
 
                     ##--------------------END Experimental Systematics---------------------
+
+                    ##----------------------Theory Systematics (TODO)----------------------
+                    ##----------------------END Theory Systematics (TODO)-------------------
                                 
                 # Add ParticleNetSFs last!
                 if sName in ['ggF','VBF','WH','ZH','ggZH','ttH','Zjetsbb']:
@@ -466,6 +469,7 @@ def vh_rhalphabet(tmpdir):
                     #     sample.setParamEffect(sys_veff,effect)
 
                 ch.addSample(sample)
+            # END loop over MC samples 
 
             data_obs = get_template(sName='data', bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='nominal')
             ch.setObservation(data_obs, read_sumw2=True)
@@ -505,7 +509,9 @@ def vh_rhalphabet(tmpdir):
             print("Muon CR Region: {}".format(bb_region))
 
             for sName in samps:
-                if (sName == 'QCD') & isPass: continue #Skip QCD in the muon passing region
+
+                # if (sName == 'QCD') & isPass: continue #Skip QCD in the muon passing region
+
                 templates[sName] = get_template(sName=sName,bb_pass=isPass, V_bin='muonCR', obs=msd, syst='nominal', muon=True)
                 nominal = templates[sName][0]
 
@@ -526,10 +532,9 @@ def vh_rhalphabet(tmpdir):
 
                     #These are all the systematics for QCD
                     if sName == 'QCD':
-                        ch.addSample(sName)
+                        ch.addSample(sample)
                         continue 
                 
-                    #TODO: THESE SYSTEMATICS ARE NOT PROCESSED FOR NOW
                     for sys in mu_exp_systs:
                         syst_up = get_template(sName=sName,bb_pass=isPass, V_bin='muonCR', obs=msd, syst=sys+'Up', muon=True)[0]
                         syst_do = get_template(sName=sName,bb_pass=isPass, V_bin='muonCR', obs=msd, syst=sys+'Down', muon=True)[0]
