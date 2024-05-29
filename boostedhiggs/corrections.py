@@ -55,42 +55,10 @@ def n2ddt_shift(fatjets, year='2017'):
 def powheg_to_nnlops(genpt):
     return compiled['powheg_to_nnlops'](genpt)
 
-# Jennet adds PDF + alpha_S weights
+# All PDF weights and alpha_S weights
 def add_pdf_weight(weights, pdf_weights):
 
-    nweights = len(weights.weight())
-
-    nom   = np.ones(nweights)
-    up    = np.ones(nweights)
-    down  = np.ones(nweights)
-
     docstring = pdf_weights.__doc__
-
-    # NNPDF31_nnlo_hessian_pdfas
-    # https://lhapdfsets.web.cern.ch/current/NNPDF31_nnlo_hessian_pdfas/NNPDF31_nnlo_hessian_pdfas.info
-    if True: #"306000 - 306102" in docstring:
-
-        # Hessian PDF weights
-        # Eq. 21 of https://arxiv.org/pdf/1510.03865v1.pdf                                   
-        arg = pdf_weights[:,1:-2]-np.ones((nweights,100))
-        summed = ak.sum(np.square(arg),axis=1)
-        pdf_unc = np.sqrt( (1./99.) * summed )
-        weights.add('PDF_weight', nom, pdf_unc + nom)
-
-        # alpha_S weights
-        # Eq. 27 of same ref
-        as_unc = 0.5*(pdf_weights[:,102] - pdf_weights[:,101])
-        weights.add('aS_weight', nom, as_unc + nom)
-
-        # PDF + alpha_S weights
-        # Eq. 28 of same ref
-        pdfas_unc = np.sqrt( np.square(pdf_unc) + np.square(as_unc) )
-        weights.add('PDFaS_weight', nom, pdfas_unc + nom) 
-
-    else:
-        weights.add('aS_weight', nom, up, down)
-        weights.add('PDF_weight', nom, up, down)
-        weights.add('PDFaS_weight', nom, up, down)
 
 # Jennet adds 7 point scale variations
 def add_scalevar_7pt(weights,var_weights):
@@ -98,39 +66,21 @@ def add_scalevar_7pt(weights,var_weights):
     docstring = var_weights.__doc__
 
     nweights = len(weights.weight())
+    nom = np.ones(nweights)
 
-    nom   = np.ones(nweights)
-    up    = np.ones(nweights)
-    down  = np.ones(nweights)
- 
-    if len(var_weights) > 0:
-        if len(var_weights[0]) == 9: 
-            up = np.maximum.reduce([var_weights[:,0],var_weights[:,1],var_weights[:,3],var_weights[:,5],var_weights[:,7],var_weights[:,8]])
-            down = np.minimum.reduce([var_weights[:,0],var_weights[:,1],var_weights[:,3],var_weights[:,5],var_weights[:,7],var_weights[:,8]])
-        elif len(var_weights[0]) > 1:
-            print("Scale variation vector has length ", len(var_weights[0]))
+    for i in range(0,103):
+        weights.add('PDF_weight_'+str(i), nom, pdf_weights[:,i])
 
-    weights.add('scalevar_7pt', nom, up, down)
-
-# Jennet adds 3 point scale variations
-def add_scalevar_3pt(weights,var_weights):
+# All 9 scale variations
+def add_scalevar(weights, var_weights):
 
     docstring = var_weights.__doc__
 
     nweights = len(weights.weight())
+    nom = np.ones(nweights)
 
-    nom   = np.ones(nweights)
-    up    = np.ones(nweights)
-    down  = np.ones(nweights)
-
-    if len(var_weights) > 0:
-        if len(var_weights[0]) == 9:
-            up = np.maximum(var_weights[:,0], var_weights[:,8])
-            down = np.minimum(var_weights[:,0], var_weights[:,8])
-        elif len(var_weights[0]) > 1:
-            print("Scale variation vector has length ", len(var_weights[0]))
-
-    weights.add('scalevar_3pt', nom, up, down)
+    for i in range(0,9):
+        weights.add('scalevar_'+str(i), nom, var_weights[:,i])
 
 # Jennet adds PS weights
 def add_ps_weight(weights,ps_weights):

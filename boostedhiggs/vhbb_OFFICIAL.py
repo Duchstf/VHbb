@@ -26,12 +26,6 @@ from boostedhiggs.corrections import (
     add_jec_variables,
     met_factory,
     lumiMasks,
-
-    # Jennet adds theory variations                                                                                                
-    add_ps_weight,
-    add_scalevar_7pt,
-    add_scalevar_3pt,
-    add_pdf_weight,
 )
 
 #Import the working points

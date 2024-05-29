@@ -23,12 +23,12 @@ sys.path.append('/srv')
 #     os.system(cmd)
 
 fileset = {
-    "JetHT_Run2016B_ver1_HIPM": [
-          "root://cmsxrootd.fnal.gov//store/test/xrootd/T1_US_FNAL/store/data/Run2016F/JetHT/NANOAOD/UL2016_MiniAODv2_NanoAODv9-v1/70000/F77A6FC2-0D11-6445-880B-5B8509DC4AB2.root"]
+    "test": [
+         "root://cmsxrootd-site.fnal.gov//store/mc/RunIISummer20UL16NanoAODv9/ZH_HToBB_ZToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/NANOAODSIM/106X_mcRun2_asymptotic_v17-v1/60000/B18E6AAE-DCC4-0D4F-8D5E-1EE098BD7C4F.root"]
 }
 
 #autoreload forces the kernel to reload the processor to include any new changes
-from boostedhiggs import VhbbPNQCDScan as vhbb_processor
+from boostedhiggs import VHbbProcessorOfficial_TheorySys as vhbb_processor
 
 import time
 tstart = time.time()

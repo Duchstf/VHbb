@@ -26,8 +26,15 @@ from boostedhiggs.corrections import (
     add_jec_variables,
     met_factory,
     lumiMasks,
+
+    # Jennet adds theory variations                                                                                                
+    add_ps_weight,
+    add_scalevar,
+    add_pdf_weight,
 )
 
+#Import the working points
+from boostedhiggs.WPs import *
 
 logger = logging.getLogger(__name__)
 
@@ -39,104 +46,61 @@ def update(events, collections):
         out = ak.with_field(out, value, name)
     return out
 
-def ak4_jets(events):
+def ak4_jets(events, year):
 
     jets = events.Jet
-    jets = jets[
-        (jets.pt > 30.)
-        & (abs(jets.eta) < 5.0)
-        & jets.isTight
-        & (jets.puId > 0)
-    ]
+    jets = jets[(jets.pt > 30.) & (abs(jets.eta) < 5.0) & jets.isTight & (jets.puId > 0)]
+        
+    # EE noise for 2017                                             
+    if year == '2017':
+        jets = jets[
+            (jets.pt > 50)
+            | (abs(jets.eta) < 2.65)
+            | (abs(jets.eta) > 3.139)]
         
     return jets
 
 
-class VHbbProcessorV11(processor.ProcessorABC):
+class VHbbProcessorOfficial_TheorySys(processor.ProcessorABC):
     
-    def __init__(self,
-                 year='2017',
-                 jet_arbitration='T_bvc',
-                 skipJER=False,
-                 tightMatch=True,
-                 ak4tagger='deepJet', #TODO: NEED TO CHECK WITH JENNET IF I NEED TO CHANGE THIS FOR PARTICLE NET
-                 ewkHcorr=True,
-                 systematics=True
-                 ):
+    def __init__(self, year='2017', jet_arbitration='T_bvq',
+                 tightMatch=True, ewkHcorr=True, systematics=True):
         
         self._year = year
-        self._ak4tagger = ak4tagger
         self._ewkHcorr = ewkHcorr
         self._jet_arbitration = jet_arbitration
-        self._skipJER = skipJER
         self._tightMatch = tightMatch
         self._systematics = systematics
 
-        #Raise errors for some taggers
-        if self._ak4tagger == 'deepcsv':
-            raise NotImplementedError()
-#            self._ak4tagBranch = 'btagDeepB'
-        elif self._ak4tagger == 'deepJet':
-            self._ak4tagBranch = 'btagDeepFlavB'
-        else:
-            raise NotImplementedError()
-
-        self._btagSF = BTagCorrector('M', self._ak4tagger, year)
-
         #Open the trigger files
-        with open('files/muon_triggers.json') as f:
-            self._muontriggers = json.load(f)
-
-        with open('files/triggers.json') as f:
-            self._triggers = json.load(f)
+        with open('files/muon_triggers.json') as f: self._muontriggers = json.load(f)
+        with open('files/triggers.json') as f: self._triggers = json.load(f)
 
         # https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2
-        with open('files/metfilters.json') as f:
-            self._met_filters = json.load(f)
-            
-        ParticleNet_WorkingPoints = {
-            '2016APV_bb':    [0.0, 0.9088, 0.9737, 0.9883],
-            '2016APV_cc':    [0.0, 0.9252, 0.9751, 0.9909],
-            
-            '2016_bb': [0.0, 0.9137, 0.9735, 0.9883],
-            '2016_cc': [0.0, 0.9252, 0.9743, 0.9905],
-            
-            '2017_bb':    [0.0, 0.9105, 0.9714, 0.9870],
-            '2017_cc':    [0.0, 0.9347, 0.9765, 0.9909],
-            
-            '2018_bb':    [0.0, 0.9172, 0.9734, 0.9880],
-            '2018_cc':    [0.0, 0.9368, 0.9777, 0.9917]
-        }
-        
+        with open('files/metfilters.json') as f: self._met_filters = json.load(f)
         
         #Scan thresholds for bb
-        bb_bins = [1.] + ParticleNet_WorkingPoints['{}_bb'.format(self._year)]
-        bb_bins.sort()
-        
-        qcd_bins = [round(x,4) for x in list(np.linspace(0.,0.2,10))] + [1.] + [0.0922, 0.1002]
-        qcd_bins.sort()
+        bb_bins = bb_WPs['{}_bb'.format(self._year)]
+        qcd_bins = qcd_WPs['{}_qcd'.format(self._year)]
         
         #Create the histogram.
         self.make_output = lambda: {
             
             'sumw': processor.defaultdict_accumulator(float),
             
-            #Might be adding a systematic
-            'btagWeight': hist2.Hist(
-                hist2.axis.Regular(50, 0, 3, name='val', label='BTag correction'),
-                hist2.storage.Weight(),
-            ),
-            
-            'ParticleNet_msd': hist.Hist(
+            'h': hist.Hist(
                 'Events',
                 hist.Cat('dataset', 'Dataset'),
                 hist.Cat('region', 'Region'),
                 hist.Cat('systematic', 'Systematic'),
                 hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
                 hist.Bin('msd2', r'Jet 2 $m_{sd}$', [40., 68.,  75.,  82.,  89.,  96., 103., 110., 201.]),
+
                 hist.Bin('bb1', r'Jet 1 Paticle Net B Score', bb_bins),
                 hist.Bin('qcd2', r'Jet 2 Paticle Net QCD Score', qcd_bins),
+
                 hist.Bin('genflavor1', 'Gen. jet 1 flavor', [1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
+                hist.Bin('pt1', 'Jet 1 pT', [450, 500, 600])
             )
         }
 
@@ -144,20 +108,14 @@ class VHbbProcessorV11(processor.ProcessorABC):
         isRealData = not hasattr(events, "genWeight")
         isQCDMC = 'QCD' in events.metadata['dataset']
 
-        if isRealData or isQCDMC:
-            # Nominal JEC are already applied in data
-            return self.process_shift(events, None)
-
-        if np.sum(ak.num(events.FatJet, axis=1)) < 1:
-            return self.process_shift(events, None)
+        if isRealData or isQCDMC: return self.process_shift(events, None)  # Nominal JEC are already applied in data
+        if np.sum(ak.num(events.FatJet, axis=1)) < 1: return self.process_shift(events, None)
 
         jec_cache = {}
 
         thekey = f"{self._year}mc"
-        if self._year == "2016":
-            thekey = "2016postVFPmc"
-        elif self._year == "2016APV":
-            thekey = "2016preVFPmc"
+        if self._year == "2016": thekey = "2016postVFPmc"
+        elif self._year == "2016APV": thekey = "2016preVFPmc"
 
         fatjets = fatjet_factory[thekey].build(add_jec_variables(events.FatJet, events.fixedGridRhoFastjetAll), jec_cache)
         jets = jet_factory[thekey].build(add_jec_variables(events.Jet, events.fixedGridRhoFastjetAll), jec_cache)
@@ -181,7 +139,6 @@ class VHbbProcessorV11(processor.ProcessorABC):
 
         dataset = events.metadata['dataset']
         isRealData = not hasattr(events, "genWeight")
-        isQCDMC = 'QCD' in dataset
         selection = PackedSelection()
         weights = Weights(len(events), storeIndividual=True)
         output = self.make_output()
@@ -224,7 +181,7 @@ class VHbbProcessorV11(processor.ProcessorABC):
 
         #Fat jets processing
         fatjets = events.FatJet
-        fatjets['msdcorr'] = corrected_msoftdrop(fatjets)
+        fatjets['msdcorr'] = corrected_msoftdrop(fatjets, self._year)
         fatjets['qcdrho'] = 2 * np.log(fatjets.msdcorr / fatjets.pt)
         fatjets['n2ddt'] = fatjets.n2b1 - n2ddt_shift(fatjets, year=self._year)
         fatjets['msdcorr_full'] = fatjets['msdcorr']
@@ -232,34 +189,24 @@ class VHbbProcessorV11(processor.ProcessorABC):
         candidatejets = fatjets[(fatjets.pt > 200) & (abs(fatjets.eta) < 2.5) & fatjets.isTight] # this is loose in sampleContainer
         
         #Pick the candidate jet based on different arbitration
-        if self._jet_arbitration == 'pt':
-            candidatejet = ak.firsts(candidatejets)
-        elif self._jet_arbitration == 'T_bvc':
+        if self._jet_arbitration == 'T_bvq':
             #Order the jets based on particle net scores
             leadingjets = candidatejets[:, 0:2]
     
-            pnet_bvc = leadingjets.particleNetMD_Xbb / (leadingjets.particleNetMD_Xcc + leadingjets.particleNetMD_Xbb)                                                                                 
-            indices = ak.argsort(pnet_bvc, axis=1, ascending = False) #Higher b score for the Higgs candidate (more b like)               
+            pnet_bvq = leadingjets.particleNetMD_Xbb / (leadingjets.particleNetMD_Xcc + leadingjets.particleNetMD_Xbb + leadingjets.particleNetMD_Xqq)                                                                                
+            indices = ak.argsort(pnet_bvq, axis=1, ascending = False) #Higher b score for the Higgs candidate (more b like)               
             candidatejet = ak.firsts(leadingjets[indices[:, 0:1]])  # candidate jet is more b-like (higher BvC score)                                                              
             secondjet = ak.firsts(leadingjets[indices[:, 1:2]]) # second jet is more charm-like (larger BvC score) 
             
-        else:
-            raise RuntimeError("Unknown candidate jet arbitration")
+        else: raise RuntimeError("Unknown candidate jet arbitration")
         
         bb1 = candidatejet.particleNetMD_Xbb / (candidatejet.particleNetMD_Xbb + candidatejet.particleNetMD_QCD) #Exact B scores for Higgs candidate
         qcd2 = secondjet.particleNetMD_QCD #Exact C scores for V candidate
         
-
         #!Add selections------------------>
         #There is a list at the end which specifies the selections being used 
-        selection.add('jet1kin',
-            (abs(candidatejet.eta) < 2.5)
-            & (candidatejet.pt >= 450)
-        )
-        selection.add('jet2kin',
-            (secondjet.pt >= 200)
-            & (abs(secondjet.eta) < 2.5)
-        )
+        selection.add('jet1kin', (abs(candidatejet.eta) < 2.5) & (candidatejet.pt >= 450))
+        selection.add('jet2kin', (secondjet.pt >= 200) & (abs(secondjet.eta) < 2.5))
 
         selection.add('jetacceptance',
             (candidatejet.msdcorr >= 40.)
@@ -270,70 +217,35 @@ class VHbbProcessorV11(processor.ProcessorABC):
             & (secondjet.msdcorr < 201.)
         )
 
-        selection.add('jetid',
-                      candidatejet.isTight
-                      & secondjet.isTight
-        )
-
-        selection.add('n2ddt',
-                      (candidatejet.n2ddt < 0.)
-                      & (secondjet.n2ddt < 0.)
-        )
-
-        jets = events.Jet
-        jets = jets[
-            (jets.pt > 30.)
-            & (abs(jets.eta) < 5.0)
-            & jets.isTight
-            & (jets.puId > 0)
-        ]
-        
-        # EE noise for 2017                                             
-        if self._year == '2017':
-            jets = jets[
-                (jets.pt > 50)
-                | (abs(jets.eta) < 2.65)
-                | (abs(jets.eta) > 3.139)
-            ]
-
-        # Only consider first 4 jets to be consistent with old framework  
-        jets = jets[:, :4]
-        dR = abs(jets.delta_r(candidatejet))
-        second_jet_dR = abs(secondjet.delta_r(candidatejet))
-        ak4_away = jets[dR > 0.8]
+        selection.add('jetid', candidatejet.isTight & secondjet.isTight)
         
         #Count the number of ak4 jets that are away
-        ak4_jets_events = ak4_jets(events)
+        ak4_jets_events = ak4_jets(events, self._year)
         n_ak4_jets = ak.count(ak4_jets_events.pt, axis=1)
         selection.add('njets', n_ak4_jets < 5.)
 
         met = events.MET
         selection.add('met', met.pt < 140.)
 
-        goodmuon = (
-            (events.Muon.pt > 10)
-            & (abs(events.Muon.eta) < 2.4)
-            & (events.Muon.pfRelIso04_all < 0.25)
-            & events.Muon.looseId
-        )
+        goodmuon = ((events.Muon.pt > 10) & (abs(events.Muon.eta) < 2.4) & (events.Muon.pfRelIso04_all < 0.25) & events.Muon.looseId)
         nmuons = ak.sum(goodmuon, axis=1)
         leadingmuon = ak.firsts(events.Muon[goodmuon])
 
-        goodelectron = (
-            (events.Electron.pt > 10)
-            & (abs(events.Electron.eta) < 2.5)
-            & (events.Electron.cutBased >= events.Electron.LOOSE)
-        )
+        goodelectron = ((events.Electron.pt > 10) & (abs(events.Electron.eta) < 2.5) & (events.Electron.cutBased >= events.Electron.LOOSE))
         nelectrons = ak.sum(goodelectron, axis=1)
 
         ntaus = ak.sum(
             (
                 (events.Tau.pt > 20)
+                & (abs(events.Tau.dz) < 0.2)
                 & (abs(events.Tau.eta) < 2.3)
-                & (events.Tau.rawIso < 5)
-                & (events.Tau.idDeepTau2017v2p1VSjet)
-                & ak.all(events.Tau.metric_table(events.Muon[goodmuon]) > 0.4, axis=2)
-                & ak.all(events.Tau.metric_table(events.Electron[goodelectron]) > 0.4, axis=2)
+                & (events.Tau.decayMode > 0)
+                & (events.Tau.decayMode != 5)
+                & (events.Tau.decayMode != 6)
+                & (events.Tau.decayMode != 7)
+                & (events.Tau.idDeepTau2017v2p1VSe >= 2)
+                & (events.Tau.idDeepTau2017v2p1VSjet >= 16)
+                & (events.Tau.idDeepTau2017v2p1VSmu >= 8)
             ),
             axis=1,
         )
@@ -349,22 +261,18 @@ class VHbbProcessorV11(processor.ProcessorABC):
         else:
             weights.add('genweight', events.genWeight)
             if 'HToBB' in dataset:
-                if self._ewkHcorr:
-                    add_HiggsEW_kFactors(weights, events.GenPart, dataset)
+                if self._ewkHcorr: add_HiggsEW_kFactors(weights, events.GenPart, dataset)
 
-                # if self._systematics:
-                #     # Jennet adds theory variations                                                                               
-                #     add_ps_weight(weights, events.PSWeight)
-                #     if "LHEPdfWeight" in events.fields:
-                #         add_pdf_weight(weights,events.LHEPdfWeight)
-                #     else:
-                #         add_pdf_weight(weights,[])
-                #     if "LHEScaleWeight" in events.fields:
-                #         add_scalevar_7pt(weights, events.LHEScaleWeight)
-                #         add_scalevar_3pt(weights, events.LHEScaleWeight)
-                #     else:
-                #         add_scalevar_7pt(weights,[])
-                #         add_scalevar_3pt(weights,[])
+                # Jennet adds theory variations                                                                               
+                add_ps_weight(weights, events.PSWeight)
+                if "LHEPdfWeight" in events.fields:
+                    add_pdf_weight(weights,events.LHEPdfWeight)
+                else:
+                    add_pdf_weight(weights,[])
+                if "LHEScaleWeight" in events.fields:
+                    add_scalevar(weights, events.LHEScaleWeight)
+                else:
+                    add_scalevar(weights,[])
 
             add_pileup_weight(weights, events.Pileup.nPU, self._year)
             bosons = getBosons(events.GenPart)
@@ -390,9 +298,6 @@ class VHbbProcessorV11(processor.ProcessorABC):
             genBosonPt = ak.fill_none(ak.firsts(bosons.pt), 0)
             add_VJets_kFactors(weights, events.GenPart, dataset)
 
-            if shift_name is None:
-                output['btagWeight'].fill(val=self._btagSF.addBtagWeight(ak4_away, weights))
-
             add_jetTriggerSF(weights, ak.firsts(fatjets), self._year, selection)
             add_muonSFs(weights, leadingmuon, self._year, selection)
 
@@ -416,18 +321,7 @@ class VHbbProcessorV11(processor.ProcessorABC):
         else: systematics = [shift_name]
             
         #!LIST OF THE SELECTIONS APPLIED
-        regions = {
-            'signal': ['trigger',
-                       'lumimask',
-                       'metfilter',
-                       'jet1kin',
-                       'jet2kin',
-                       'jetid',
-                       'jetacceptance',
-                       'met',
-                       'noleptons',
-                       'njets'],
-        }
+        regions = {'signal': ['trigger', 'lumimask', 'metfilter', 'jet1kin', 'jet2kin', 'jetid', 'jetacceptance', 'met', 'noleptons','njets'],}
 
         def fill(region, systematic, wmod=None):
             
@@ -444,15 +338,18 @@ class VHbbProcessorV11(processor.ProcessorABC):
             else: weight = weights.weight()[cut] * wmod[cut]
 
             #! FILL THE HISTOGRAM
-            output['ParticleNet_msd'].fill(
+            output['h'].fill(
                 dataset=dataset,
                 region=region,
                 systematic=sname,
                 msd1=normalize(msd1_matched, cut),
                 msd2=normalize(msd2_matched, cut),
+
                 bb1=normalize(bb1, cut),
                 qcd2=normalize(qcd2, cut),
+
                 genflavor1=normalize(genflavor1, cut),
+                pt1=normalize(candidatejet.pt, cut),
                 weight=weight,
             )
 

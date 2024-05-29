@@ -26,6 +26,11 @@ from boostedhiggs.corrections import (
     add_jec_variables,
     met_factory,
     lumiMasks,
+
+    # Jennet adds theory variations                                                                                                
+    add_ps_weight,
+    add_scalevar,
+    add_pdf_weight,
 )
 
 
@@ -39,29 +44,17 @@ def update(events, collections):
         out = ak.with_field(out, value, name)
     return out
 
-def ak4_jets(events):
 
-    jets = events.Jet
-    jets = jets[
-        (jets.pt > 30.)
-        & (abs(jets.eta) < 5.0)
-        & jets.isTight
-        & (jets.puId > 0)
-    ]
-        
-    return jets
-
-
-class VHbbProcessorV11(processor.ProcessorABC):
+class VHbbTheorySystProcessor(processor.ProcessorABC):
     
     def __init__(self,
                  year='2017',
                  jet_arbitration='T_bvc',
                  skipJER=False,
-                 tightMatch=True,
+                 tightMatch=False,
                  ak4tagger='deepJet', #TODO: NEED TO CHECK WITH JENNET IF I NEED TO CHANGE THIS FOR PARTICLE NET
                  ewkHcorr=True,
-                 systematics=True
+                 systematics=False
                  ):
         
         self._year = year
@@ -110,11 +103,8 @@ class VHbbProcessorV11(processor.ProcessorABC):
         
         
         #Scan thresholds for bb
-        bb_bins = [1.] + ParticleNet_WorkingPoints['{}_bb'.format(self._year)]
+        bb_bins = [0.0, 0.97, 0.9918] + [round(x,4) for x in list(np.linspace(0.98,1.,20))] + ParticleNet_WorkingPoints['{}_bb'.format(self._year)][1:]
         bb_bins.sort()
-        
-        qcd_bins = [round(x,4) for x in list(np.linspace(0.,0.2,10))] + [1.] + [0.0922, 0.1002]
-        qcd_bins.sort()
         
         #Create the histogram.
         self.make_output = lambda: {
@@ -135,8 +125,8 @@ class VHbbProcessorV11(processor.ProcessorABC):
                 hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
                 hist.Bin('msd2', r'Jet 2 $m_{sd}$', [40., 68.,  75.,  82.,  89.,  96., 103., 110., 201.]),
                 hist.Bin('bb1', r'Jet 1 Paticle Net B Score', bb_bins),
-                hist.Bin('qcd2', r'Jet 2 Paticle Net QCD Score', qcd_bins),
                 hist.Bin('genflavor1', 'Gen. jet 1 flavor', [1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
+                hist.Bin('pt1', r'Jet 1 pt', [0, 250, 450, 650]),
             )
         }
 
@@ -186,8 +176,11 @@ class VHbbProcessorV11(processor.ProcessorABC):
         weights = Weights(len(events), storeIndividual=True)
         output = self.make_output()
         
-        if shift_name is None and not isRealData: output['sumw'][dataset] = ak.sum(events.genWeight)
-        if len(events) == 0: return output
+        if shift_name is None and not isRealData:
+            output['sumw'][dataset] = ak.sum(events.genWeight)
+
+        if len(events) == 0:
+            return output
 
         #Add triggers
         if isRealData:
@@ -199,12 +192,12 @@ class VHbbProcessorV11(processor.ProcessorABC):
             del trigger
         else:
             selection.add('trigger', np.ones(len(events), dtype='bool'))
-        
-        #Add lumimask
-        if isRealData: selection.add('lumimask', lumiMasks[self._year[:4]](events.run, events.luminosityBlock))
-        else: selection.add('lumimask', np.ones(len(events), dtype='bool'))
 
-        #Add muon trigger
+        if isRealData:
+            selection.add('lumimask', lumiMasks[self._year[:4]](events.run, events.luminosityBlock))
+        else:
+            selection.add('lumimask', np.ones(len(events), dtype='bool'))
+
         if isRealData:
             trigger = np.zeros(len(events), dtype='bool')
             for t in self._muontriggers[self._year]:
@@ -215,46 +208,78 @@ class VHbbProcessorV11(processor.ProcessorABC):
         else:
             selection.add('muontrigger', np.ones(len(events), dtype='bool'))
 
-        #Met filter
         metfilter = np.ones(len(events), dtype='bool')
         for flag in self._met_filters[self._year]['data' if isRealData else 'mc']:
             metfilter &= np.array(events.Flag[flag])
         selection.add('metfilter', metfilter)
         del metfilter
 
-        #Fat jets processing
         fatjets = events.FatJet
         fatjets['msdcorr'] = corrected_msoftdrop(fatjets)
         fatjets['qcdrho'] = 2 * np.log(fatjets.msdcorr / fatjets.pt)
         fatjets['n2ddt'] = fatjets.n2b1 - n2ddt_shift(fatjets, year=self._year)
         fatjets['msdcorr_full'] = fatjets['msdcorr']
 
-        candidatejets = fatjets[(fatjets.pt > 200) & (abs(fatjets.eta) < 2.5) & fatjets.isTight] # this is loose in sampleContainer
+        candidatejet = fatjets[
+            (fatjets.pt > 200)
+            & (abs(fatjets.eta) < 2.5)
+            & fatjets.isTight  # this is loose in sampleContainer
+        ]
+
+        # Only consider first two to match generators
+        candidatejet = candidatejet[:, :2]  
         
         #Pick the candidate jet based on different arbitration
         if self._jet_arbitration == 'pt':
-            candidatejet = ak.firsts(candidatejets)
+            candidatejet = ak.firsts(candidatejet)
+        elif self._jet_arbitration == 'mass':
+            candidatejet = ak.firsts(candidatejet[ak.argmax(candidatejet.msdcorr, axis=1, keepdims=True)])
+        elif self._jet_arbitration == 'n2':
+            candidatejet = ak.firsts(candidatejet[ak.argmin(candidatejet.n2ddt, axis=1, keepdims=True)])
+        elif self._jet_arbitration == 'ddb':
+            candidatejet = ak.firsts(candidatejet[ak.argmax(candidatejet.btagDDBvLV2, axis=1, keepdims=True)])
+        elif self._jet_arbitration == 'ddc':
+            candidatejet = ak.firsts(candidatejet[ak.argmax(candidatejet.btagDDCvLV2, axis=1, keepdims=True)])
+        elif self._jet_arbitration == 'ddcvb':
+            leadingjets = candidatejet[:, 0:2]
+            # ascending = true                                                                                                                                
+            indices = ak.argsort(leadingjets.btagDDCvBV2,axis=1)
+
+            # candidate jet is more b-like                                                                                                               
+            candidatejet = ak.firsts(leadingjets[indices[:, 0:1]])
+            # second jet is more charm-like                                                                                                              
+            secondjet = ak.firsts(leadingjets[indices[:, 1:2]])
+            
         elif self._jet_arbitration == 'T_bvc':
             #Order the jets based on particle net scores
-            leadingjets = candidatejets[:, 0:2]
-    
-            pnet_bvc = leadingjets.particleNetMD_Xbb / (leadingjets.particleNetMD_Xcc + leadingjets.particleNetMD_Xbb)                                                                                 
-            indices = ak.argsort(pnet_bvc, axis=1, ascending = False) #Higher b score for the Higgs candidate (more b like)               
-            candidatejet = ak.firsts(leadingjets[indices[:, 0:1]])  # candidate jet is more b-like (higher BvC score)                                                              
-            secondjet = ak.firsts(leadingjets[indices[:, 1:2]]) # second jet is more charm-like (larger BvC score) 
+            leadingjets = candidatejet[:, 0:2]
+            
+            pnet_bvc = leadingjets.particleNetMD_Xbb / (leadingjets.particleNetMD_Xcc + leadingjets.particleNetMD_Xbb)
+            
+            #Higher b score for the Higgs candidate (more b like)                                                                                                                           
+            indices = ak.argsort(pnet_bvc, axis=1, ascending = False) 
+
+            # candidate jet is more b-like (higher BvC score)                                                                                                           
+            candidatejet = ak.firsts(leadingjets[indices[:, 0:1]])
+            
+            # second jet is more charm-like (larger BvC score)                                                                                                           
+            secondjet = ak.firsts(leadingjets[indices[:, 1:2]])
             
         else:
             raise RuntimeError("Unknown candidate jet arbitration")
+
         
-        bb1 = candidatejet.particleNetMD_Xbb / (candidatejet.particleNetMD_Xbb + candidatejet.particleNetMD_QCD) #Exact B scores for Higgs candidate
-        qcd2 = secondjet.particleNetMD_QCD #Exact C scores for V candidate
+        #Exact B scores for Higgs candidate
+        bb1 = candidatejet.particleNetMD_Xbb / (candidatejet.particleNetMD_Xbb + candidatejet.particleNetMD_QCD)
+
+        #Exact C scores for V candidate
+        cc2 = secondjet.particleNetMD_Xcc /  (secondjet.particleNetMD_Xcc + secondjet.particleNetMD_QCD)
         
 
         #!Add selections------------------>
         #There is a list at the end which specifies the selections being used 
         selection.add('jet1kin',
-            (abs(candidatejet.eta) < 2.5)
-            & (candidatejet.pt >= 450)
+            abs(candidatejet.eta) < 2.5
         )
         selection.add('jet2kin',
             (secondjet.pt >= 200)
@@ -301,11 +326,6 @@ class VHbbProcessorV11(processor.ProcessorABC):
         dR = abs(jets.delta_r(candidatejet))
         second_jet_dR = abs(secondjet.delta_r(candidatejet))
         ak4_away = jets[dR > 0.8]
-        
-        #Count the number of ak4 jets that are away
-        ak4_jets_events = ak4_jets(events)
-        n_ak4_jets = ak.count(ak4_jets_events.pt, axis=1)
-        selection.add('njets', n_ak4_jets < 5.)
 
         met = events.MET
         selection.add('met', met.pt < 140.)
@@ -348,44 +368,30 @@ class VHbbProcessorV11(processor.ProcessorABC):
             genflavor2 = ak.zeros_like(secondjet.pt)
         else:
             weights.add('genweight', events.genWeight)
+
             if 'HToBB' in dataset:
+
                 if self._ewkHcorr:
                     add_HiggsEW_kFactors(weights, events.GenPart, dataset)
 
-                # if self._systematics:
-                #     # Jennet adds theory variations                                                                               
-                #     add_ps_weight(weights, events.PSWeight)
-                #     if "LHEPdfWeight" in events.fields:
-                #         add_pdf_weight(weights,events.LHEPdfWeight)
-                #     else:
-                #         add_pdf_weight(weights,[])
-                #     if "LHEScaleWeight" in events.fields:
-                #         add_scalevar_7pt(weights, events.LHEScaleWeight)
-                #         add_scalevar_3pt(weights, events.LHEScaleWeight)
-                #     else:
-                #         add_scalevar_7pt(weights,[])
-                #         add_scalevar_3pt(weights,[])
+                # Jennet adds theory variations                                                                               
+                add_ps_weight(weights, events.PSWeight)
+                if "LHEPdfWeight" in events.fields:
+                    add_pdf_weight(weights,events.LHEPdfWeight)
+                else:
+                    add_pdf_weight(weights,[])
+                if "LHEScaleWeight" in events.fields:
+                    add_scalevar(weights, events.LHEScaleWeight)
+                else:
+                    add_scalevar(weights,[])
 
             add_pileup_weight(weights, events.Pileup.nPU, self._year)
             bosons = getBosons(events.GenPart)
             matchedBoson1 = candidatejet.nearest(bosons, axis=None, threshold=0.8)
             matchedBoson2 = secondjet.nearest(bosons, axis=None, threshold=0.8)
-            
-            if self._tightMatch:
-                #First boson
-                match_mask1 = (abs(candidatejet.pt - matchedBoson1.pt)/matchedBoson1.pt < 0.5) & (abs(candidatejet.msdcorr - matchedBoson1.mass)/matchedBoson1.mass < 0.3)
-                selmatchedBoson1 = ak.mask(matchedBoson1, match_mask1)
-                
-                #Second boson
-                match_mask2 = (abs(secondjet.pt - matchedBoson2.pt)/matchedBoson2.pt < 0.5) & (abs(secondjet.msdcorr - matchedBoson2.mass)/matchedBoson2.mass < 0.3)
-                selmatchedBoson2 = ak.mask(matchedBoson2, match_mask2)
-                
-                genflavor1 = bosonFlavor(selmatchedBoson1)
-                genflavor2 = bosonFlavor(selmatchedBoson2)
 
-            else:
-                genflavor1 = bosonFlavor(matchedBoson1)
-                genflavor2 = bosonFlavor(matchedBoson2)
+            genflavor1 = bosonFlavor(matchedBoson1)
+            genflavor2 = bosonFlavor(matchedBoson2)
 
             genBosonPt = ak.fill_none(ak.firsts(bosons.pt), 0)
             add_VJets_kFactors(weights, events.GenPart, dataset)
@@ -394,9 +400,13 @@ class VHbbProcessorV11(processor.ProcessorABC):
                 output['btagWeight'].fill(val=self._btagSF.addBtagWeight(ak4_away, weights))
 
             add_jetTriggerSF(weights, ak.firsts(fatjets), self._year, selection)
+
             add_muonSFs(weights, leadingmuon, self._year, selection)
 
-            if self._year in ("2016APV", "2016", "2017"): weights.add("L1Prefiring", events.L1PreFiringWeight.Nom, events.L1PreFiringWeight.Up, events.L1PreFiringWeight.Dn)
+            if self._year in ("2016APV", "2016", "2017"):
+                weights.add("L1Prefiring", events.L1PreFiringWeight.Nom, events.L1PreFiringWeight.Up, events.L1PreFiringWeight.Dn)
+
+
             logger.debug("Weight statistics: %r" % weights.weightStatistics)
 
         msd1_matched = candidatejet.msdcorr * (genflavor1 > 0) + candidatejet.msdcorr * (genflavor1 == 0)
@@ -404,16 +414,22 @@ class VHbbProcessorV11(processor.ProcessorABC):
         
         def normalize(val, cut):
             '''not actually normalizing, just fill in the values after cuts'''
-            if cut is None: return ak.to_numpy(ak.fill_none(val, np.nan))
-            else: return ak.to_numpy(ak.fill_none(val[cut], np.nan))
+            if cut is None:
+                ar = ak.to_numpy(ak.fill_none(val, np.nan))
+                return ar
+            else:
+                ar = ak.to_numpy(ak.fill_none(val[cut], np.nan))
+                return ar
         
         #Start timer
         import time
         tic = time.time()
         #----------------
         
-        if shift_name is None: systematics = [None] + list(weights.variations)
-        else: systematics = [shift_name]
+        if shift_name is None:
+            systematics = [None] + list(weights.variations)
+        else:
+            systematics = [shift_name]
             
         #!LIST OF THE SELECTIONS APPLIED
         regions = {
@@ -424,9 +440,9 @@ class VHbbProcessorV11(processor.ProcessorABC):
                        'jet2kin',
                        'jetid',
                        'jetacceptance',
+                       'n2ddt',
                        'met',
-                       'noleptons',
-                       'njets'],
+                       'noleptons'],
         }
 
         def fill(region, systematic, wmod=None):
@@ -439,9 +455,12 @@ class VHbbProcessorV11(processor.ProcessorABC):
             sname = 'nominal' if systematic is None else systematic
             
             if wmod is None:
-                if systematic in weights.variations: weight = weights.weight(modifier=systematic)[cut]
-                else: weight = weights.weight()[cut]
-            else: weight = weights.weight()[cut] * wmod[cut]
+                if systematic in weights.variations:
+                    weight = weights.weight(modifier=systematic)[cut]
+                else:
+                    weight = weights.weight()[cut]
+            else:
+                weight = weights.weight()[cut] * wmod[cut]
 
             #! FILL THE HISTOGRAM
             output['ParticleNet_msd'].fill(
@@ -451,8 +470,8 @@ class VHbbProcessorV11(processor.ProcessorABC):
                 msd1=normalize(msd1_matched, cut),
                 msd2=normalize(msd2_matched, cut),
                 bb1=normalize(bb1, cut),
-                qcd2=normalize(qcd2, cut),
                 genflavor1=normalize(genflavor1, cut),
+                pt1=normalize(candidatejet.pt, cut),
                 weight=weight,
             )
 
@@ -469,7 +488,12 @@ class VHbbProcessorV11(processor.ProcessorABC):
         toc = time.time()
         output["filltime"] = toc - tic
         #-----------------------------
+        
+        #TODO: IS THIS NEEDED ANYMORE?
+        if shift_name is None:
+            output["weightStats"] = weights.weightStatistics
             
         return output
 
-    def postprocess(self, accumulator): return accumulator
+    def postprocess(self, accumulator):
+        return accumulator
