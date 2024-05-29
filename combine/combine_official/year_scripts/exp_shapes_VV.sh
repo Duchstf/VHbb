@@ -10,6 +10,8 @@ elif [[ "$PWD" == *"2017"* ]]; then
     year="_2017"
 elif [[ "$PWD" == *"2018"* ]]; then
     year="_2018"
+elif [[ "$PWD" == *"allyears"* ]]; then
+    year=""
 fi
 
 #-t -1 keeps us from using the data.

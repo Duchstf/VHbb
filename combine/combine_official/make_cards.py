@@ -82,6 +82,11 @@ def passfailSF(sName, bb_pass, V_bin, obs, mask,
 
         return sf, sfup, sfdown
 
+def one_bin(sName, bb_pass, V_bin, obs, syst, muon=False):
+    '''
+    One-binning the sample instead of getting the template
+    '''
+
 # Read the histogram
 def get_template(sName, bb_pass, V_bin, obs, syst, muon=False):
     """

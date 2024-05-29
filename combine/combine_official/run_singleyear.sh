@@ -54,8 +54,8 @@ ln -s -f ../year_scripts/*.C .
 ln -s -f ../year_scripts/*.sh .
 
 conda run -n combine --no-capture-output ./make_workspace.sh > out_make_workspace.txt
-conda run -n combine --no-capture-output ./exp_shapes.sh > out_exp_shapes.txt $2
-conda run -n combine --no-capture-output ./exp_significance.sh > significance.txt $2
+conda run -n combine --no-capture-output ./exp_shapes.sh $2 > out_exp_shapes.txt 
+conda run -n combine --no-capture-output ./exp_significance.sh $2 > significance.txt 
 
 
 # Produce the relevant plots

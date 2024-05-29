@@ -11,6 +11,8 @@ elif [[ "$PWD" == *"2017"* ]]; then
     year="_2017"
 elif [[ "$PWD" == *"2018"* ]]; then
     year="_2018"
+elif [[ "$PWD" == *"allyears"* ]]; then
+    year=""
 fi
 
 echo "VH SIGNIFICANCE"

@@ -24,7 +24,7 @@ def plot_h(h, labels, name, year):
 
     labels = copy.copy(labels)
     figtext = f'BB PASS' if name == 'bb_pass' else f'BB FAIL'
-    # if name == 'bb_pass': del labels['QCD'] #Delete QCD in the bb passing region
+    if name == 'bb_pass': del labels['QCD'] #Delete QCD in the bb passing region
     mc = list(labels.values())
     
     #Plot now
