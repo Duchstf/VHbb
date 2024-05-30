@@ -1,7 +1,7 @@
-# Datacard for <Channel (VBin2pass2016) instance at 0x7fa62dc344c0> generated on 2024-05-24 22:42:24.449777
+# Datacard for <Channel (VBin2pass2016) instance at 0x7fe1237ce6d0> generated on 2024-05-30 01:00:23.905238
 imax 1 # number of categories ('bins' but here we are using shape templates)
 jmax 11 # number of samples minus 1
-kmax 27 # number of nuisance parameters
+kmax 35 # number of nuisance parameters
 shapes * VBin2pass2016 testModel_2016.root testModel_2016:VBin2pass2016_$PROCESS testModel_2016:VBin2pass2016_$PROCESS_$SYSTEMATIC
 bin VBin2pass2016
 observation 207.000
@@ -12,6 +12,14 @@ rate                                                0.080          0.501        
 CMS_L1Prefiring_2016 lnN                    1.0023/0.9976  1.0024/0.9975  1.0001/0.9999  1.0013/0.9984      1.0042/0.9955  1.0002/0.9995  1.0024/0.9976  1.0001/0.9999  1.0027/0.9972  1.0016/0.9983  1.0015/0.9984              -
 CMS_eff_bb_2016 lnN                         1.1552/1.1573  1.1552/1.1573              -              -                  -  1.1552/1.1573  1.1552/1.1573              -              -  1.1552/1.1573              -              -
 CMS_hbb_PU_2016 lnN                         1.1529/0.8434  1.1152/0.9019  0.9422/1.0379  1.1918/0.8361      0.8614/1.2016  1.0121/0.9908  1.0935/0.8564  1.0824/0.9311  1.1256/0.8895  1.1090/0.9073  1.1123/0.8997              -
+CMS_hbb_W_d2kappa_EW lnN                                -              -              -              -                  -              -              -              -              -              -  0.9890/1.0110              -
+CMS_hbb_W_d3kappa_EW lnN                                -              -              -              -                  -              -              -              -              -              -  0.9973/1.0027              -
+CMS_hbb_Z_d2kappa_EW lnN                                -              -              -  0.9913/1.0087                  -              -              -              -              -  0.9909/1.0091              -              -
+CMS_hbb_Z_d3kappa_EW lnN                                -              -              -  0.9951/1.0049                  -              -              -              -              -  0.9945/1.0055              -              -
+CMS_hbb_d1K_NLO lnN                                     -              -              -  0.9166/1.0834                  -              -              -              -              -  0.9159/1.0841  0.9139/1.0861              -
+CMS_hbb_d1kappa_EW lnN                                  -              -              -  0.9981/1.0019                  -              -              -              -              -  0.9978/1.0022  0.9969/1.0031              -
+CMS_hbb_d2K_NLO lnN                                     -              -              -  1.0191/0.9809                  -              -              -              -              -  1.0157/0.9843  1.0144/0.9856              -
+CMS_hbb_d3K_NLO lnN                                     -              -              -              -                  -              -              -              -              -              -  0.9912/1.0088              -
 CMS_hbb_e_veto_2016 lnN                            1.0050         1.0050         1.0050         1.0050             1.0050         1.0050         1.0050         1.0050         1.0050         1.0050         1.0050              -
 CMS_hbb_jet_trigger_2016 lnN                0.9944/1.0043  0.9958/1.0036  0.9963/1.0038  0.9972/1.0039      0.9964/1.0029  0.9956/1.0040  0.9908/1.0043  0.9968/1.0043  0.9943/1.0044  0.9967/1.0037  0.9956/1.0037              -
 CMS_hbb_mu_veto_2016 lnN                           1.0050         1.0050         1.0050         1.0050             1.0050         1.0050         1.0050         1.0050         1.0050         1.0050         1.0050              -
@@ -60,3 +68,7 @@ qcdparam_VBin2_HBin7_2016 extArg testModel_2016.root:testModel_2016
 qcdparam_VBin2_HBin8_2016 extArg testModel_2016.root:testModel_2016
 qcdparam_VBin2_HBin9_2016 extArg testModel_2016.root:testModel_2016
 tf_dataResidual_2016_pt_par0_rho_par0 extArg testModel_2016.root:testModel_2016
+tqqeffSF_2016 extArg testModel_2016.root:testModel_2016
+tqqnormSF_2016 extArg testModel_2016.root:testModel_2016
+tqqeffSF_2016_effect_VBin2pass2016_ttbar rateParam VBin2pass2016 ttbar (1*@0) tqqeffSF_2016
+tqqnormSF_2016_effect_VBin2pass2016_ttbar rateParam VBin2pass2016 ttbar (1*@0) tqqnormSF_2016

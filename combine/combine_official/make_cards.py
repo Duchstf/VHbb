@@ -456,6 +456,98 @@ def vh_rhalphabet(tmpdir):
                     ##--------------------END Experimental Systematics---------------------
 
                     ##----------------------Theory Systematics (TODO)----------------------
+                    # uncertainties on V+jets                 
+                    if sName in ['WjetsQQ']:
+                        for sys in Wjets_thsysts:
+                            syst_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst=sys+'Up')[0]
+                            syst_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst=sys+'Down')[0]
+                                
+                            eff_up = shape_to_num(syst_up,nominal)
+                            eff_do = shape_to_num(syst_do,nominal)
+                                
+                            sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
+
+                    elif sName in ['Zjets','Zjetsbb']:
+                        for sys in Zjets_thsysts:
+                            syst_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst=sys+'Up')[0]
+                            syst_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst=sys+'Down')[0]
+                                
+                            eff_up = shape_to_num(syst_up,nominal)
+                            eff_do = shape_to_num(syst_do,nominal)
+
+                            sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
+
+                    # QCD scale and PDF uncertainties on Higgs signal    
+                    elif sName in ['ggF','VBF','WH','ZH','ggZH','ttH']:
+                        """
+                        fsr_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='UEPS_FSRUp')[0]
+                        fsr_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='UEPS_FSRDown')[0]
+                        eff_fsr_up = np.sum(fsr_up)/np.sum(nominal)
+                        eff_fsr_do = np.sum(fsr_do)/np.sum(nominal)
+
+                        isr_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='UEPS_ISRUp')[0]
+                        isr_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='UEPS_ISRDown')[0]
+                        eff_isr_up = np.sum(isr_up)/np.sum(nominal)
+                        eff_isr_do = np.sum(isr_do)/np.sum(nominal)
+
+                        
+                        pdf_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='PDF_weightUp')[0]
+                        pdf_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='PDF_weightDown')[0]
+                        eff_pdf_up = np.sum(pdf_up)/np.sum(nominal)
+                        eff_pdf_do = np.sum(pdf_do)/np.sum(nominal)
+
+                        if sName == 'ggF':
+                            scale_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_7ptUp')[0]
+                            scale_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_7ptDown')[0]
+                            
+                            eff_scale_up = np.sum(scale_up)/np.sum(nominal)
+                            eff_scale_do = np.sum(scale_do)/np.sum(nominal)
+
+                            sample.setParamEffect(scale_ggF,eff_scale_up,eff_scale_do)
+                            sample.setParamEffect(pdf_Higgs_ggF,eff_pdf_up,eff_pdf_do)
+                            sample.setParamEffect(fsr_ggF,eff_fsr_up,eff_fsr_do)
+                            sample.setParamEffect(isr_ggF,eff_isr_up,eff_isr_do)
+                        
+                        elif sName == 'VBFDipoleRecoilOn':
+                            scale_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_3ptUp')[0]
+                            scale_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_3ptDown')[0]
+
+                            eff_scale_up = np.sum(scale_up)/np.sum(nominal)
+                            eff_scale_do = np.sum(scale_do)/np.sum(nominal)
+
+                            sample.setParamEffect(scale_VBF,eff_scale_up,eff_scale_do)
+                            sample.setParamEffect(pdf_Higgs_VBF,eff_pdf_up,eff_pdf_do)
+                            sample.setParamEffect(fsr_VBF,eff_fsr_up,eff_fsr_do)
+                            sample.setParamEffect(isr_VBF,eff_isr_up,eff_isr_do)
+                        
+                        elif sName in ['WH','ZH','ggZH']:
+
+                            scale_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_3ptUp')[0]
+                            scale_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_3ptDown')[0]
+
+                            eff_scale_up = np.sum(scale_up)/np.sum(nominal)
+                            eff_scale_do = np.sum(scale_do)/np.sum(nominal)
+
+                            if eff_scale_do < 0:
+                                eff_scale_do = eff_scale_up
+
+                            sample.setParamEffect(scale_VH,eff_scale_up,eff_scale_do)
+                            sample.setParamEffect(pdf_Higgs_VH,eff_pdf_up,eff_pdf_do)
+                            sample.setParamEffect(fsr_VH,eff_fsr_up,eff_fsr_do)
+                            sample.setParamEffect(isr_VH,eff_isr_up,eff_isr_do)
+                        
+                        elif sName == 'ttH':
+                            scale_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_7ptUp')[0]
+                            scale_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_7ptDown')[0]
+
+                            eff_scale_up = np.sum(scale_up)/np.sum(nominal)
+                            eff_scale_do = np.sum(scale_do)/np.sum(nominal)
+
+                            sample.setParamEffect(scale_ttH,eff_scale_up,eff_scale_do)
+                            sample.setParamEffect(pdf_Higgs_ttH,eff_pdf_up,eff_pdf_do)
+                            sample.setParamEffect(fsr_ttH,eff_fsr_up,eff_fsr_do)
+                            sample.setParamEffect(isr_ttH,eff_isr_up,eff_isr_do)
+                        """
                     ##----------------------END Theory Systematics (TODO)-------------------
                                 
                 # Add ParticleNetSFs last!
@@ -500,6 +592,33 @@ def vh_rhalphabet(tmpdir):
             failCh.addSample(fail_qcd)
             pass_qcd = rl.TransferFactorSample("VBin%dpass%s_qcd" % (iBin, year), rl.Sample.BACKGROUND, tf_params[n_ptbins-1,:], fail_qcd)
             passCh.addSample(pass_qcd)
+
+            if do_muon_CR:
+                
+                tqqpass = passCh['ttbar']
+                tqqfail = failCh['ttbar']
+                sumPass = tqqpass.getExpectation(nominal=True).sum()
+                sumFail = tqqfail.getExpectation(nominal=True).sum()
+
+                if 'singlet' in passCh.samples:
+                    stqqpass = passCh['singlet']
+                    stqqfail = failCh['singlet']
+                    
+                    sumPass += stqqpass.getExpectation(nominal=True).sum()
+                    sumFail += stqqfail.getExpectation(nominal=True).sum()
+                    
+                    tqqPF =  sumPass / sumFail
+                    
+                    stqqpass.setParamEffect(tqqeffSF, 1 * tqqeffSF)
+                    stqqfail.setParamEffect(tqqeffSF, (1 - tqqeffSF) * tqqPF + 1)
+                    stqqpass.setParamEffect(tqqnormSF, 1 * tqqnormSF)
+                    stqqfail.setParamEffect(tqqnormSF, 1 * tqqnormSF)
+
+                tqqPF =  sumPass / sumFail
+                tqqpass.setParamEffect(tqqeffSF, 1 * tqqeffSF)
+                tqqfail.setParamEffect(tqqeffSF, (1 - tqqeffSF) * tqqPF + 1)
+                tqqpass.setParamEffect(tqqnormSF, 1 * tqqnormSF)
+                tqqfail.setParamEffect(tqqnormSF, 1 * tqqnormSF)
 
     #-----------------------------MUON CONTROL REGION-------------------------------
     if do_muon_CR:

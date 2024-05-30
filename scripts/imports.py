@@ -1,4 +1,5 @@
 import json
+import sys
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import cm
 import mplhep as hep
@@ -23,7 +24,8 @@ import numpy as np
 
 #Dataset parameters
 lumis = {}
-lumis['2016'] = 35.9
+lumis['2016'] = 16.81
+lumis['2016APV'] = 19.52
 lumis['2017'] = 41.5
 lumis['2018'] = 59.9
 

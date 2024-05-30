@@ -60,11 +60,6 @@ def add_pdf_weight(weights, pdf_weights):
 
     docstring = pdf_weights.__doc__
 
-# Jennet adds 7 point scale variations
-def add_scalevar_7pt(weights,var_weights):
-
-    docstring = var_weights.__doc__
-
     nweights = len(weights.weight())
     nom = np.ones(nweights)
 

@@ -21,6 +21,7 @@ pkl_dir="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/pickle"
 #Define the pickling directory
 signal_pkl="$pkl_dir/vhbb_official/$1/h.pkl"
 muonCR_pkl="$pkl_dir/muonCR/$1/h.pkl"
+theory_systematics_pkl="$pkl_dir/vhbb_theory_systematics/$1/h.pkl"
 
 # Clean everything except for the pickle file
 cd $1
@@ -33,6 +34,7 @@ rm -rf output
 #Symbolic linking the pickle files to save space
 ln -s ${signal_pkl} signal.pkl
 ln -s ${muonCR_pkl} muonCR.pkl
+ln -s ${theory_systematics_pkl} theory_syst.pkl
 
 #Return to the main directory
 cd ..

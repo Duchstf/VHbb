@@ -1,7 +1,7 @@
-# Datacard for <Channel (VBin1fail2017) instance at 0x7f767b23ff40> generated on 2024-05-28 23:04:52.364801
+# Datacard for <Channel (VBin1fail2017) instance at 0x7f243baccfa0> generated on 2024-05-30 01:07:28.729205
 imax 1 # number of categories ('bins' but here we are using shape templates)
 jmax 11 # number of samples minus 1
-kmax 26 # number of nuisance parameters
+kmax 34 # number of nuisance parameters
 shapes * VBin1fail2017 testModel_2017.root testModel_2017:VBin1fail2017_$PROCESS testModel_2017:VBin1fail2017_$PROCESS_$SYSTEMATIC
 bin VBin1fail2017
 observation 47344.000
@@ -12,6 +12,14 @@ rate                                                5.599          2.785        
 CMS_L1Prefiring_2017 lnN                    1.0020/0.9979  1.0018/0.9981  1.0036/0.9964  1.0045/0.9955      1.0123/0.9877  1.0038/0.9961  1.0030/0.9970  1.0029/0.9971  1.0025/0.9974  1.0036/0.9963  1.0038/0.9962              -
 CMS_eff_bb_2017 lnN                         1.1099/0.9010  1.1300/0.8849              -              -                  -  1.0665/0.9376  1.0160/0.9843              -              -  1.1535/0.8669              -              -
 CMS_hbb_PU_2017 lnN                         1.0519/0.9782  1.0570/0.9767  1.0608/0.9702  1.0509/0.9743      1.1047/0.9293  1.0635/0.9966  1.0598/0.9632  1.0601/0.9664  1.0524/0.9806  1.0618/0.9794  1.0428/0.9980              -
+CMS_hbb_W_d2kappa_EW lnN                                -              -              -              -                  -              -              -              -              -              -  0.9901/1.0099              -
+CMS_hbb_W_d3kappa_EW lnN                                -              -              -              -                  -              -              -              -              -              -  0.9979/1.0021              -
+CMS_hbb_Z_d2kappa_EW lnN                                -              -              -  0.9915/1.0085                  -              -              -              -              -  0.9915/1.0085              -              -
+CMS_hbb_Z_d3kappa_EW lnN                                -              -              -  0.9954/1.0046                  -              -              -              -              -  0.9953/1.0047              -              -
+CMS_hbb_d1K_NLO lnN                                     -              -              -  0.9171/1.0829                  -              -              -              -              -  0.9171/1.0829  0.9153/1.0847              -
+CMS_hbb_d1kappa_EW lnN                                  -              -              -  0.9982/1.0018                  -              -              -              -              -  0.9982/1.0018  0.9978/1.0022              -
+CMS_hbb_d2K_NLO lnN                                     -              -              -  1.0216/0.9784                  -              -              -              -              -  1.0214/0.9786  1.0233/0.9767              -
+CMS_hbb_d3K_NLO lnN                                     -              -              -              -                  -              -              -              -              -              -  0.9908/1.0092              -
 CMS_hbb_e_veto_2017 lnN                            1.0050         1.0050         1.0050         1.0050             1.0050         1.0050         1.0050         1.0050         1.0050         1.0050         1.0050              -
 CMS_hbb_jet_trigger_2017 lnN                0.9948/1.0055  0.9945/1.0059  0.9946/1.0055  0.9943/1.0062      0.9950/1.0057  0.9933/1.0077  0.9944/1.0062  0.9942/1.0059  0.9941/1.0068  0.9945/1.0062  0.9946/1.0062              -
 CMS_hbb_mu_veto_2017 lnN                           1.0050         1.0050         1.0050         1.0050             1.0050         1.0050         1.0050         1.0050         1.0050         1.0050         1.0050              -
@@ -58,3 +66,7 @@ qcdparam_VBin1_HBin6_2017 extArg testModel_2017.root:testModel_2017
 qcdparam_VBin1_HBin7_2017 extArg testModel_2017.root:testModel_2017
 qcdparam_VBin1_HBin8_2017 extArg testModel_2017.root:testModel_2017
 qcdparam_VBin1_HBin9_2017 extArg testModel_2017.root:testModel_2017
+tqqeffSF_2017 extArg testModel_2017.root:testModel_2017
+tqqnormSF_2017 extArg testModel_2017.root:testModel_2017
+tqqeffSF_2017_effect_VBin1fail2017_ttbar rateParam VBin1fail2017 ttbar (((1-@0)*0.045055604612946824)+1) tqqeffSF_2017
+tqqnormSF_2017_effect_VBin1fail2017_ttbar rateParam VBin1fail2017 ttbar (1*@0) tqqnormSF_2017

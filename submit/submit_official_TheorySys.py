@@ -33,7 +33,7 @@ year = sys.argv[1]
 tag = "vhbb_theory_systematics"
 syst = True
 memory='6GB'
-CR_list = ['ZH','WH']
+CR_list = ['ZH','WH', 'ttH', 'ggF', 'VBFHToBBDipoleRecoilOn', 'VV']
 
 env_extra = [f"export PYTHONPATH=$PYTHONPATH:{os.getcwd()}"]
 cluster = LPCCondorCluster( shared_temp_directory="/tmp", transfer_input_files=["boostedhiggs"], ship_env=True, memory=memory)
