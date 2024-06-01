@@ -553,7 +553,7 @@ def vh_rhalphabet(tmpdir):
                 # Add ParticleNetSFs last!
                 if sName in ['ggF','VBF','WH','ZH','ggZH','ttH','Zjetsbb']:
                     sf, sfunc_up, sfunc_down = passfailSF(sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, mask=mask,
-                                                          SF=PnetSF['central'], SF_unc_up=PnetSF['up'], SF_unc_down=PnetSF['down'],
+                                                          SF=PnetSF['central'], SF_unc_up=PnetSF['up'], SF_unc_down=-PnetSF['down'],
                                                           muon = False)
                     sample.scale(sf)
                     if do_systematics: sample.setParamEffect(sys_PNetEffBB, sfunc_up, sfunc_down)
