@@ -82,10 +82,13 @@ def passfailSF(sName, bb_pass, V_bin, obs, mask,
 
         return sf, sfup, sfdown
 
-def one_bin(sName, bb_pass, V_bin, obs, syst, muon=False):
-    '''
-    One-binning the sample instead of getting the template
-    '''
+def one_bin(template):
+    try:
+        h_vals, h_edges, h_key, h_variances = template
+        return (np.array([np.sum(h_vals)]), np.array([0., 1.]), "onebin", np.array([np.sum(h_variances)]))
+    except:
+        h_vals, h_edges, h_key = template
+        return (np.array([np.sum(h_vals)]), np.array([0., 1.]), "onebin")
 
 # Read the histogram
 def get_template(sName, bb_pass, V_bin, obs, syst, muon=False):
@@ -636,7 +639,8 @@ def vh_rhalphabet(tmpdir):
 
                 # if (sName == 'QCD') & isPass: continue #Skip QCD in the muon passing region
 
-                templates[sName] = get_template(sName=sName,bb_pass=isPass, V_bin='muonCR', obs=msd, syst='nominal', muon=True)
+                #Counting experiment for muon control region
+                templates[sName] = one_bin(get_template(sName=sName,bb_pass=isPass, V_bin='muonCR', obs=msd, syst='nominal', muon=True))
                 nominal = templates[sName][0]
 
                 stype = rl.Sample.BACKGROUND
@@ -660,8 +664,8 @@ def vh_rhalphabet(tmpdir):
                         continue 
                 
                     for sys in mu_exp_systs:
-                        syst_up = get_template(sName=sName,bb_pass=isPass, V_bin='muonCR', obs=msd, syst=sys+'Up', muon=True)[0]
-                        syst_do = get_template(sName=sName,bb_pass=isPass, V_bin='muonCR', obs=msd, syst=sys+'Down', muon=True)[0]
+                        syst_up = one_bin(get_template(sName=sName,bb_pass=isPass, V_bin='muonCR', obs=msd, syst=sys+'Up', muon=True))[0]
+                        syst_do = one_bin(get_template(sName=sName,bb_pass=isPass, V_bin='muonCR', obs=msd, syst=sys+'Down', muon=True))[0]
                 
                         eff_up = shape_to_num(syst_up,nominal)
                         eff_do = shape_to_num(syst_do,nominal)
@@ -671,7 +675,7 @@ def vh_rhalphabet(tmpdir):
                 ch.addSample(sample)
 
             # End loop over samples and start loading data
-            muon_data_obs = get_template(sName='muondata', bb_pass=isPass, V_bin='muonCR', obs=msd, syst='nominal', muon=True)
+            muon_data_obs = one_bin(get_template(sName='muondata', bb_pass=isPass, V_bin='muonCR', obs=msd, syst='nominal', muon=True))
             ch.setObservation(muon_data_obs, read_sumw2=True) #WTF is read_sumw2?
 
         #END LOOP OVER DIFFERENT BB REGIONS

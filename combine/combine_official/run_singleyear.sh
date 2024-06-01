@@ -59,7 +59,6 @@ conda run -n combine --no-capture-output ./make_workspace.sh > out_make_workspac
 conda run -n combine --no-capture-output ./exp_shapes.sh $2 > out_exp_shapes.txt 
 conda run -n combine --no-capture-output ./exp_significance.sh $2 > significance.txt 
 
-
 # Produce the relevant plots
 conda run -n combine --no-capture-output root -b -q draw_DataFit.C
 

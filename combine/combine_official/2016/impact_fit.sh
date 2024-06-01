@@ -1,1 +1,0 @@
-../year_scripts/impact_fit.sh
