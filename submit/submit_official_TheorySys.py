@@ -32,7 +32,7 @@ from boostedhiggs import VHbbProcessorOfficial_TheorySys as vhbb_processor
 year = sys.argv[1]
 tag = "vhbb_theory_systematics"
 syst = True
-memory='6GB'
+memory='16GB'
 CR_list = ['ZH','WH', 'ttH', 'ggF', 'VBFHToBBDipoleRecoilOn', 'VV']
 
 env_extra = [f"export PYTHONPATH=$PYTHONPATH:{os.getcwd()}"]
