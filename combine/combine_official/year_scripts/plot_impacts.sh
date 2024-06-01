@@ -12,8 +12,9 @@ elif [[ "$PWD" == *"2018"* ]]; then
     year="_2018"
 fi
 
+#Run impacts_fit first
 #Add -spool to condor submit command, like this: condor_submit -spool condor_run_impacts.sub
 #Then run these interactively
 
-combineTool.py -M Impacts -d $modelfile -m 125 -o impacts.json --exclude 'rgx{qcdparams*}' -t -1
+combineTool.py -M Impacts -d $modelfile -m 125 -o impacts.json --exclude 'rgx{qcdparams*}' -t -1 --redefineSignalPOIs rVH  
 plotImpacts.py -i impacts.json -o impacts

@@ -32,8 +32,10 @@ from boostedhiggs import VHbbProcessorOfficial_TheorySys as vhbb_processor
 year = sys.argv[1]
 tag = "vhbb_theory_systematics"
 syst = True
-memory='20GB'
-CR_list = ['ZH','WH', 'ttH', 'ggF', 'VBFHToBBDipoleRecoilOn', 'VV']
+memory='12GB'
+
+#Had to split ZH due to memory issues
+CR_list = ['WH', 'ttH', 'ggF', 'VBFHToBBDipoleRecoilOn', 'VV', 'ZHHToBBZToQQ', 'ZHHToBBZToLL', 'ZHHToBBZToNuNu', 'ggZHHToBBZToQQ', 'ggZHHToBBZToLL', 'ggZHHToBBZToNuNu']
 
 env_extra = [f"export PYTHONPATH=$PYTHONPATH:{os.getcwd()}"]
 cluster = LPCCondorCluster( shared_temp_directory="/tmp", transfer_input_files=["boostedhiggs"], ship_env=True, memory=memory)
@@ -52,10 +54,10 @@ with Client(cluster) as client:
     with performance_report(filename="dask-report.html"):
         
         #Input PF nano for the year
-        infiles = subprocess.getoutput("ls datasets/infiles/{}/{}_*.json".format(year, year)).split()
+        infiles = subprocess.getoutput("ls datasets/theory_syst_infiles/{}/{}_*.json".format(year, year)).split()
     
         for this_file in infiles:
-            index = ''.join(this_file.split("_")[1:]).split(".json")[0]
+            index = ''.join(this_file.split("_")[3:]).split(".json")[0]
             outfile = out_path + '{}_dask_{}.coffea'.format(year, index)
             
             if index not in CR_list:
