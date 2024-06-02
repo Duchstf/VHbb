@@ -82,8 +82,9 @@ conda run -n combine --no-capture-output ./exp_significance.sh $2 > significance
 conda run -n combine --no-capture-output ./exp_significance_VV.sh $2 > significance_VV.txt 
 
 #Plot
+add_all='--cats VBin0fail:VBin0fail*;VBin0pass:VBin0pass*;VBin1fail:VBin1fail*;VBin1pass:VBin1pass*;VBin2fail:VBin2fail*;VBin2pass:VBin2pass*;muonCRfail:muonCRfail*;muonCRpass:muonCRpass*'
 if [ "$2" == "unblind" ]; then
-    conda run -n plot --no-capture-output combine_postfits -i fitDiagnosticsTest.root -o plots/test_plot --data --style ../files/style_D.yml --onto qcd --sigs VH --bkgs QCD,qcd,ttbar,singlet,WjetsQQ,Zjets,Zjetsbb,VV,H,WLNu  --rmap 'VH:rVH' --project-signals 3 --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p 
+    conda run -n plot --no-capture-output combine_postfits -i fitDiagnosticsTest.root $add_all -o plots/test_plot --data --style ../files/style_D.yml --onto qcd --sigs VH --bkgs QCD,qcd,ttbar,singlet,WjetsQQ,Zjets,Zjetsbb,VV,H,WLNu  --rmap 'VH:rVH' --project-signals 3 --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p 
 else
-    conda run -n plot --no-capture-output combine_postfits -i fitDiagnosticsTest.root -o plots/test_plot --MC --style ../files/style_D.yml --onto qcd --sigs VH --bkgs QCD,qcd,ttbar,singlet,WjetsQQ,Zjets,Zjetsbb,VV,H,WLNu  --rmap 'VH:rVH' --project-signals 3 --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p 
+    conda run -n plot --no-capture-output combine_postfits -i fitDiagnosticsTest.root $add_all -o plots/test_plot --MC --style ../files/style_D.yml --onto qcd --sigs VH --bkgs QCD,qcd,ttbar,singlet,WjetsQQ,Zjets,Zjetsbb,VV,H,WLNu  --rmap 'VH:rVH' --project-signals 3 --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p 
 fi
