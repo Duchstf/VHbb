@@ -59,16 +59,11 @@ def make_hists_signal(year, bbthr, qcdthr, signal_pickle_path, theory_syst_path,
     pickle_hist =  pickle.load(open(signal_pickle_path,'rb')).integrate('region','signal').integrate('qcd2', slice(0., qcdthr)).integrate('pt1', slice(450, None), overflow='over')
     check_missing(pickle_hist)
 
-    #Pickle file for theory systematics
-    # pickle_hist_theory = pickle.load(open(theory_syst_path,'rb')).integrate('region','signal').integrate('qcd2', slice(0., qcdthr)).integrate('pt1', slice(450, None), overflow='over')
-
-    #Process each region
     for i in range(len(mass_range)-1):
 
         print('Running for {} in {} mass region'.format(year, i))
         msd2_int_range = slice(mass_range[i], mass_range[i+1])
         sig = pickle_hist.integrate('msd2', msd2_int_range)
-        # sig_theory_syst=pickle_hist_theory.integrate('msd2', msd2_int_range)
         
         #Split into Jet 1 score b-tag passing/failing region. 
         for p in samples:
@@ -114,19 +109,6 @@ def make_hists_signal(year, bbthr, qcdthr, signal_pickle_path, theory_syst_path,
                         
                     fout[f"Vmass_{i}_pass_{p + 'bb'}_{s}"] = hist.export1d(hpass_bb.integrate('systematic',s))
                     fout[f"Vmass_{i}_fail_{p + 'bb'}_{s}"] = hist.export1d(hfail_bb.integrate('systematic',s))
-
-            #Additionally add theory systematics
-            # if p in theory_syst_samples:
-
-            #     print("Running theory systematics for sample: ", p)
-
-            #     hpass = sig_theory_syst.integrate('bb1',int_range=slice(bbthr,1.)).sum('genflavor1', overflow='under').integrate('process',p)
-            #     hfail = sig_theory_syst.integrate('bb1',int_range=slice(0.,bbthr)).sum('genflavor1', overflow='under').integrate('process',p)
-
-            #     for s in hfail.identifiers('systematic'):
-            #             print(s)
-            #             fout[f"Vmass_{i}_pass_{p}_{s}"] = hist.export1d(hpass.integrate('systematic',s))
-            #             fout[f"Vmass_{i}_fail_{p}_{s}"] = hist.export1d(hfail.integrate('systematic',s))
 
 
 def make_hists_muonCR(year, bbthr, muonCR_pickle_path, muonCR_out_path):

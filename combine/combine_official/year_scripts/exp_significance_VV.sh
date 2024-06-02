@@ -16,7 +16,8 @@ elif [[ "$PWD" == *"allyears"* ]]; then
 fi
 
 echo "VV SIGNIFICANCE"
-combine -M Significance -m 125 --signif output/testModel${year}/model_combined.root --cminDefaultMinimizerStrategy 0 -t -1 --redefineSignalPOI rVV --setParameters rVV=1 --verbose 9
-
-#Maybe freeze the qcd nuisance parameters
-#nuisance parameters make analysis less sensitive
+if [ "$1" == "unblind" ]; then
+    combine -M Significance -m 125 --signif output/testModel${year}/model_combined.root --cminDefaultMinimizerStrategy 0 --redefineSignalPOI rVV --setParameters rVV=1 --verbose 9
+else
+    combine -M Significance -m 125 --signif output/testModel${year}/model_combined.root --cminDefaultMinimizerStrategy 0 --redefineSignalPOI rVV --setParameters rVV=1 --verbose 9 -t -1
+fi

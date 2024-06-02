@@ -15,5 +15,5 @@ elif [[ "$PWD" == *"allyears"* ]]; then
 fi
 
 #-t -1 keeps us from using the data.
-combine -M FitDiagnostics -m 90 output/testModel${year}/model_combined.root --setParameters rVV=1,rVH=1 -t -1 --saveShapes --saveWithUncertainties --cminDefaultMinimizerStrategy 0 --robustFit=1 --redefineSignalPOI rVV --freezeParameters rVH
+combine -M FitDiagnostics -m 90 output/testModel${year}/model_combined.root --setParameters rVV=1,rVH=1 -t -1 --saveShapes --saveWithUncertainties --cminDefaultMinimizerStrategy 0 --robustFit=1 --redefineSignalPOI rVV 
 #combine -M MultiDimFit -m 90 output/testModel${year}/model_combined.root --setParameters rVV=1,rVH=1 -t -1 --cminDefaultMinimizerStrategy 0 --robustFit=1

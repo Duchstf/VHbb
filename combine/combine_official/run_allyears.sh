@@ -78,7 +78,8 @@ cd ../../
 ln -s -f ../year_scripts/*.sh .
 
 conda run -n combine --no-capture-output ./exp_shapes.sh $2 > exp_shapes.out 
-conda run -n combine --no-capture-output ./exp_significance.sh $2 > exp_significance.out
+conda run -n combine --no-capture-output ./exp_significance.sh $2 > significance_VH.txt
+conda run -n combine --no-capture-output ./exp_significance_VV.sh $2 > significance_VV.txt 
 
 #Plot
 if [ "$2" == "unblind" ]; then
