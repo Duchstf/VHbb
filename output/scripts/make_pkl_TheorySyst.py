@@ -44,18 +44,33 @@ def reduce_scalevar(h, point=7):
     # Recommendation from LHC H WG is 3 point for VH, VBF and 7 point for ggF, ttH
 
     # Read in all the up histograms, conver to numpy arrays
-    hists = np.array([h.integrate('systematic','scalevar_'+str(i)+'Up').values()[()] for i in range(0,9)])
+    values = [h.integrate('systematic','scalevar_'+str(i)+'Up')._sumw[()] for i in range(0,9)]
+    errors = [h.integrate('systematic','scalevar_'+str(i)+'Up')._sumw2[()] for i in range(0,9)]
+
+    hists = np.array(values)
+    hists_errors = np.array(errors)
 
     if point == 7:
-        up = np.maximum(hists[0], hists[8])
-        down = np.minimum(hists[0], hists[8])
-        for i in range(1,8):
-            up = np.maximum(up, hists[i])
-            down = np.minimum(down, hists[i])
+        up = hists[0]
+        down = hists[0]
+        up_errors = hists_errors[0]
+        down_errors = hists_errors[0]
+        
+        for i in range(1, 9):
+            mask_up = hists[i] > up
+            mask_down = hists[i] < down
+            up = np.where(mask_up, hists[i], up)
+            down = np.where(mask_down, hists[i], down)
+            up_errors = np.where(mask_up, hists_errors[i], up_errors)
+            down_errors = np.where(mask_down, hists_errors[i], down_errors)
 
     elif point == 3:
         up = np.maximum(hists[0], hists[8])
         down = np.minimum(hists[0], hists[8])
+        mask_up = hists[8] > hists[0]
+        mask_down = hists[8] < hists[0]
+        up_errors = np.where(mask_up, hists_errors[8], hists_errors[0])
+        down_errors = np.where(mask_down, hists_errors[8], hists_errors[0])
         
     else:
         print("unknown point value")
@@ -63,13 +78,17 @@ def reduce_scalevar(h, point=7):
     scalevar_hist_up = hist.Hist('Events', hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201))
     scalevar_hist_down = hist.Hist('Events', hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201))
 
-    # Set the bin values
-    scalevar_hist_up.values()[()]=up
-    scalevar_hist_down.values()[()]=down
+    # Set the bin values and errors
+    values_up = {(): up}
+    errors_up = {(): up_errors}
+    values_down = {(): down}
+    errors_down = {(): down_errors}
 
-    # for i in range(len(up)):
-    #     scalevar_hist_up.view()[i] = up[i]
-    #     scalevar_hist_down.view()[i] = down[i]
+    # Assign values and errors
+    scalevar_hist_up._sumw = values_up
+    scalevar_hist_up._sumw2 = errors_up
+    scalevar_hist_down._sumw = values_down
+    scalevar_hist_down._sumw2 = errors_down
 
     return scalevar_hist_up, scalevar_hist_down
 
