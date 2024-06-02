@@ -16,12 +16,11 @@ else
     mkdir -p $1
 fi
 
-pkl_dir="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/pickle"
+out_dir="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/"
 
 #Define the pickling directory
-signal_pkl="$pkl_dir/vhbb_official/$1/h.pkl"
-muonCR_pkl="$pkl_dir/muonCR/$1/h.pkl"
-theory_systematics_pkl="$pkl_dir/vhbb_theory_systematics/$1/h.pkl"
+signal_pkl="$out_dir/pickle/vhbb_official/$1/h.pkl"
+muonCR_pkl="$out_dir/pickle/muonCR/$1/h.pkl"
 
 # Clean everything except for the pickle file
 cd $1
@@ -34,7 +33,6 @@ rm -rf output
 #Symbolic linking the pickle files to save space
 ln -s ${signal_pkl} signal.pkl
 ln -s ${muonCR_pkl} muonCR.pkl
-ln -s ${theory_systematics_pkl} theory_syst.pkl
 
 #Return to the main directory
 cd ..
@@ -42,7 +40,7 @@ cd ..
 echo "finish cleaning and symbolic linking"
 
 #Make the histograms
-singularity exec -B ${PWD}:/srv -B $pkl_dir --pwd /srv /cvmfs/unpacked.cern.ch/registry.hub.docker.com/coffeateam/coffea-dask:latest python make_hists.py $1
+singularity exec -B ${PWD}:/srv -B $out_dir --pwd /srv /cvmfs/unpacked.cern.ch/registry.hub.docker.com/coffeateam/coffea-dask:latest python make_hists.py $1 > out.make_hists.txt
 
 # Produce combine cards
 conda run -n combine --no-capture-output python make_cards.py $1 > out_make_cards.txt

@@ -93,34 +93,46 @@ def reduce_scalevar(h, point=7):
     return scalevar_hist_up, scalevar_hist_down
 
 # run this per msd2 bin
-def reduce_pdfvar(h, p):
+def reduce_pdfvar(h):
 
     # NNPDF31_nnlo_hessian_pdfas
     # https://lhapdfsets.web.cern.ch/current/NNPDF31_nnlo_hessian_pdfas/NNPDF31_nnlo_hessian_pdfas.info
 
     # Nominal (sigma^0)
-    sigma0 = np.array(h.integrate('systematic','PDF_weight_0Up').values()[()])
+    sigma0 = np.array(h.integrate('systematic','PDF_weight_0Up')._sumw[()])
     
     # Hessian PDF weights
     # Eq. 21 of https://arxiv.org/pdf/1510.03865v1.pdf  
-    hists_pdf = np.array([h.integrate('systematic','PDF_weight_'+str(i)+'Up').values()[()] - sigma0 for i in range(1,101)])
+    hists_pdf = np.array([h.integrate('systematic','PDF_weight_'+str(i)+'Up')._sumw[()] - sigma0 for i in range(1,101)])
     summed = np.sum(np.square(hists_pdf),axis=0)
     pdf_unc = np.sqrt( (1./99.) * summed ) 
 
     # alpha_S weights
     # Eq. 27 of same ref
-    hists_aS = np.array([h.integrate('systematic','PDF_weight_'+str(i)+'Up').values()[()] for i in range(101,103)])
+    hists_aS = np.array([h.integrate('systematic','PDF_weight_'+str(i)+'Up')._sumw[()] for i in range(101,103)])
     as_unc = 0.5*(hists_aS[1] - hists_aS[0]) 
 
     # PDF + alpha_S weights
     # Eq. 28 of same ref
     pdfas_unc = np.sqrt( np.square(pdf_unc) + np.square(as_unc) ) 
-    
-    return sigma0 + pdfas_unc, sigma0 - pdfas_unc
+
+    pdf_hist_up = hist.Hist('Events', hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201))
+    pdf_hist_down = hist.Hist('Events', hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201))
+
+    # Set the bin values and errors
+    values_up = {(): sigma0 + pdfas_unc}
+    errors_up = {(): np.asarray([0.00001] * sigma0.shape[0])}
+    values_down = {(): sigma0 - pdfas_unc}
+    errors_down = {(): np.asarray([0.00001] * sigma0.shape[0])}
+
+    pdf_hist_up._sumw = values_up
+    pdf_hist_up._sumw2 = errors_up
+    pdf_hist_down._sumw = values_down
+    pdf_hist_down._sumw2 = errors_down
+
+    return pdf_hist_up, pdf_hist_down
 
 def theory_process(sample, coffea_files):
-
-    if sample != 'ggF': return
 
     outpath = os.path.join(outdir, f'{sample}.root')
 
@@ -178,16 +190,27 @@ def theory_process(sample, coffea_files):
                 fout[f"Vmass_{i}_fail_{sample}_{s}"] = hist.export1d(hfail.integrate('systematic',s))
                 
         #Reduce the other systematics
-        scalevar_syst = f'scalevar_{scalevar_map[sample]}pt'
-        scalevar_pass_up, scalevar_pass_down = reduce_scalevar(hpass, point=scalevar_map[sample])
-        scalevar_fail_up, scalevar_fail_down = reduce_scalevar(hfail, point=scalevar_map[sample])
+        if sample != 'VV': #Skip these for VV for now
+            scalevar_syst = f'scalevar_{scalevar_map[sample]}pt'
+            scalevar_pass_up, scalevar_pass_down = reduce_scalevar(hpass, point=scalevar_map[sample])
+            scalevar_fail_up, scalevar_fail_down = reduce_scalevar(hfail, point=scalevar_map[sample])
 
-        fout[f"Vmass_{i}_pass_{sample}_{scalevar_syst}Up"] = hist.export1d(scalevar_pass_up)
-        fout[f"Vmass_{i}_pass_{sample}_{scalevar_syst}Down"] = hist.export1d(scalevar_pass_down)
+            fout[f"Vmass_{i}_pass_{sample}_{scalevar_syst}Up"] = hist.export1d(scalevar_pass_up)
+            fout[f"Vmass_{i}_pass_{sample}_{scalevar_syst}Down"] = hist.export1d(scalevar_pass_down)
 
-        fout[f"Vmass_{i}_fail_{sample}_{scalevar_syst}Up"] = hist.export1d(scalevar_fail_up)
-        fout[f"Vmass_{i}_fail_{sample}_{scalevar_syst}Down"] = hist.export1d(scalevar_fail_down)
+            fout[f"Vmass_{i}_fail_{sample}_{scalevar_syst}Up"] = hist.export1d(scalevar_fail_up)
+            fout[f"Vmass_{i}_fail_{sample}_{scalevar_syst}Down"] = hist.export1d(scalevar_fail_down)
 
+            #Reduce pdf weights
+            pdf_weights_syst = 'PDF_weight'
+            pdf_weights_pass_up, pdf_weights_pass_down = reduce_pdfvar(hpass)
+            pdf_weights_fail_up, pdf_weights_fail_down = reduce_pdfvar(hfail)
+
+            fout[f"Vmass_{i}_pass_{sample}_{pdf_weights_syst}Up"] = hist.export1d(pdf_weights_pass_up)
+            fout[f"Vmass_{i}_pass_{sample}_{pdf_weights_syst}Down"] = hist.export1d(pdf_weights_pass_down)
+
+            fout[f"Vmass_{i}_fail_{sample}_{pdf_weights_syst}Up"] = hist.export1d(pdf_weights_fail_up)
+            fout[f"Vmass_{i}_fail_{sample}_{pdf_weights_syst}Down"] = hist.export1d(pdf_weights_fail_down)
 
 
 # Main method

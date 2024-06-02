@@ -481,8 +481,7 @@ def vh_rhalphabet(tmpdir):
                             sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
 
                     # QCD scale and PDF uncertainties on Higgs signal    
-                    elif sName in ['ggF','VBF','WH','ZH','ggZH','ttH']:
-                        """
+                    elif sName in ['ggF','VBFDipoleRecoilOn','WH','ZH','ggZH','ttH']: #to add VV
                         fsr_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='UEPS_FSRUp')[0]
                         fsr_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='UEPS_FSRDown')[0]
                         eff_fsr_up = np.sum(fsr_up)/np.sum(nominal)
@@ -550,11 +549,10 @@ def vh_rhalphabet(tmpdir):
                             sample.setParamEffect(pdf_Higgs_ttH,eff_pdf_up,eff_pdf_do)
                             sample.setParamEffect(fsr_ttH,eff_fsr_up,eff_fsr_do)
                             sample.setParamEffect(isr_ttH,eff_isr_up,eff_isr_do)
-                        """
                     ##----------------------END Theory Systematics (TODO)-------------------
                                 
                 # Add ParticleNetSFs last!
-                if sName in ['ggF','VBF','WH','ZH','ggZH','ttH','Zjetsbb']:
+                if sName in ['ggF','VBFDipoleRecoilOn','WH','ZH','ggZH','ttH','Zjetsbb']:
                     sf, sfunc_up, sfunc_down = passfailSF(sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, mask=mask,
                                                           SF=PnetSF['central'], SF_unc_up=PnetSF['up'], SF_unc_down=-PnetSF['down'],
                                                           muon = False)

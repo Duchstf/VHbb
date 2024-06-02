@@ -29,8 +29,35 @@ samples = ['QCD','VV','Wjets', 'Zjets',
 
 samples_save = [x for x in samples + ['Zjetsbb', 'WjetsQQ'] if x != 'Wjets']
 btag_SF_samples = ['Wjets', 'Zjets']
-theory_syst_samples = ['VV', 'VBFDipoleRecoilOn','ggF','ttH', 'WH','ZH']
+theory_syst_samples = ['VV','VBFDipoleRecoilOn','ggF','ttH', 'WH','ZH']
 muonCR_samples = ['QCD', 'singlet', 'ttbar', 'WLNu', "muondata"]
+
+def make_hist_TheorySyst(year, fout):
+    '''
+    add processed theory systematics to signal_out_path
+    '''
+
+    print("Processing Theory Systematics") 
+    processed_theory_dir = f'/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/vhbb_theory_systematics/{year}'
+
+    for sample in theory_syst_samples:
+        processed_sample = f'{processed_theory_dir}/{sample}.root'
+        theory_file = uproot3.open(processed_sample)
+
+        # List the contents of the source file
+        source_keys = theory_file.keys()
+
+        # Iterate through each key in the source file and copy the object to the destination file
+        for key in source_keys:
+            obj = theory_file[key]
+            obj_name = obj.name
+
+            # Check if the object already exists in the destination file
+            if obj_name in fout:
+                print(f"Object {obj_name} already exists in the destination file. Skipping...")
+            else:
+                print(f"Copying {obj_name} to the destination file...")
+                fout[obj_name] = obj
 
 def check_missing(pickle_hist):
         
@@ -47,7 +74,7 @@ def check_missing(pickle_hist):
     with open("files/sys_list.json", "w") as f: json.dump(sys_list, f)
     with open("files/Vmass.json", "w") as f:json.dump(mass_range, f)
 
-def make_hists_signal(year, bbthr, qcdthr, signal_pickle_path, theory_syst_path, signal_out_path):
+def make_hists_signal(year, bbthr, qcdthr, signal_pickle_path, signal_out_path):
 
     #If file already exists remove it and create a new file
     if os.path.isfile(signal_out_path): os.remove(signal_out_path)
@@ -110,6 +137,8 @@ def make_hists_signal(year, bbthr, qcdthr, signal_pickle_path, theory_syst_path,
                     fout[f"Vmass_{i}_pass_{p + 'bb'}_{s}"] = hist.export1d(hpass_bb.integrate('systematic',s))
                     fout[f"Vmass_{i}_fail_{p + 'bb'}_{s}"] = hist.export1d(hfail_bb.integrate('systematic',s))
 
+    #Create other theory systematics
+    make_hist_TheorySyst(year, fout)
 
 def make_hists_muonCR(year, bbthr, muonCR_pickle_path, muonCR_out_path):
 
@@ -166,10 +195,8 @@ def main():
     muonCR_pickle_path = '{}/{}.pkl'.format(year, 'muonCR')
     muonCR_out_path = '{}/muonCRregion.root'.format(year)
 
-    theory_syst_path = '{}/{}.pkl'.format(year, 'theory_syst')
-
     #Make the hists for signal region and muon CR
-    make_hists_signal(year, bbthr, qcdthr, signal_pickle_path, theory_syst_path, signal_out_path)
+    make_hists_signal(year, bbthr, qcdthr, signal_pickle_path, signal_out_path)
     make_hists_muonCR(year, bbthr, muonCR_pickle_path, muonCR_out_path)
     
     return
