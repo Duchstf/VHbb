@@ -100,7 +100,7 @@ def plot_h(h, labels, name, year):
     
     ax2.errorbar(mc_centers, ratio, yerr=ratio_errors, fmt='o', color='k', markersize=5)
     ax2.set_ylabel(r'$Data/MC$')
-    ax2.set_xlabel('Jet Mass [GeV]')
+    ax2.set_xlabel(r'Jet $m_{SD}$ [GeV]')
     ax2.set_xlim(ax1.get_xlim())
     ax2.set_ylim(0, 2)
     
@@ -109,8 +109,8 @@ def plot_h(h, labels, name, year):
     # Add horizontal line at 1
     ax2.axhline(1, color='black', linestyle='--', linewidth=1)
 
-    plt.savefig(f'plots/{year}_muCR_{name}.pdf', bbox_inches='tight')
-    plt.savefig(f'plots/{year}_muCR_{name}.pdf', bbox_inches='tight')
+    plt.savefig(f'plots/{year}_wTagCR_{name}.pdf', bbox_inches='tight')
+    plt.savefig(f'plots/{year}_wTagCR_{name}.pdf', bbox_inches='tight')
     # plt.savefig(f'plots/{year}_muCR_{name}.png', bbox_inches='tight')
     
     
