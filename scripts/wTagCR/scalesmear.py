@@ -171,20 +171,20 @@ if __name__ == "__main__":
 
             plt.style.use(hep.style.ROOT)
             fig, ax = plt.subplots()
-            hep.histplot(morph_base.get()[:2], c='black' , ls=':', label='Nominal')
-            hep.histplot(scale_up[:2], c='blue' , ls='--', label='Up')
-            hep.histplot(scale_down[:2], c='red' , ls='--', label='Down')
+            hep.histplot(morph_base.get()[:2], color='black' , ls=':', label='Nominal')
+            hep.histplot(scale_up[:2], color='blue' , ls='--', label='Up')
+            hep.histplot(scale_down[:2], color='red' , ls='--', label='Down')
             ax.set_xlabel('jet $m_{SD}$')
             ax.legend()
-            fig.savefig('{}/plot_{}_scale.png'.format(work_dir, template_name))
+            fig.savefig('{}/plot_{}_scale.pdf'.format(work_dir, template_name))
 
             fig, ax = plt.subplots()
-            hep.histplot(morph_base.get()[:2], c='black' , ls=':', label='Nominal')
-            hep.histplot(smear_up[:2], c='blue' , ls='--', label='Up')
-            hep.histplot(smear_down[:2], c='red' , ls='--', label='Down')
+            hep.histplot(morph_base.get()[:2], color='black' , ls=':', label='Nominal')
+            hep.histplot(smear_up[:2], color='blue' , ls='--', label='Up')
+            hep.histplot(smear_down[:2], color='red' , ls='--', label='Down')
             ax.set_xlabel('jet $m_{SD}$')
             ax.legend()
-            fig.savefig('{}/plot_{}_smear.png'.format(work_dir, template_name))
+            fig.savefig('{}/plot_{}_smear.pdf'.format(work_dir, template_name))
 
         fout[template_name] = source_file[template_name]
         fout[template_name.replace("nominal", "smearDown")] = export1d(smear_down, histtype=args.hist_type)
