@@ -206,7 +206,7 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
         selection.add('met', met.pt < 140.)
 
         #Lepton vetos
-        goodmuon = ((events.Muon.pt > 10) & (abs(events.Muon.eta) < 2.4) & (events.Muon.pfRelIso04_all < 0.25) & events.Muon.looseId)
+        goodmuon = ((events.Muon.pt > 10) & (abs(events.Muon.eta) < 2.4) & (events.Muon.pfRelIso04_all < 0.15) & events.Muon.looseId)
         nmuons = ak.sum(goodmuon, axis=1)
         leadingmuon = ak.firsts(events.Muon[goodmuon])
 

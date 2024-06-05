@@ -704,7 +704,6 @@ def vh_rhalphabet(tmpdir):
     with open(os.path.join(str(tmpdir), 'testModel_{}.pkl'.format(year)), 'wb') as fout: pickle.dump(model, fout)
     model.renderCombine(os.path.join(str(tmpdir), 'testModel_{}'.format(year)))
 
-
 def main():
 
     #Setting different years depending on 

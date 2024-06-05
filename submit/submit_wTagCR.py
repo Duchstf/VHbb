@@ -28,15 +28,15 @@ from datetime import datetime
 sys.path.append('/srv')
 
 #Import processor
-from boostedhiggs import VHBB_MuonCR_Processor
+from boostedhiggs import VHBB_WTagCR
 year = sys.argv[1]
-tag = "muonCR"
+tag = "wTagCR"
 syst = False
 memory='6GB'
-CR_list = ['WJetsToLNu', 'WJetsToQQ', 'ZJetsToQQ' 'TTbar', 'QCD']
+CR_list = ['muondata','WLNu', 'Wjets', 'Zjets', 'ttbar', 'QCD', 'singlet']
 
 env_extra = [f"export PYTHONPATH=$PYTHONPATH:{os.getcwd()}"]
-cluster = LPCCondorCluster( shared_temp_directory="/tmp", transfer_input_files=["boostedhiggs"], ship_env=True, emory=memory)
+cluster = LPCCondorCluster( shared_temp_directory="/tmp", transfer_input_files=["boostedhiggs"], ship_env=True, memory=memory)
 
 out_path = "output/coffea/{}/{}/".format(tag,year)
 os.system('mkdir -p  %s' %out_path)
@@ -52,7 +52,7 @@ with Client(cluster) as client:
     with performance_report(filename="dask-report.html"):
         
         #Input PF nano for the year
-        infiles = subprocess.getoutput("ls data/infiles/{}/{}_*.json".format(year, year)).split()
+        infiles = subprocess.getoutput("ls datasets/infiles/{}/{}_*.json".format(year, year)).split()
     
         for this_file in infiles:
             index = ''.join(this_file.split("_")[1:]).split(".json")[0]
@@ -73,7 +73,7 @@ with Client(cluster) as client:
                 uproot.open.defaults["xrootd_handler"] = uproot.source.xrootd.MultithreadedXRootDSource
 
                 #RUN MAIN PROCESSOR
-                p = VHBB_MuonCR_Processor(year=year, jet_arbitration='T_bvq' , systematics=syst)
+                p = VHBB_WTagCR(year=year, jet_arbitration='T_bvq' , systematics=syst)
                 args = {'savemetrics':True, 'schema':NanoAODSchema}
 
                 #Safe to skip bad files for MC, not safe for data

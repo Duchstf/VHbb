@@ -55,7 +55,7 @@ def ak4_jets(events, year):
 
 class VHBB_WTagCR(processor.ProcessorABC):
     
-    def __init__(self, year='2017', jet_arbitration='T_bvq', systematics=True):
+    def __init__(self, year='2017', jet_arbitration='T_bvq', systematics=False):
         
         self._year = year
         self._jet_arbitration = jet_arbitration
@@ -68,30 +68,20 @@ class VHBB_WTagCR(processor.ProcessorABC):
         with open('files/metfilters.json') as f: self._met_filters = json.load(f) # https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2
             
         #Scan thresholds for bb
-        bb_bins = bb_WPs['{}_bb'.format(self._year)]
+        qcd_bins = qcd_WPs['{}_qcd'.format(self._year)]
         
         #Create the histogram.
         self.make_output = lambda: {
             
             'sumw': processor.defaultdict_accumulator(float),
 
-            'cutflow': hist.Hist(
-               'Events',
-               hist.Cat('dataset', 'Dataset'),
-               hist.Cat('region', 'Region'),
-               hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
-               hist.Bin('genflavor', 'Gen. jet flavor', [1, 2, 3, 4]),
-               hist.Bin('cut', 'Cut index', 15, 0, 15),
-           ),
-
             'h': hist.Hist(
                 'Events',
                 hist.Cat('dataset', 'Dataset'),
                 hist.Cat('region', 'Region'),
-                hist.Cat('systematic', 'Systematic'),
-                hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
-                hist.Bin('bb1', r'Jet 1 Paticle Net B Score', bb_bins),
-                hist.Bin('genflavor1', 'Gen. jet 1 flavor', [1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
+                hist.Bin('msd1', r'Jet 1 $m_{sd}$', 46, 40, 201),
+                hist.Bin('qcd1', r'Jet 2 Paticle Net QCD Score', qcd_bins),
+                hist.Bin('genflavor1', 'Gen. jet 1 flavor', [0, 1, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
             )
         }
 
@@ -113,16 +103,6 @@ class VHBB_WTagCR(processor.ProcessorABC):
         met = met_factory.build(events.MET, jets, {})
 
         shifts = [({"Jet": jets, "FatJet": fatjets, "MET": met}, None)]
-        if self._systematics:
-            shifts = [
-                ({"Jet": jets, "FatJet": fatjets, "MET": met}, None),
-                ({"Jet": jets.JES_jes.up, "FatJet": fatjets.JES_jes.up, "MET": met.JES_jes.up}, "JESUp"),
-                ({"Jet": jets.JES_jes.down, "FatJet": fatjets.JES_jes.down, "MET": met.JES_jes.down}, "JESDown"),
-                ({"Jet": jets, "FatJet": fatjets, "MET": met.MET_UnclusteredEnergy.up}, "UESUp"),
-                ({"Jet": jets, "FatJet": fatjets, "MET": met.MET_UnclusteredEnergy.down}, "UESDown"),
-                ({"Jet": jets.JER.up, "FatJet": fatjets.JER.up, "MET": met.JER.up}, "JERUp"),
-                ({"Jet": jets.JER.down, "FatJet": fatjets.JER.down, "MET": met.JER.down}, "JERDown"),
-            ]
 
         return processor.accumulate(self.process_shift(update(events, collections), name) for collections, name in shifts)
 
@@ -174,12 +154,10 @@ class VHBB_WTagCR(processor.ProcessorABC):
             pnet_bvq = leadingjets.particleNetMD_Xbb / (leadingjets.particleNetMD_Xcc + leadingjets.particleNetMD_Xbb + leadingjets.particleNetMD_Xqq)                                                                                       
             indices = ak.argsort(pnet_bvq, axis=1, ascending = False) #Higher b score for the Higgs candidate (more b like)                                                            
             candidatejet = ak.firsts(leadingjets[indices[:, 0:1]]) # candidate jet is more b-like (higher BvC score)
-            secondjet = ak.firsts(leadingjets[indices[:, 1:2]]) # second jet is more charm-like (larger BvC score) 
-            
+
         else: raise RuntimeError("Unknown candidate jet arbitration")
 
-        bb1 = candidatejet.particleNetMD_Xbb / (candidatejet.particleNetMD_Xbb + candidatejet.particleNetMD_QCD) #Exact B scores for Higgs candidate
-        selection.add('bbpass', (bb1 >= bb_WPs['{}_bb'.format(self._year)][-2]))
+        qcd1 = candidatejet.particleNetMD_QCD
 
         #!Add selections------------------>
         #There is a list at the end which specifies the selections being used  
@@ -187,7 +165,7 @@ class VHBB_WTagCR(processor.ProcessorABC):
 
         # Selections for muon control region
         selection.add('minjetkinmu',
-            (candidatejet.pt >= 400)
+            (candidatejet.pt >= 200)
             & (candidatejet.pt < 1200)
             & (candidatejet.msdcorr >= 40.)
             & (candidatejet.msdcorr < 201.)
@@ -204,11 +182,14 @@ class VHBB_WTagCR(processor.ProcessorABC):
 
         met = events.MET 
         selection.add('met', met.pt < 140.)
+        selection.add('met40p', met.pt > 40.)
 
         #Lepton vetos
         goodmuon = ((events.Muon.pt > 10) & (abs(events.Muon.eta) < 2.4) & (events.Muon.pfRelIso04_all < 0.25) & events.Muon.looseId)
         nmuons = ak.sum(goodmuon, axis=1)
         leadingmuon = ak.firsts(events.Muon[goodmuon])
+        selection.add('tightMuon', (leadingmuon.tightId) & (leadingmuon.pt > 53.))
+        selection.add('ptrecoW200', (leadingmuon + met).pt > 200.)
 
         goodelectron = ((events.Electron.pt > 10) & (abs(events.Electron.eta) < 2.5) & (events.Electron.cutBased >= events.Electron.LOOSE))
         nelectrons = ak.sum(goodelectron, axis=1)
@@ -268,30 +249,7 @@ class VHBB_WTagCR(processor.ProcessorABC):
         #----------------
 
         #!LIST OF THE SELECTIONS APPLIED
-        regions = { 'muoncontrol': ['muontrigger','lumimask','metfilter','minjetkinmu', 'jetid', 'onemuon', 'muonkin', 'ak4btagMedium08','muonDphiAK8']}
-        
-        #Create the cutflow table
-        if shift_name is None:
-            for region, cuts in regions.items():
-                allcuts = set([])
-                cut = selection.all(*allcuts)
-
-                output['cutflow'].fill(dataset=dataset,
-                                        region=region,
-                                        msd1=normalize(msd1_matched,cut),
-                                        genflavor=normalize(genflavor1, None),
-                                        cut=0,
-                                        weight=weights.weight())
-
-                for i, cut in enumerate(cuts + ['bbpass']):
-                    allcuts.add(cut)
-                    cut = selection.all(*allcuts)
-                    output['cutflow'].fill(dataset=dataset,
-                                            region=region,
-                                            genflavor=normalize(genflavor1, cut),
-                                            msd1=normalize(msd1_matched,cut),
-                                            cut=i + 1,
-                                            weight=weights.weight()[cut])
+        regions = { 'tnp': ['muontrigger','lumimask','metfilter', 'tightMuon', 'onemuon',  'met40p', 'ptrecoW200', 'ak4btagMedium08','muonDphiAK8', 'minjetkinmu']}
         
         if shift_name is None: systematics = [None] + list(weights.variations)
         else: systematics = [shift_name]
@@ -317,9 +275,8 @@ class VHBB_WTagCR(processor.ProcessorABC):
             output['h'].fill(
                 dataset=dataset,
                 region=region,
-                systematic=sname,
                 msd1=normalize(msd1_matched, cut),
-                bb1=normalize(bb1, cut),
+                qcd1=normalize(qcd1, cut),
                 genflavor1=normalize(genflavor1, cut),
                 weight=weight,
             )

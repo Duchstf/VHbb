@@ -28,7 +28,7 @@ fileset = {
 }
 
 #autoreload forces the kernel to reload the processor to include any new changes
-from boostedhiggs import VHbbProcessorOfficial_TheorySys as vhbb_processor
+from boostedhiggs import VHBB_WTagCR as vhbb_processor
 
 import time
 tstart = time.time()
