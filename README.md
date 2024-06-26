@@ -1,6 +1,11 @@
 # VHbb
 Analysis framework for VHbb analysis
 
+## Documentation
+* Higgs -> BB subgroup twiki: https://twiki.cern.ch/twiki/bin/view/CMS/HiggsBB
+
+
+----
 ## Environment set up
 You can set up the environment by following the instructions here: https://github.com/CoffeaTeam/lpcjobqueue/
 
