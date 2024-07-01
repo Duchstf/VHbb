@@ -3,7 +3,7 @@ Analysis framework for VHbb analysis
 
 ## Documentation
 * Higgs -> BB subgroup twiki: https://twiki.cern.ch/twiki/bin/view/CMS/HiggsBB
-* Comments and reply for the review process: https://github.com/Duchstf/VHbb/tree/main/feedbacks
+* Comments and reply for the review process: https://twiki.cern.ch/twiki/bin/view/CMSPublic/BoostedVqqHbbRun2
 
 ## References
 
