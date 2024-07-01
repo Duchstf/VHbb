@@ -3,7 +3,26 @@ Analysis framework for VHbb analysis
 
 ## Documentation
 * Higgs -> BB subgroup twiki: https://twiki.cern.ch/twiki/bin/view/CMS/HiggsBB
+* Comments and reply for the review process: https://github.com/Duchstf/VHbb/tree/main/feedbacks
 
+## References
+
+### Talks
+
+* ParticleNet talk and corresponding paper: https://indico.physics.lbl.gov/event/975/contributions/8301/attachments/4047/5437/23.07.31_BOOST_Xbbcc_performance_CL.pdf
+* [Di-Higgs -> 4b approval talk.](https://indico.cern.ch/event/1078870/contributions/4537934/attachments/2313106/3947040/Preapproval_HH4bggF_280921.pdf)
+* Jennet's talk on VBF/ggF: https://indico.physics.lbl.gov/event/975/contributions/8306/attachments/4062/5457/Dickinson_BOOST23_CMSVBF_vf.pdf
+
+### Papers
+* ATLAS VH: https://arxiv.org/abs/2312.07605
+* **[Electroweak Restoration at the LHC and Beyond: The Vh Channel](https://arxiv.org/abs/2012.00774)**
+* A portrait of the Higgs boson by the CMS experiment ten years after the discovery: https://www.nature.com/articles/s41586-022-04892-x
+* ParticleNet Performance Paper: https://cds.cern.ch/record/2866276/files/BTV-22-001-pas.pdf
+
+### Other relevant links
+* Combine installation: https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/#standalone-compilation-with-lcg
+* [NanoAOD attributes](https://cms-nanoaod-integration.web.cern.ch/integration/cms-swCMSSW_12_4_X/mc123Xrun3_v10_doc.html)
+* [Save data array to ParQuet](https://awkward-array.org/doc/main/reference/generated/ak.to_parquet.html)
 
 ----
 ## Environment set up
@@ -82,21 +101,3 @@ If you make any update for the environment, please edit the `environment.yml` fi
 conda env update --file environment.yml  --prune
 ```
 
-# References
-
-## Talks
-
-* ParticleNet talk and corresponding paper: https://indico.physics.lbl.gov/event/975/contributions/8301/attachments/4047/5437/23.07.31_BOOST_Xbbcc_performance_CL.pdf
-* [Di-Higgs -> 4b approval talk.](https://indico.cern.ch/event/1078870/contributions/4537934/attachments/2313106/3947040/Preapproval_HH4bggF_280921.pdf)
-* Jennet's talk on VBF/ggF: https://indico.physics.lbl.gov/event/975/contributions/8306/attachments/4062/5457/Dickinson_BOOST23_CMSVBF_vf.pdf
-
-## Papers
-* ATLAS VH: https://arxiv.org/abs/2312.07605
-* **[Electroweak Restoration at the LHC and Beyond: The Vh Channel](https://arxiv.org/abs/2012.00774)**
-* A portrait of the Higgs boson by the CMS experiment ten years after the discovery: https://www.nature.com/articles/s41586-022-04892-x
-* ParticleNet Performance Paper: https://cds.cern.ch/record/2866276/files/BTV-22-001-pas.pdf
-
-## Other relevant links
-* Combine installation: https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/#standalone-compilation-with-lcg
-* [NanoAOD attributes](https://cms-nanoaod-integration.web.cern.ch/integration/cms-swCMSSW_12_4_X/mc123Xrun3_v10_doc.html)
-* [Save data array to ParQuet](https://awkward-array.org/doc/main/reference/generated/ak.to_parquet.html)
