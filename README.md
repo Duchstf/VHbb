@@ -14,10 +14,10 @@ Analysis framework for VHbb analysis
 * Jennet's talk on VBF/ggF: https://indico.physics.lbl.gov/event/975/contributions/8306/attachments/4062/5457/Dickinson_BOOST23_CMSVBF_vf.pdf
 
 ### Papers
+* ParticleNet BTV Paper: https://cds.cern.ch/record/2866276/files/BTV-22-001-pas.pdf
 * ATLAS VH: https://arxiv.org/abs/2312.07605
 * **[Electroweak Restoration at the LHC and Beyond: The Vh Channel](https://arxiv.org/abs/2012.00774)**
 * A portrait of the Higgs boson by the CMS experiment ten years after the discovery: https://www.nature.com/articles/s41586-022-04892-x
-* ParticleNet Performance Paper: https://cds.cern.ch/record/2866276/files/BTV-22-001-pas.pdf
 
 ### Other relevant links
 * Combine installation: https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/#standalone-compilation-with-lcg
