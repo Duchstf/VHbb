@@ -9,13 +9,13 @@ Analysis framework for VHbb analysis
 
 ### Talks
 
-* ParticleNet talk and corresponding paper: https://indico.physics.lbl.gov/event/975/contributions/8301/attachments/4047/5437/23.07.31_BOOST_Xbbcc_performance_CL.pdf
+* [ParticleNet talk and corresponding paper](https://indico.physics.lbl.gov/event/975/contributions/8301/attachments/4047/5437/23.07.31_BOOST_Xbbcc_performance_CL.pdf)
 * [Di-Higgs -> 4b approval talk.](https://indico.cern.ch/event/1078870/contributions/4537934/attachments/2313106/3947040/Preapproval_HH4bggF_280921.pdf)
-* Jennet's talk on VBF/ggF: https://indico.physics.lbl.gov/event/975/contributions/8306/attachments/4062/5457/Dickinson_BOOST23_CMSVBF_vf.pdf
+* [Jennet's talk on VBF/ggF](https://indico.physics.lbl.gov/event/975/contributions/8306/attachments/4062/5457/Dickinson_BOOST23_CMSVBF_vf.pdf)
 
 ### Papers
-* ParticleNet BTV Paper: https://cds.cern.ch/record/2866276/files/BTV-22-001-pas.pdf
-* ATLAS VH: https://arxiv.org/abs/2312.07605
+* [ParticleNet BTV Paper](https://cds.cern.ch/record/2866276/files/BTV-22-001-pas.pdf)
+* [ATLAS VH](https://arxiv.org/abs/2312.07605)
 * **[Electroweak Restoration at the LHC and Beyond: The Vh Channel](https://arxiv.org/abs/2012.00774)**
 * A portrait of the Higgs boson by the CMS experiment ten years after the discovery: https://www.nature.com/articles/s41586-022-04892-x
 
