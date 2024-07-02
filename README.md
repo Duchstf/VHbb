@@ -8,7 +8,7 @@ Analysis framework for VHbb analysis
 ## References
 
 ### Talks
-
+* [Booosted Z'+jets scale factors](https://indico.cern.ch/event/1355112/#16-booosted-zjets-scale-factor)
 * [ParticleNet talk and corresponding paper](https://indico.physics.lbl.gov/event/975/contributions/8301/attachments/4047/5437/23.07.31_BOOST_Xbbcc_performance_CL.pdf)
 * [Di-Higgs -> 4b approval talk.](https://indico.cern.ch/event/1078870/contributions/4537934/attachments/2313106/3947040/Preapproval_HH4bggF_280921.pdf)
 * [Jennet's talk on VBF/ggF](https://indico.physics.lbl.gov/event/975/contributions/8306/attachments/4062/5457/Dickinson_BOOST23_CMSVBF_vf.pdf)
