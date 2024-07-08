@@ -123,6 +123,10 @@ def vh_rhalphabet(tmpdir):
     Then,
     1. Fit QCD TF in fail -> pass
     2. Fit Data/MC TF. 
+
+    Notes: 
+    - lnN up and down, shape varies the shape
+    - lnN: Log Normal
     """
     
     #! SYSTEMATICS
@@ -133,7 +137,7 @@ def vh_rhalphabet(tmpdir):
     tqqnormSF = rl.IndependentParameter('tqqnormSF_{}'.format(year), 1., 0, 2) 
 
     # Simple lumi systematics, changes event yields, onstraints applied to overall likelihood                                                                                                                                                        
-    sys_lumi_uncor = rl.NuisanceParameter('CMS_lumi_13TeV_{}'.format(year), 'lnN') #lnN: Log Normal
+    sys_lumi_uncor = rl.NuisanceParameter('CMS_lumi_13TeV_{}'.format(year), 'lnN')
     sys_lumi_cor_161718 = rl.NuisanceParameter('CMS_lumi_13TeV_correlated', 'lnN')
     sys_lumi_cor_1718 = rl.NuisanceParameter('CMS_lumi_13TeV_correlated_20172018', 'lnN')
     
@@ -170,18 +174,13 @@ def vh_rhalphabet(tmpdir):
     print("Experimental systematics: ",  exp_systs) 
     print("Muon CR systematics: ", mu_exp_systs)
     
-    #Particle Net BB systematics
-    #TODO: Put the scale factor and uncertainty into a json file and read it afterwards
-    sys_PNetEffBB = rl.NuisanceParameter('CMS_eff_bb_{}'.format(year), 'lnN')
-    
-    #V scake factor uncertainty, derived
-    sys_veff = rl.NuisanceParameter('CMS_hbb_veff_{}'.format(year), 'lnN')
+    #ParticleNet-MD systematics
+    sys_PNetXbb = rl.NuisanceParameter('CMS_eff_bb_{}'.format(year), 'lnN') #Xbb
+    sys_PNetVqq = rl.NuisanceParameter('CMS_eff_2prong_{}'.format(year), 'lnN') #V scale factor uncertainty
     
     #All derived from muon control region, shape systematics in all the masses.
     sys_smear = rl.NuisanceParameter('CMS_hbb_smear_{}'.format(year), 'shape')
     sys_scale = rl.NuisanceParameter('CMS_hbb_scale_{}'.format(year), 'shape')
-    
-    #lnN up and down, shape varies the shape
     
     # Theory systematics are correlated across years
     # V + jets, not year in name and correlated accross year
@@ -191,7 +190,7 @@ def vh_rhalphabet(tmpdir):
     Zjets_thsysts = ['d1kappa_EW', 'Z_d2kappa_EW', 'Z_d3kappa_EW', 'd1K_NLO', 'd2K_NLO']
     Wjets_thsysts = ['d1kappa_EW', 'W_d2kappa_EW', 'W_d3kappa_EW', 'd1K_NLO', 'd2K_NLO', 'd3K_NLO']
     
-    #TODO: Likely add VV for these theory systematics
+    #TODO: Add VV for these theory systematics
     pdf_Higgs_ggF = rl.NuisanceParameter('pdf_Higgs_ggF','lnN')
     pdf_Higgs_VBF = rl.NuisanceParameter('pdf_Higgs_VBF','lnN')
     pdf_Higgs_VH  = rl.NuisanceParameter('pdf_Higgs_VH','lnN')
@@ -557,7 +556,7 @@ def vh_rhalphabet(tmpdir):
                                                           SF=PnetSF['central'], SF_unc_up=PnetSF['up'], SF_unc_down=-PnetSF['down'],
                                                           muon = False)
                     sample.scale(sf)
-                    if do_systematics: sample.setParamEffect(sys_PNetEffBB, sfunc_up, sfunc_down)
+                    if do_systematics: sample.setParamEffect(sys_PNetXbb, sfunc_up, sfunc_down)
 
                 # V SF
                 # if sName in ['VV','WH','ZH']:                                                 

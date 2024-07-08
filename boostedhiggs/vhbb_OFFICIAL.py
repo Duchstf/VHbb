@@ -42,18 +42,8 @@ def update(events, collections):
     return out
 
 def ak4_jets(events, year):
-
     jets = events.Jet
-    jets = jets[(jets.pt > 30.) & (abs(jets.eta) < 5.0) & jets.isTight & (jets.puId > 0)]
-        
-    # EE noise for 2017                                             
-    if year == '2017':
-        jets = jets[
-            (jets.pt > 50)
-            | (abs(jets.eta) < 2.65)
-            | (abs(jets.eta) > 3.139)]
-        
-    return jets
+    return jets[(jets.pt > 30.) & (abs(jets.eta) < 5.0) & jets.isTight & ((jets.pt >= 50) | ((jets.pt < 50) & (jets.puId & 2) == 2))]
 
 
 class VHbbProcessorOfficial(processor.ProcessorABC):
@@ -215,8 +205,8 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
         selection.add('jetid', candidatejet.isTight & secondjet.isTight)
         
         #Count the number of ak4 jets that are away
-        ak4_jets_events = ak4_jets(events, self._year)
-        n_ak4_jets = ak.count(ak4_jets_events.pt, axis=1)
+        goodjets = ak4_jets(events, self._year)
+        n_ak4_jets = ak.count(goodjets.pt, axis=1)
         selection.add('njets', n_ak4_jets < 5.)
 
         met = events.MET
@@ -250,6 +240,30 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
         selection.add('muonkin', (leadingmuon.pt > 55.) & (abs(leadingmuon.eta) < 2.1))
         selection.add('muonDphiAK8', abs(leadingmuon.delta_phi(candidatejet)) > 2*np.pi/3)
 
+        # hem-cleaning selection
+        if self._year == "2018":
+            hem_veto = ak.any(
+                ((goodjets.eta > -3.2) & (goodjets.eta < -1.3) & (goodjets.phi > -1.57) & (goodjets.phi < -0.87)),
+                -1,
+            ) | ak.any(
+                (
+                    (goodelectron.pt > 30)
+                    & (goodelectron.eta > -3.2)
+                    & (goodelectron.eta < -1.3)
+                    & (goodelectron.phi > -1.57)
+                    & (goodelectron.phi < -0.87)
+                ),
+                -1,
+            )
+
+            hem_cleaning = (
+                ((events.run >= 319077) & (not self.isMC))  # if data check if in Runs C or D
+                # else for MC randomly cut based on lumi fraction of C&D
+                | ((np.random.rand(len(events)) < 0.632) & self.isMC)
+            ) & (hem_veto)
+
+            self.add_selection(name="HEMCleaning", sel=~hem_cleaning)
+
         if isRealData :
             genflavor1 = ak.zeros_like(candidatejet.pt)
             genflavor2 = ak.zeros_like(secondjet.pt)
@@ -257,20 +271,7 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
             weights.add('genweight', events.genWeight)
             if 'HToBB' in dataset:
                 if self._ewkHcorr: add_HiggsEW_kFactors(weights, events.GenPart, dataset)
-
-                # if self._systematics:
-                #     # Jennet adds theory variations                                                                               
-                #     add_ps_weight(weights, events.PSWeight)
-                #     if "LHEPdfWeight" in events.fields:
-                #         add_pdf_weight(weights,events.LHEPdfWeight)
-                #     else:
-                #         add_pdf_weight(weights,[])
-                #     if "LHEScaleWeight" in events.fields:
-                #         add_scalevar_7pt(weights, events.LHEScaleWeight)
-                #         add_scalevar_3pt(weights, events.LHEScaleWeight)
-                #     else:
-                #         add_scalevar_7pt(weights,[])
-                #         add_scalevar_3pt(weights,[])
+                #Other theory systematics applied in a separate processor
 
             add_pileup_weight(weights, events.Pileup.nPU, self._year)
             bosons = getBosons(events.GenPart)
@@ -319,7 +320,10 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
         else: systematics = [shift_name]
             
         #!LIST OF THE SELECTIONS APPLIED
-        regions = {'signal': ['trigger', 'lumimask', 'metfilter', 'jet1kin', 'jet2kin', 'jetid', 'jetacceptance', 'met', 'noleptons','njets'],}
+        signal_selection = ['trigger', 'lumimask', 'metfilter', 'jet1kin', 'jet2kin', 'jetid', 'jetacceptance', 'met', 'noleptons','njets']
+        if self._year == "2018": signal_selection.append("HEMCleaning") #HEM for only this jet veto
+
+        regions = {'signal': signal_selection}
 
         def fill(region, systematic, wmod=None):
             
