@@ -48,13 +48,6 @@ def ak4_jets(events, year):
     jets_selection = (jets.pt > 30.) & (abs(jets.eta) < 5.0) & jets.isTight & ((jets.pt >= 50) | ((jets.pt < 50) & (jets.puId & 2) == 2))
     jets = jets[jets_selection]
 
-    # EE noise for 2017                                             
-    if year == '2017':
-        jets = jets[
-            (jets.pt > 50)
-            | (abs(jets.eta) < 2.65)
-            | (abs(jets.eta) > 3.139)]
-
     #Apply jet veto maps
     jet_veto_map, _ = get_VetoMap(jets, year)
     jets = jets[jet_veto_map]

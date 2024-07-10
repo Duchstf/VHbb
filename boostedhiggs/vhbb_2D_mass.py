@@ -26,6 +26,7 @@ from boostedhiggs.corrections import (
     add_jec_variables,
     met_factory,
     lumiMasks,
+    get_VetoMap,
 )
 
 #Import the working points
@@ -42,11 +43,19 @@ def update(events, collections):
     return out
 
 def ak4_jets(events, year):
+
     jets = events.Jet
-    return jets[(jets.pt > 30.) & (abs(jets.eta) < 5.0) & jets.isTight & ((jets.pt >= 50) | ((jets.pt < 50) & (jets.puId & 2) == 2))]
+    jets_selection = (jets.pt > 30.) & (abs(jets.eta) < 5.0) & jets.isTight & ((jets.pt >= 50) | ((jets.pt < 50) & (jets.puId & 2) == 2))
+    jets = jets[jets_selection]
+
+    #Apply jet veto maps
+    jet_veto_map, _ = get_VetoMap(jets, year)
+    jets = jets[jet_veto_map]
+
+    return jets
 
 
-class VHbbProcessor2DMass(processor.ProcessorABC):
+class VHbbProcessorOfficial(processor.ProcessorABC):
     
     def __init__(self, year='2017', jet_arbitration='T_bvq',
                  tightMatch=True, ewkHcorr=True, systematics=True):
@@ -204,10 +213,10 @@ class VHbbProcessor2DMass(processor.ProcessorABC):
 
         selection.add('jetid', candidatejet.isTight & secondjet.isTight)
         
-        #Count the number of ak4 jets that are away
+        #Count the number of ak4 jets in the event
         goodjets = ak4_jets(events, self._year)
         n_ak4_jets = ak.count(goodjets.pt, axis=1)
-        selection.add('njets', n_ak4_jets < 5.)
+        selection.add('njets', n_ak4_jets < 6.)
 
         met = events.MET
         selection.add('met', met.pt < 140.)
@@ -216,8 +225,9 @@ class VHbbProcessor2DMass(processor.ProcessorABC):
         nmuons = ak.sum(goodmuon, axis=1)
         leadingmuon = ak.firsts(events.Muon[goodmuon])
 
-        goodelectron = ((events.Electron.pt > 10) & (abs(events.Electron.eta) < 2.5) & (events.Electron.cutBased >= events.Electron.LOOSE))
-        nelectrons = ak.sum(goodelectron, axis=1)
+        electrons_selection = ((events.Electron.pt > 10) & (abs(events.Electron.eta) < 2.5) & (events.Electron.cutBased >= events.Electron.LOOSE))
+        goodelectrons = events.Electron[electrons_selection]
+        nelectrons = ak.sum(electrons_selection, axis=1)
 
         ntaus = ak.sum(
             (
@@ -247,22 +257,22 @@ class VHbbProcessor2DMass(processor.ProcessorABC):
                 -1,
             ) | ak.any(
                 (
-                    (goodelectron.pt > 30)
-                    & (goodelectron.eta > -3.2)
-                    & (goodelectron.eta < -1.3)
-                    & (goodelectron.phi > -1.57)
-                    & (goodelectron.phi < -0.87)
+                    (goodelectrons.pt > 30)
+                    & (goodelectrons.eta > -3.2)
+                    & (goodelectrons.eta < -1.3)
+                    & (goodelectrons.phi > -1.57)
+                    & (goodelectrons.phi < -0.87)
                 ),
                 -1,
             )
 
             hem_cleaning = (
-                ((events.run >= 319077) & (not self.isMC))  # if data check if in Runs C or D
+                ((events.run >= 319077) & isRealData)  # if data check if in Runs C or D
                 # else for MC randomly cut based on lumi fraction of C&D
-                | ((np.random.rand(len(events)) < 0.632) & self.isMC)
+                | ((np.random.rand(len(events)) < 0.632) & (not isRealData))
             ) & (hem_veto)
 
-            self.add_selection(name="HEMCleaning", sel=~hem_cleaning)
+            selection.add("HEMCleaning", ~hem_cleaning)
 
         if isRealData :
             genflavor1 = ak.zeros_like(candidatejet.pt)
