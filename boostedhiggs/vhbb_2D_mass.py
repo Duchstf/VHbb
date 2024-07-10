@@ -55,7 +55,7 @@ def ak4_jets(events, year):
     return jets
 
 
-class VHbbProcessorOfficial(processor.ProcessorABC):
+class VHbbProcessor2DMass(processor.ProcessorABC):
     
     def __init__(self, year='2017', jet_arbitration='T_bvq',
                  tightMatch=True, ewkHcorr=True, systematics=True):
