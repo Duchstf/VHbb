@@ -45,7 +45,7 @@ def update(events, collections):
 def ak4_jets(events, year):
 
     jets = events.Jet
-    jets_selection = (jets.pt > 30.) & (abs(jets.eta) < 5.0) & jets.isTight & ((jets.pt >= 50) | ((jets.pt < 50) & (jets.puId & 2) == 2))
+    jets_selection = (jets.pt > 15.) & (abs(jets.eta) < 5.0) & jets.isTight & ((jets.pt >= 50) | ((jets.pt < 50) & (jets.puId & 2) == 2))
     jets = jets[jets_selection]
 
     #Apply jet veto maps
@@ -216,7 +216,7 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
         #Count the number of ak4 jets in the event
         goodjets = ak4_jets(events, self._year)
         n_ak4_jets = ak.count(goodjets.pt, axis=1)
-        selection.add('njets', n_ak4_jets < 6.)
+        selection.add('njets', n_ak4_jets < 5.)
 
         met = events.MET
         selection.add('met', met.pt < 140.)
