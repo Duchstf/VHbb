@@ -58,8 +58,7 @@ def ak4_jets(events, year):
     jets_selection = ((jets.pt > 30.) & 
                       (abs(jets.eta) < 5.0) & 
                       (jets.isTight) & 
-                      (jets.chEmEF < 0.9) & 
-                      (jets.neEmEF < 0.9) & 
+                      (jets.chEmEF + jets.neEmEF < 0.9) & 
                       ((jets.pt >= 50) | ((jets.pt < 50) & (jets.puId & 2) == 2)))
     
     jets = jets[jets_selection]
@@ -71,7 +70,7 @@ def ak4_jets(events, year):
     return jets
 
 
-class VHbbProcessorOfficial(processor.ProcessorABC):
+class VHbbProcessorHEM(processor.ProcessorABC):
     
     def __init__(self, year='2017', jet_arbitration='T_bvq',
                  tightMatch=True, ewkHcorr=True, systematics=True):
@@ -103,14 +102,8 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
                 hist.Cat('dataset', 'Dataset'),
                 hist.Cat('region', 'Region'),
                 hist.Cat('systematic', 'Systematic'),
-                hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
-                hist.Bin('msd2', r'Jet 2 $m_{sd}$', [40., 68.,  75.,  82.,  89.,  96., 103., 110., 201.]),
-
-                hist.Bin('bb1', r'Jet 1 Paticle Net B Score', bb_bins),
-                hist.Bin('qcd2', r'Jet 2 Paticle Net QCD Score', qcd_bins),
-
-                hist.Bin('genflavor1', 'Gen. jet 1 flavor', [1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
-                hist.Bin('pt1', 'Jet 1 pT', [450, 500, 600])
+                hist.Bin('eta1', r'Jet 1 $\eta$', 40, -3.1, 3.1),
+                hist.Bin('phi1', r'Jet 1 $\phi$', 40, -4.7, 4.7)
             )
         }
 
@@ -345,14 +338,8 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
                 dataset=dataset,
                 region=region,
                 systematic=sname,
-                msd1=normalize(msd1_matched, cut),
-                msd2=normalize(msd2_matched, cut),
-
-                bb1=normalize(bb1, cut),
-                qcd2=normalize(qcd2, cut),
-
-                genflavor1=normalize(genflavor1, cut),
-                pt1=normalize(candidatejet.pt, cut),
+                eta1=normalize(candidatejet.eta, cut),
+                phi1=normalize(candidatejet.phi, cut),
                 weight=weight,
             )
 

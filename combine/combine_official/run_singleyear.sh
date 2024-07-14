@@ -43,8 +43,11 @@ echo "finish cleaning and symbolic linking"
 singularity exec -B ${PWD}:/srv -B $out_dir --pwd /srv /cvmfs/unpacked.cern.ch/registry.hub.docker.com/coffeateam/coffea-dask:latest python make_hists.py $1 > out.make_hists.txt
 
 # Produce combine cards
-conda run -n combine --no-capture-output python make_cards.py $1 > out_make_cards.txt
-
+if [ "$2" == "unblind_sideband" ]; then
+conda run -n combine --no-capture-output python make_cards.py $1 1 > out_make_cards.txt
+else
+conda run -n combine --no-capture-output python make_cards.py $1 0 > out_make_cards.txt
+fi
 # Run the combine jobs
 cd $1
 
@@ -63,7 +66,7 @@ conda run -n combine --no-capture-output ./exp_significance_VV.sh $2 > significa
 # Produce the relevant plots
 conda run -n combine --no-capture-output root -b -q draw_DataFit.C
 
-if [ "$2" == "unblind" ]; then
+if [[ "$2" == "unblind" || "$2" == "unblind_sideband" ]]; then
     conda run -n plot --no-capture-output combine_postfits -i fitDiagnosticsTest.root -o plots/test_plot --data --style ../files/style_D.yml --onto qcd --sigs VH --bkgs QCD,qcd,ttbar,singlet,WjetsQQ,Zjets,Zjetsbb,VV,H,WLNu  --rmap 'VH:rVH' --project-signals 3 --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p 
 else
     conda run -n plot --no-capture-output combine_postfits -i fitDiagnosticsTest.root -o plots/test_plot --MC --style ../files/style_D.yml --onto qcd --sigs VH --bkgs QCD,qcd,ttbar,singlet,WjetsQQ,Zjets,Zjetsbb,VV,H,WLNu  --rmap 'VH:rVH' --project-signals 3 --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p 

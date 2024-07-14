@@ -90,6 +90,35 @@ def one_bin(template):
         h_vals, h_edges, h_key = template
         return (np.array([np.sum(h_vals)]), np.array([0., 1.]), "onebin")
 
+def make_validbins(validbins, nVmass):
+    '''
+    Make validbins to unblind in 2 settings
+
+    1. only unblind the sideband
+    2. unblinding the whole analysis
+
+    input is validbins that is true for all regions.
+
+    Return a list of dictionary: validbins_list[iVBin]['pass'] #or 'fail'
+    '''
+
+    validbins_list = [{}, {}, {}] #3 mass bins
+
+    for i in range(nVmass):
+
+        #Unblind all the fail regions
+        validbins_list[i]['fail'] = validbins
+
+        validbins_pass = np.copy(validbins)
+
+        #Unblind certain bins for pass regions
+        if i != 1: validbins_pass[4:12] = False
+        else: validbins_pass[4:16] = False
+
+        validbins_list[i]['pass'] =  validbins_pass
+
+    return validbins_list
+
 # Read the histogram
 def get_template(sName, bb_pass, V_bin, obs, syst, muon=False):
     """
@@ -178,7 +207,7 @@ def vh_rhalphabet(tmpdir):
     sys_PNetXbb = rl.NuisanceParameter('CMS_eff_bb_{}'.format(year), 'lnN') #Xbb
     sys_PNetVqq = rl.NuisanceParameter('CMS_eff_2prong_{}'.format(year), 'lnN') #V scale factor uncertainty
     
-    #All derived from muon control region, shape systematics in all the masses.
+    #All derived W-tagged CR, shape systematics in all the masses.
     sys_smear = rl.NuisanceParameter('CMS_hbb_smear_{}'.format(year), 'shape')
     sys_scale = rl.NuisanceParameter('CMS_hbb_scale_{}'.format(year), 'shape')
     
@@ -240,6 +269,8 @@ def vh_rhalphabet(tmpdir):
     validbins = (rhoscaled >= 0) & (rhoscaled <= 1)
     rhoscaled[~validbins] = 1
     validbins = validbins[0] #validbin is a 1D array of 23 bins
+
+    validbins_list = make_validbins(validbins, nVmass)
     
     while fitfailed_qcd < fitfailed_limit: #Fail if choose bad initial values, start from where the fits fail. 
    
@@ -340,8 +371,6 @@ def vh_rhalphabet(tmpdir):
         if fitfailed_qcd >=5:
             raise RuntimeError('Could not fit qcd after 5 tries')
     
-
-    #TODO: WHAT ARE THESE PARAMETERS?
     param_names = [p.name for p in tf_MCtempl.parameters.reshape(-1)]
     decoVector = rl.DecorrelatedNuisanceVector.fromRooFitResult(tf_MCtempl.name + "_deco", qcdfit, param_names)
     tf_MCtempl.parameters = decoVector.correlated_params.reshape(tf_MCtempl.parameters.shape)
@@ -458,6 +487,7 @@ def vh_rhalphabet(tmpdir):
                     ##--------------------END Experimental Systematics---------------------
 
                     ##----------------------Theory Systematics (TODO)----------------------
+                    """
                     # uncertainties on V+jets                 
                     if sName in ['WjetsQQ']:
                         for sys in Wjets_thsysts:
@@ -548,6 +578,7 @@ def vh_rhalphabet(tmpdir):
                             sample.setParamEffect(pdf_Higgs_ttH,eff_pdf_up,eff_pdf_do)
                             sample.setParamEffect(fsr_ttH,eff_fsr_up,eff_fsr_do)
                             sample.setParamEffect(isr_ttH,eff_isr_up,eff_isr_do)
+                        """
                     ##----------------------END Theory Systematics (TODO)-------------------
                                 
                 # Add ParticleNetSFs last!
@@ -570,6 +601,11 @@ def vh_rhalphabet(tmpdir):
 
             data_obs = get_template(sName='data', bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='nominal')
             ch.setObservation(data_obs, read_sumw2=True)
+            
+            #Blind bins
+            if unblind_sideband: ch.mask = validbins_list[iBin][bb_region]
+
+            print(f"TEST, {iBin}, {bb_region}, {validbins_list[iBin][bb_region]}")
     
     #Fill in the QCD in the actual fit model. 
     for iBin in range(nVmass):
@@ -705,20 +741,29 @@ def vh_rhalphabet(tmpdir):
 
 def main():
 
-    #Setting different years depending on 
-    if len(sys.argv) < 2:
-        print("Enter year")
+    # Check if there are enough arguments
+    if len(sys.argv) < 3:
+        print("Usage: make_cards.py <year> <unblind_sideband>")
         return
 
+    # Setting different years depending on the input
     global year
     year = sys.argv[1]
 
-    print("Running for " + year)
+    # Set the unblind_sideband variable
+    global unblind_sideband
+    unblind_sideband_input = sys.argv[2].lower()
+
+    if unblind_sideband_input in ['true', '1', 'yes', 'y']: unblind_sideband = True
+    elif unblind_sideband_input in ['false', '0', 'no', 'n']: unblind_sideband = False 
+
+    #Print out some info and make the output directory
+    print(f"Running for {year}. Unblind SideBand: {unblind_sideband}." )
 
     outdir = '{}/output'.format(year)
-    if not os.path.exists(outdir):
-        os.mkdir(outdir)
+    if not os.path.exists(outdir): os.mkdir(outdir)
 
+    #Produce the cards
     vh_rhalphabet(outdir)
 
 if __name__ == '__main__':

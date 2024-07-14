@@ -138,7 +138,7 @@ def make_hists_signal(year, bbthr, qcdthr, signal_pickle_path, signal_out_path):
                     fout[f"Vmass_{i}_fail_{p + 'bb'}_{s}"] = hist.export1d(hfail_bb.integrate('systematic',s))
 
     #Create other theory systematics
-    make_hist_TheorySyst(year, fout)
+    # make_hist_TheorySyst(year, fout)
 
 def make_hists_muonCR(year, bbthr, muonCR_pickle_path, muonCR_out_path):
 
