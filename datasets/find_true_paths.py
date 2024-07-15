@@ -6,7 +6,7 @@ import os
 import json
 import subprocess, sys
 
-file_path = 'infiles/2018/2018_VBFHToBB_DipoleRecoilOn.json'
+file_path = 'infiles/2016APV/2016APV_VBFHToBB_DipoleRecoilOn.json'
 
 # Function to update URLs in the JSON data
 def update_urls(data):
