@@ -15,7 +15,7 @@ from boostedhiggs.common import (
 )
 from boostedhiggs.corrections import (
     corrected_msoftdrop,
-    n2ddt_shift,
+#    n2ddt_shift,
     add_pileup_weight,
     add_HiggsEW_kFactors,
     add_VJets_kFactors,
@@ -192,7 +192,7 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
         fatjets = events.FatJet
         fatjets['msdcorr'] = corrected_msoftdrop(fatjets, self._year)
         fatjets['qcdrho'] = 2 * np.log(fatjets.msdcorr / fatjets.pt)
-        fatjets['n2ddt'] = fatjets.n2b1 - n2ddt_shift(fatjets, year=self._year)
+#        fatjets['n2ddt'] = fatjets.n2b1 - n2ddt_shift(fatjets, year=self._year)
         fatjets['msdcorr_full'] = fatjets['msdcorr']
 
         candidatejets = fatjets[(fatjets.pt > 200) & (abs(fatjets.eta) < 2.5) & fatjets.isTight] # this is loose in sampleContainer
