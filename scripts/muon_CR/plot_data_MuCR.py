@@ -93,8 +93,6 @@ def plot_h(h, labels, name, year):
     
     # Add horizontal line at 1
     ax2.axhline(1, color='black', linestyle='--', linewidth=1)
-    # Add horizontal line at 1
-    ax2.axhline(1, color='black', linestyle='--', linewidth=1)
     
     plt.savefig(f'plots/{year}_muCR_{name}.pdf', bbox_inches='tight')
     # plt.savefig(f'plots/{year}_muCR_{name}.png', bbox_inches='tight')

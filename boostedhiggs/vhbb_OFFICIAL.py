@@ -58,8 +58,7 @@ def ak4_jets(events, year):
     jets_selection = ((jets.pt > 30.) & 
                       (abs(jets.eta) < 5.0) & 
                       (jets.isTight) & 
-                      (jets.chEmEF < 0.9) & 
-                      (jets.neEmEF < 0.9) & 
+                      (jets.chEmEF + jets.neEmEF < 0.9) & 
                       ((jets.pt >= 50) | ((jets.pt < 50) & (jets.puId & 2) == 2)))
     
     jets = jets[jets_selection]

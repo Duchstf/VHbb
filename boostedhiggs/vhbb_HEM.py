@@ -52,7 +52,7 @@ def ak4_jets(events, year):
 
     jets = events.Jet
 
-    #Loose jet selection as recommended here
+    # Loose jet selection as recommended here
     # https://cms-jerc.web.cern.ch/Recommendations/#jet-veto-maps
 
     jets_selection = ((jets.pt > 30.) & 
