@@ -25,6 +25,7 @@ from boostedhiggs.corrections import (
     add_jec_variables,
     met_factory,
     lumiMasks,
+    get_VetoMap,
 )
 
 #Import the working points
@@ -40,16 +41,29 @@ def update(events, collections):
 
 def ak4_jets(events, year):
 
+    """
+    Related dicussion on how to apply jet veto maps from here
+
+    https://cms-talk.web.cern.ch/t/questions-about-jet-veto-maps-and-2018-hem/43448
+    """
+
     jets = events.Jet
-    jets = jets[(jets.pt > 30.) & (abs(jets.eta) < 5.0) & jets.isTight & (jets.puId > 0)]
-        
-    # EE noise for 2017                                             
-    if year == '2017':
-        jets = jets[
-            (jets.pt > 50)
-            | (abs(jets.eta) < 2.65)
-            | (abs(jets.eta) > 3.139)]
-        
+
+    #Loose jet selection as recommended here
+    # https://cms-jerc.web.cern.ch/Recommendations/#jet-veto-maps
+
+    jets_selection = ((jets.pt > 50.) & 
+                      (abs(jets.eta) < 2.5) & 
+                      (jets.isTight) & 
+                      (jets.chEmEF + jets.neEmEF < 0.9) & 
+                      ((jets.pt >= 50) | ((jets.pt < 50) & (jets.puId & 2) == 2)))
+    
+    jets = jets[jets_selection]
+
+    #Apply jet veto maps
+    jet_veto_map, _ = get_VetoMap(jets, year)
+    jets = jets[jet_veto_map]
+
     return jets
 
 
@@ -165,7 +179,7 @@ class VHBB_WTagCR(processor.ProcessorABC):
 
         # Selections for muon control region
         selection.add('minjetkinmu',
-            (candidatejet.pt >= 200)
+            (candidatejet.pt >= 400)
             & (candidatejet.pt < 1200)
             & (candidatejet.msdcorr >= 40.)
             & (candidatejet.msdcorr < 201.)
@@ -173,7 +187,6 @@ class VHBB_WTagCR(processor.ProcessorABC):
 
         #Count the number of ak4 jets that are away
         ak4_jets_events = ak4_jets(events, self._year)
-        n_ak4_jets = ak.count(ak4_jets_events.pt, axis=1)
         
         jets = ak4_jets_events[:, :4]
         dphi = abs(jets.delta_phi(candidatejet))
