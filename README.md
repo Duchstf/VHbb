@@ -109,7 +109,6 @@ conda env update --file environment.yml  --prune
 
 ## Bias Test
 * Following example from here: https://github.com/andrzejnovak/higgstocharm?tab=readme-ov-file#running-bias-tests
-* Tests performed in `scripts/BiasTest`
 * Tests done using combine v10
 
 ```
