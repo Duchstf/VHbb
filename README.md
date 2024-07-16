@@ -18,11 +18,11 @@ Analysis framework for VHbb analysis
 ### Papers
 * [ParticleNet BTV Paper](https://cds.cern.ch/record/2866276/files/BTV-22-001-pas.pdf)
 * [ATLAS VH](https://arxiv.org/abs/2312.07605)
-* **[Electroweak Restoration at the LHC and Beyond: The Vh Channel](https://arxiv.org/abs/2012.00774)**
-* A portrait of the Higgs boson by the CMS experiment ten years after the discovery: https://www.nature.com/articles/s41586-022-04892-x
+* [Electroweak Restoration at the LHC and Beyond: The Vh Channel](https://arxiv.org/abs/2012.00774)
+* [A portrait of the Higgs boson by the CMS experiment ten years after the discovery]( https://www.nature.com/articles/s41586-022-04892-x)
 
 ### Other relevant links
-* Combine installation: https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/#standalone-compilation-with-lcg
+* [Combine installation](https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/latest/)
 * [NanoAOD attributes](https://cms-nanoaod-integration.web.cern.ch/integration/cms-swCMSSW_12_4_X/mc123Xrun3_v10_doc.html)
 * [Save data array to ParQuet](https://awkward-array.org/doc/main/reference/generated/ak.to_parquet.html)
 
