@@ -1,6 +1,10 @@
 # VHbb
 Analysis framework for VHbb analysis
 
+
+<img src="https://github.com/user-attachments/assets/3c43623f-6a2c-4cc0-ab7d-9013d2eec666" alt="image" width="300"/>
+
+
 ## Documentation
 * Higgs -> BB subgroup twiki: https://twiki.cern.ch/twiki/bin/view/CMS/HiggsBB
 * Comments and reply for the review process: https://twiki.cern.ch/twiki/bin/view/CMSPublic/BoostedVqqHbbRun2
