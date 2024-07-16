@@ -112,3 +112,20 @@ conda env update --file environment.yml  --prune
 * Tests performed in `scripts/BiasTest`
 * Tests done using combine v10
 
+```
+for bias in 0 1 `seq 5 5 100`
+    do
+    combineTool.py -M FitDiagnostics --expectSignal $bias -n bias$bias -d model_combined.root --cminDefaultMinimizerStrategy 0 --robustFit=1 -t 20 -s 1:50:1 --job-mode condor --sub-opts='+JobFlavour = "workday"' --task-name ggHcc$bias
+    done
+```
+
+```
+for bias in 0 1 `seq 5 5 100`
+    do 
+    hadd -f bias$bias.root *Combinebias$bias.*
+    done
+```
+
+
+
+
