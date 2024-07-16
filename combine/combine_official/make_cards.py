@@ -245,7 +245,7 @@ def vh_rhalphabet(tmpdir):
     with open("files/samples.json", "r") as f: samples = json.load(f)
     with open("files/Vmass.json", "r") as f: VmassBins = np.asarray(json.load(f))
     with open('files/pnet-b.json', "r") as f: PnetSF = json.load(f)[year]['hp']['mutag']['ptbin0']
-    with open('files/sf.json') as f: SF = json.load(f)
+    with open('files/V_tagged_SFs.json') as f: SF = json.load(f)
     
     print("Current mass bins: ", VmassBins)
     nVmass = len(VmassBins) - 1
@@ -467,8 +467,9 @@ def vh_rhalphabet(tmpdir):
                     mtempl = AffineMorphTemplate(templ)
 
                     if sName not in ['QCD']:
+
                         # shift
-                        realshift = SF[year]['shift_SF_ERR']/smass('Wjets') * smass(sName)
+                        realshift = SF[year]['scale_SF_ERR']/smass('Wjets') * smass(sName)
                         _up = mtempl.get(shift=realshift)
                         _down = mtempl.get(shift=-realshift)
                         if badtemp_ma(_up[0]) or badtemp_ma(_down[0]):
@@ -589,12 +590,12 @@ def vh_rhalphabet(tmpdir):
                     sample.scale(sf)
                     if do_systematics: sample.setParamEffect(sys_PNetXbb, sfunc_up, sfunc_down)
 
-                # V SF
-                # if sName in ['VV','WH','ZH']:                                                 
-                    # sample.scale(SF[year]['V_SF'])
-                    # if do_systematics:
-                    #     effect = 1.0 + SF[year]['V_SF_ERR'] / SF[year]['V_SF']
-                    #     sample.setParamEffect(sys_veff,effect)
+                # V-tagged SF
+                if sName in ['VV','WH','ZH']:                                                 
+                    sample.scale(SF[year]['eff_SF'])
+                    if do_systematics:
+                        effect = 1.0 + SF[year]['eff_SF_ERR'] / SF[year]['eff_SF']
+                        sample.setParamEffect(sys_PNetVqq, effect)
 
                 ch.addSample(sample)
             # END loop over MC samples 
