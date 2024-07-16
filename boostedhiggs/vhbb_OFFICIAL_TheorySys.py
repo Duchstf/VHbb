@@ -15,7 +15,6 @@ from boostedhiggs.common import (
 )
 from boostedhiggs.corrections import (
     corrected_msoftdrop,
-    n2ddt_shift,
     add_pileup_weight,
     add_HiggsEW_kFactors,
     add_VJets_kFactors,
@@ -26,6 +25,7 @@ from boostedhiggs.corrections import (
     add_jec_variables,
     met_factory,
     lumiMasks,
+    get_VetoMap,
 
     # Jennet adds theory variations                                                                                                
     add_ps_weight,
@@ -48,16 +48,29 @@ def update(events, collections):
 
 def ak4_jets(events, year):
 
+    """
+    Related dicussion on how to apply jet veto maps from here
+
+    https://cms-talk.web.cern.ch/t/questions-about-jet-veto-maps-and-2018-hem/43448
+    """
+
     jets = events.Jet
-    jets = jets[(jets.pt > 30.) & (abs(jets.eta) < 5.0) & jets.isTight & (jets.puId > 0)]
-        
-    # EE noise for 2017                                             
-    if year == '2017':
-        jets = jets[
-            (jets.pt > 50)
-            | (abs(jets.eta) < 2.65)
-            | (abs(jets.eta) > 3.139)]
-        
+
+    #Loose jet selection as recommended here
+    # https://cms-jerc.web.cern.ch/Recommendations/#jet-veto-maps
+
+    jets_selection = ((jets.pt > 30.) & 
+                      (abs(jets.eta) < 5.0) & 
+                      (jets.isTight) & 
+                      (jets.chEmEF + jets.neEmEF < 0.9) & 
+                      ((jets.pt >= 50) | ((jets.pt < 50) & (jets.puId & 2) == 2)))
+    
+    jets = jets[jets_selection]
+
+    #Apply jet veto maps
+    jet_veto_map, _ = get_VetoMap(jets, year)
+    jets = jets[jet_veto_map]
+
     return jets
 
 
@@ -183,7 +196,6 @@ class VHbbProcessorOfficial_TheorySys(processor.ProcessorABC):
         fatjets = events.FatJet
         fatjets['msdcorr'] = corrected_msoftdrop(fatjets, self._year)
         fatjets['qcdrho'] = 2 * np.log(fatjets.msdcorr / fatjets.pt)
-        fatjets['n2ddt'] = fatjets.n2b1 - n2ddt_shift(fatjets, year=self._year)
         fatjets['msdcorr_full'] = fatjets['msdcorr']
 
         candidatejets = fatjets[(fatjets.pt > 200) & (abs(fatjets.eta) < 2.5) & fatjets.isTight] # this is loose in sampleContainer
