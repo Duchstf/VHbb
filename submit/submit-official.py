@@ -26,7 +26,7 @@ from boostedhiggs import VHbbProcessorOfficial as vhbb_processor
 tag = "vhbb_official"
 syst = True
 year = sys.argv[1]
-ignore_list = ['muondata', 'WW_NLO', 'WZ_NLO', 'ZZ_NLO'] #Sample to ignore processing
+ignore_list = ['muondata', 'WWNLO', 'WZNLO', 'ZZNLO'] #Sample to ignore processing
 
 from distributed import Client
 from lpcjobqueue import LPCCondorCluster
@@ -37,7 +37,12 @@ from datetime import datetime
 
 env_extra = [
     f"export PYTHONPATH=$PYTHONPATH:{os.getcwd()}",
+    "export XRD_RUNFORKHANDLER=1",
+    f"export X509_USER_PROXY=/uscms/home/dhoang/x509up_u55495"
 ]
+
+for cmd in env_extra:
+    os.system(cmd)
 
 cluster = LPCCondorCluster(
     shared_temp_directory="/tmp",
