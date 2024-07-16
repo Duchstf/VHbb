@@ -77,7 +77,7 @@ with Client(cluster) as client:
                 args = {'savemetrics':True, 'schema':NanoAODSchema}
 
                 #Safe to skip bad files for MC, not safe for data
-                skipBadFiles = 0 if 'Data' in index else 1
+                skipBadFiles = 0 if 'data' in index else 1
                 output = processor.run_uproot_job(
                     this_file,
                     treename="Events",

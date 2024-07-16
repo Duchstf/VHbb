@@ -24,6 +24,15 @@ from dask.distributed import performance_report
 from dask_jobqueue import HTCondorCluster, SLURMCluster
 from datetime import datetime
 
+env_extra = [
+    f"export PYTHONPATH=$PYTHONPATH:{os.getcwd()}",
+    "export XRD_RUNFORKHANDLER=1",
+    f"export X509_USER_PROXY=/uscms/home/dhoang/x509up_u55495"
+]
+
+for cmd in env_extra:
+    os.system(cmd)
+
 # Add path so the script sees the modules in parent directory
 sys.path.append('/srv')
 
@@ -77,7 +86,7 @@ with Client(cluster) as client:
                 args = {'savemetrics':True, 'schema':NanoAODSchema}
 
                 #Safe to skip bad files for MC, not safe for data
-                skipBadFiles = 0 if 'Data' in index else 1
+                skipBadFiles = 0 if 'data' in index else 1
                 output = processor.run_uproot_job(
                     this_file,
                     treename="Events",

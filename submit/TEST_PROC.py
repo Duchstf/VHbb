@@ -13,22 +13,13 @@ import os,sys
 # Add path so the script sees the modules in parent directory
 sys.path.append('/srv')
 
-# env_extra = [
-#     "export XRD_RUNFORKHANDLER=1",
-#     f"export X509_USER_PROXY=/uscms/home/dhoang/x509up_u55495",
-#     # f'export X509_CERT_DIR={os.environ["X509_CERT_DIR"]}',
-# ]
-
-# for cmd in env_extra:
-#     os.system(cmd)
-
 fileset = {
     "test": [
          "root://cmsxrootd-site.fnal.gov//store/mc/RunIISummer20UL18NanoAODv9/QCD_HT100to200_TuneCP5_PSWeights_13TeV-madgraph-pythia8/NANOAODSIM/106X_upgrade2018_realistic_v16_L1v1-v1/2520000/C9C073BD-47D3-8F43-A809-EDA7FFBF176E.root"]
 }
 
 #autoreload forces the kernel to reload the processor to include any new changes
-from boostedhiggs import VHbbProcessorHEM as vhbb_processor
+from boostedhiggs import VHBB_WTagCR as vhbb_processor
 
 import time
 tstart = time.time()
