@@ -103,3 +103,7 @@ If you make any update for the environment, please edit the `environment.yml` fi
 conda env update --file environment.yml  --prune
 ```
 
+## Bias Test
+* Following example from here: https://github.com/andrzejnovak/higgstocharm?tab=readme-ov-file#running-bias-tests
+* Tests performed in `scripts/BiasTest`
+
