@@ -42,7 +42,7 @@ for year in ['2016', '2016APV' ,'2017', '2018']:
 
                 # if ('data' in k): filesets[v] += ["root://cmsxrootd.fnal.gov//store/test/xrootd/T1_US_FNAL" + f for f in files_no_redirector if len(f) > 0]
                 # else: filesets[v] += ["root://cmsxrootd-site.fnal.gov/" + f for f in files_no_redirector if len(f) > 0]
-                filesets[v] += ["root://cmsxrootd-site.fnal.gov/" + f for f in files_no_redirector if len(f) > 0]
+                filesets[v] += ["root://cmsxrootd.fnal.gov/" + f for f in files_no_redirector if len(f) > 0]
 
             print(v, len(filesets[v]))
            
