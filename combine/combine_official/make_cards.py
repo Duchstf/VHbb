@@ -597,7 +597,7 @@ def vh_rhalphabet(tmpdir):
                         effect = 1.0 + SF[year]['eff_SF_ERR'] / SF[year]['eff_SF']
                         sample.setParamEffect(sys_PNetVqq, effect)
 
-                if sName in ['WH','ZH']: sample.scale(5.0)
+                # if sName in ['WH','ZH']: sample.scale(5.0)
 
                 ch.addSample(sample)
             # END loop over MC samples 

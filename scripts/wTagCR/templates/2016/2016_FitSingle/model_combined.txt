@@ -1,18 +1,18 @@
 Combination of wsfSinglePass=wsfSinglePass.txt  wsfSingleFail=wsfSingleFail.txt
 imax 2 number of bins
 jmax 1 number of processes minus 1
-kmax 167 number of nuisance parameters
+kmax 172 number of nuisance parameters
 ----------------------------------------------------------------------------------------------------------------------------------
 shapes *              wsfSingleFail  sfModel.root sfModel:wsfSingleFail_$PROCESS sfModel:wsfSingleFail_$PROCESS_$SYSTEMATIC
 shapes *              wsfSinglePass  sfModel.root sfModel:wsfSinglePass_$PROCESS sfModel:wsfSinglePass_$PROCESS_$SYSTEMATIC
 ----------------------------------------------------------------------------------------------------------------------------------
 bin          wsfSinglePass  wsfSingleFail
-observation  515            1377         
+observation  2308           8949         
 ----------------------------------------------------------------------------------------------------------------------------------
 bin                                                 wsfSinglePass  wsfSinglePass  wsfSingleFail  wsfSingleFail
 process                                             wqq            qcd            wqq            qcd          
 process                                             0              1              0              1            
-rate                                                95.839         579.893        137.088        1345.928     
+rate                                                1145.243       1817.87        1976.715       7211.925     
 ----------------------------------------------------------------------------------------------------------------------------------
 CMS_jecs                lnN                         1.02           1.02           1.02           1.02         
 CMS_lumi                lnN                         1.023          1.023          1.023          1.023        
@@ -85,6 +85,7 @@ wsfSingleFail_wqq_mcstat_bin23   shape              -              -            
 wsfSingleFail_wqq_mcstat_bin24   shape              -              -              1.0            -            
 wsfSingleFail_wqq_mcstat_bin25   shape              -              -              1.0            -            
 wsfSingleFail_wqq_mcstat_bin26   shape              -              -              1.0            -            
+wsfSingleFail_wqq_mcstat_bin27   shape              -              -              1.0            -            
 wsfSingleFail_wqq_mcstat_bin28   shape              -              -              1.0            -            
 wsfSingleFail_wqq_mcstat_bin29   shape              -              -              1.0            -            
 wsfSingleFail_wqq_mcstat_bin3   shape               -              -              1.0            -            
@@ -169,11 +170,15 @@ wsfSinglePass_wqq_mcstat_bin21   shape              1.0            -            
 wsfSinglePass_wqq_mcstat_bin22   shape              1.0            -              -              -            
 wsfSinglePass_wqq_mcstat_bin23   shape              1.0            -              -              -            
 wsfSinglePass_wqq_mcstat_bin24   shape              1.0            -              -              -            
+wsfSinglePass_wqq_mcstat_bin25   shape              1.0            -              -              -            
 wsfSinglePass_wqq_mcstat_bin26   shape              1.0            -              -              -            
+wsfSinglePass_wqq_mcstat_bin27   shape              1.0            -              -              -            
 wsfSinglePass_wqq_mcstat_bin28   shape              1.0            -              -              -            
+wsfSinglePass_wqq_mcstat_bin29   shape              1.0            -              -              -            
 wsfSinglePass_wqq_mcstat_bin3   shape               1.0            -              -              -            
 wsfSinglePass_wqq_mcstat_bin30   shape              1.0            -              -              -            
 wsfSinglePass_wqq_mcstat_bin32   shape              1.0            -              -              -            
+wsfSinglePass_wqq_mcstat_bin37   shape              1.0            -              -              -            
 wsfSinglePass_wqq_mcstat_bin4   shape               1.0            -              -              -            
 wsfSinglePass_wqq_mcstat_bin44   shape              1.0            -              -              -            
 wsfSinglePass_wqq_mcstat_bin5   shape               1.0            -              -              -            
@@ -183,7 +188,7 @@ wsfSinglePass_wqq_mcstat_bin8   shape               1.0            -            
 wsfSinglePass_wqq_mcstat_bin9   shape               1.0            -              -              -            
 effSF_un_effect_wsfSinglePass_qcd  rateParam wsfSinglePass qcd (1.0*@0) effSF_un 
 effSF_effect_wsfSinglePass_wqq  rateParam wsfSinglePass wqq (1.0*@0) effSF 
-effSF_un_effect_wsfSingleFail_qcd  rateParam wsfSingleFail qcd (((1-@0)*0.43084986026166167)+1) effSF_un 
-effSF_effect_wsfSingleFail_wqq  rateParam wsfSingleFail wqq (((1-@0)*0.6991034402333425)+1) effSF 
+effSF_un_effect_wsfSingleFail_qcd  rateParam wsfSingleFail qcd (((1-@0)*0.2520645110419009)+1) effSF_un 
+effSF_effect_wsfSingleFail_wqq  rateParam wsfSingleFail wqq (((1-@0)*0.5793667471286279)+1) effSF 
 effSF extArg sfModel.root:sfModel
 effSF_un extArg sfModel.root:sfModel
