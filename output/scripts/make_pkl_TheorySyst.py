@@ -22,7 +22,7 @@ with open('../../files/xsec.json') as f: xs = json.load(f)
 with open('../../files/pmap.json') as f: pmap = json.load(f)
 with open('../../files/lumi.json') as f: lumis = json.load(f)
 bb_WPs = { '2016APV_bb1': 0.9883, '2016_bb1': 0.9883, '2017_bb1': 0.9870, '2018_bb1':  0.9880}
-qcd_WPs = { '2016APV_qcd2': 0.0541, '2016_qcd2': 0.0882, '2017_qcd2': 0.0541, '2018_qcd2':  0.0741}
+qcd_WPs = { '2016APV_qcd2': 0.0741, '2016_qcd2': 0.0741, '2017_qcd2': 0.0741, '2018_qcd2':  0.0741}
 theory_syst_samples = ['VV', 'VBFDipoleRecoilOn','ggF','ttH', 'WH','ZH']
 scalevar_map = {'VV':3, 'ggF':7, 'ttH':7, 'WH':3, 'ZH':3, 'VBFDipoleRecoilOn':3}
 if len(sys.argv) < 2: raise Exception("Enter year.") # Take in the year and tag

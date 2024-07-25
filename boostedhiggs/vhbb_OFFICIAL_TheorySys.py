@@ -73,7 +73,6 @@ def ak4_jets(events, year):
 
     return jets
 
-
 class VHbbProcessorOfficial_TheorySys(processor.ProcessorABC):
     
     def __init__(self, year='2017', jet_arbitration='T_bvq',
