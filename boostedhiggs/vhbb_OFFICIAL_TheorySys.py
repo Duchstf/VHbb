@@ -112,6 +112,7 @@ class VHbbProcessorOfficial_TheorySys(processor.ProcessorABC):
                 hist.Bin('qcd2', r'Jet 2 Paticle Net QCD Score', qcd_bins),
 
                 hist.Bin('genflavor1', 'Gen. jet 1 flavor', [1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
+                hist.Bin('genflavor2', 'Gen. jet 2 flavor', [1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
                 hist.Bin('pt1', 'Jet 1 pT', [450, 500, 600])
             )
         }
@@ -360,6 +361,7 @@ class VHbbProcessorOfficial_TheorySys(processor.ProcessorABC):
                 qcd2=normalize(qcd2, cut),
 
                 genflavor1=normalize(genflavor1, cut),
+                genflavor2=normalize(genflavor2, cut),
                 pt1=normalize(candidatejet.pt, cut),
                 weight=weight,
             )
