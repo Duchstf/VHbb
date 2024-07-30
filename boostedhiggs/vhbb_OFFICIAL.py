@@ -350,7 +350,7 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
                 qcd2=normalize(qcd2, cut),
 
                 genflavor1=normalize(genflavor1, cut),
-                genflavor1=normalize(genflavor2, cut),
+                genflavor2=normalize(genflavor2, cut),
                 pt1=normalize(candidatejet.pt, cut),
                 weight=weight,
             )
