@@ -23,6 +23,15 @@ from dask.distributed import performance_report
 from dask_jobqueue import HTCondorCluster, SLURMCluster
 from datetime import datetime
 
+env_extra = [
+    f"export PYTHONPATH=$PYTHONPATH:{os.getcwd()}",
+    "export XRD_RUNFORKHANDLER=1",
+    f"export X509_USER_PROXY=/uscms/home/dhoang/x509up_u55495"
+]
+
+for cmd in env_extra:
+    os.system(cmd)
+
 # Add path so the script sees the modules in parent directory
 sys.path.append('/srv')
 
@@ -34,10 +43,11 @@ syst = True
 memory='12GB'
 
 #Had to split ZH due to memory issues
-CR_list = ['WH', 'ttH', 'ggF', 'VBFHToBBDipoleRecoilOn', 'VV', 'ZHHToBBZToQQ', 'ZHHToBBZToLL', 'ZHHToBBZToNuNu', 'ggZHHToBBZToQQ', 'ggZHHToBBZToLL', 'ggZHHToBBZToNuNu']
+CR_list = ['ttH', 'ggF', 'VBFHToBBDipoleRecoilOn', 'VV',
+           'ZHHToBBZToQQ', 'ZHHToBBZToLL', 'ZHHToBBZToNuNu', 'ggZHHToBBZToQQ', 'ggZHHToBBZToLL', 'ggZHHToBBZToNuNu',
+           'WminusHHToBBWToQQ', 'WplusHHToBBWToQQ', 'WminusHHToBBWToLNu', 'WplusHHToBBWToLNu']
 
-env_extra = [f"export PYTHONPATH=$PYTHONPATH:{os.getcwd()}"]
-cluster = LPCCondorCluster( shared_temp_directory="/tmp", transfer_input_files=["boostedhiggs"], ship_env=True, memory=memory)
+cluster = LPCCondorCluster(shared_temp_directory="/tmp", transfer_input_files=["boostedhiggs"], ship_env=True, memory=memory)
 
 out_path = "output/coffea/{}/{}/".format(tag,year)
 os.system('mkdir -p  %s' %out_path)

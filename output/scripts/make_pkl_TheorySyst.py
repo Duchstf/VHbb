@@ -5,7 +5,7 @@ Make a pickle file out of the coffea histograms. Like this:
 
 ./shell
 
-python make_pkl.py 2017 pnet_scan_msd_Aug4_2023
+python make_pkl_TheorySyst.py 2018
 """
 
 import os, sys

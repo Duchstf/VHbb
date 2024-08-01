@@ -20,7 +20,8 @@ do
     cp ../infiles/$year/${year}_${sample}.json $year/
   done
 
-  #Split ZH
+  #Split ZH, WH
   python split_ZH.py $year
+  python split_WH.py $year
 
 done
