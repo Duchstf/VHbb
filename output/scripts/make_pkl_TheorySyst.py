@@ -21,15 +21,39 @@ import shutil
 with open('../../files/xsec.json') as f: xs = json.load(f)     
 with open('../../files/pmap.json') as f: pmap = json.load(f)
 with open('../../files/lumi.json') as f: lumis = json.load(f)
+
+#Working points
 bb_WPs = { '2016APV_bb1': 0.9883, '2016_bb1': 0.9883, '2017_bb1': 0.9870, '2018_bb1':  0.9880}
 qcd_WPs = { '2016APV_qcd2': 0.0741, '2016_qcd2': 0.0741, '2017_qcd2': 0.0741, '2018_qcd2':  0.0741}
+
+#Samples definition
 theory_syst_samples = ['VV', 'VBFDipoleRecoilOn','ggF','ttH', 'WH','ZH']
 scalevar_map = {'VV':3, 'ggF':7, 'ttH':7, 'WH':3, 'ZH':3, 'VBFDipoleRecoilOn':3}
-if len(sys.argv) < 2: raise Exception("Enter year.") # Take in the year and tag
 
+#Year definitions and tags 
+if len(sys.argv) < 2: raise Exception("Enter year.") # Take in the year and tag
 year = sys.argv[1]
 tag = "vhbb_theory_systematics"
 outdir = '../{}/{}'.format(tag,year)
+
+sample_coffea_files_map = {
+    'VV': [f'../coffea/{tag}/{year}/{year}_dask_VV.coffea'],
+    'VBFDipoleRecoilOn': [f'../coffea/{tag}/{year}/{year}_dask_VBFHToBBDipoleRecoilOn.coffea'],
+    'ggF': [f'../coffea/{tag}/{year}/{year}_dask_ggF.coffea'],
+    'ttH': [f'../coffea/{tag}/{year}/{year}_dask_ttH.coffea'],
+
+    'WH': [f'../coffea/{tag}/{year}/{year}_dask_WminusHHToBBWToQQ.coffea',
+           f'../coffea/{tag}/{year}/{year}_dask_WplusHHToBBWToQQ.coffea',
+           f'../coffea/{tag}/{year}/{year}_dask_WminusHHToBBWToLNu.coffea',
+           f'../coffea/{tag}/{year}/{year}_dask_WplusHHToBBWToLNu.coffea'],
+
+    'ZH': [f'../coffea/{tag}/{year}/{year}_dask_ZHHToBBZToQQ.coffea',
+           f'../coffea/{tag}/{year}/{year}_dask_ZHHToBBZToLL.coffea',
+           f'../coffea/{tag}/{year}/{year}_dask_ZHHToBBZToNuNu.coffea',
+           f'../coffea/{tag}/{year}/{year}_dask_ggZHHToBBZToQQ.coffea',
+           f'../coffea/{tag}/{year}/{year}_dask_ggZHHToBBZToLL.coffea',
+           f'../coffea/{tag}/{year}/{year}_dask_ggZHHToBBZToNuNu.coffea'],
+}
 
 #Define the score threshold
 bbthr = bb_WPs[f'{year}_bb1']
@@ -173,8 +197,9 @@ def theory_process(sample, coffea_files):
 
     #Reduce the systematics
     to_reduce_list = ['PDF_weight', 'scalevar']
-    templates = templates.integrate('region','signal').integrate('qcd2', slice(0., qcdthr)).integrate('pt1', slice(450, None), overflow='over')
+    templates = templates.integrate('region','signal').integrate('qcd2', slice(0., qcdthr)).integrate('pt1', slice(450, None), overflow='over').sum('genflavor2', overflow='under')
     mass_range = [40., 68., 110., 201.]
+
     for i in range(len(mass_range)-1):
         print('Running for {} in {} mass region'.format(year, i))
         msd2_int_range = slice(mass_range[i], mass_range[i+1])
@@ -226,7 +251,8 @@ def main():
     os.system('mkdir -p  %s' %outdir)
 
     for sample in theory_syst_samples: 
-        coffea_files =  [infile for infile in infiles if sample in infile]
+        coffea_files =  sample_coffea_files_map[sample]
+        print(f"Processing sample: {sample}. Coffea files: {coffea_files}")
         theory_process(sample, coffea_files)
 
 if __name__ == "__main__":
