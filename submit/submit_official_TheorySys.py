@@ -43,7 +43,7 @@ syst = True
 memory='12GB'
 
 #Had to split ZH due to memory issues
-CR_list = ['ttH', 'ggF', 'VBFHToBBDipoleRecoilOn', 'VV',
+CR_list = ['ttH', 'ggF', 'VV', #'VBFHToBBDipoleRecoilOn',
            'ZHHToBBZToQQ', 'ZHHToBBZToLL', 'ZHHToBBZToNuNu', 'ggZHHToBBZToQQ', 'ggZHHToBBZToLL', 'ggZHHToBBZToNuNu',
            'WminusHHToBBWToQQ', 'WplusHHToBBWToQQ', 'WminusHHToBBWToLNu', 'WplusHHToBBWToLNu']
 
