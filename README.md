@@ -21,7 +21,7 @@ Analysis framework for VHbb analysis
 
 ### Papers
 * [ParticleNet BTV Paper](https://cds.cern.ch/record/2866276/files/BTV-22-001-pas.pdf)
-* [ATLAS VH](https://arxiv.org/abs/2312.07605)
+* [ATLAS VH](https://arxiv.org/abs/2312.07605), [PRL Paper](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.132.131802)
 * [Electroweak Restoration at the LHC and Beyond: The Vh Channel](https://arxiv.org/abs/2012.00774)
 * [A portrait of the Higgs boson by the CMS experiment ten years after the discovery]( https://www.nature.com/articles/s41586-022-04892-x)
 
