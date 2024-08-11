@@ -26,6 +26,7 @@ Analysis framework for VHbb analysis
 * [A portrait of the Higgs boson by the CMS experiment ten years after the discovery]( https://www.nature.com/articles/s41586-022-04892-x)
 
 ### Other relevant links
+* [Z' twiki](https://twiki.cern.ch/twiki/bin/edit/CMS/EXO24007)
 * [Combine installation](https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/latest/)
 * [NanoAOD attributes](https://cms-nanoaod-integration.web.cern.ch/integration/cms-swCMSSW_12_4_X/mc123Xrun3_v10_doc.html)
 * [Save data array to ParQuet](https://awkward-array.org/doc/main/reference/generated/ak.to_parquet.html)
