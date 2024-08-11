@@ -7,7 +7,7 @@ python make_infiles.py
 """
 
 custom_list = ['VBFDipoleRecoilOn']
-target_list = ['muondata']
+target_list = ['VV']
 
 import os
 import json
@@ -25,6 +25,8 @@ for year in ['2016', '2016APV' ,'2017', '2018']:
         # if k in custom_list: continue
         if k not in target_list: continue
 
+        print(f"Processing {k} for year {year}:")
+
         outfilename = f'infiles/{year}/{year}_{k}.json'
         filesets = {}
         for v in val:
@@ -41,7 +43,7 @@ for year in ['2016', '2016APV' ,'2017', '2018']:
                 files_no_redirector = longstring.split('\n')
 
                 if ('data' in k): filesets[v] += ["root://cmsxrootd.fnal.gov//store/test/xrootd/T1_US_FNAL" + f for f in files_no_redirector if len(f) > 0]
-                # else: filesets[v] += ["root://cmsxrootd-site.fnal.gov/" + f for f in files_no_redirector if len(f) > 0]
+                else: filesets[v] += ["root://cmsxrootd-site.fnal.gov/" + f for f in files_no_redirector if len(f) > 0]
                 # filesets[v] += ["root://cmsxrootd.fnal.gov/" + f for f in files_no_redirector if len(f) > 0]
 
             print(v, len(filesets[v]))
