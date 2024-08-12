@@ -29,6 +29,7 @@ Analysis framework for VHbb analysis
 * [Combine installation](https://cms-analysis.github.io/HiggsAnalysis-CombinedLimit/latest/)
 * [NanoAOD attributes](https://cms-nanoaod-integration.web.cern.ch/integration/cms-swCMSSW_12_4_X/mc123Xrun3_v10_doc.html)
 * [Save data array to ParQuet](https://awkward-array.org/doc/main/reference/generated/ak.to_parquet.html)
+* [BTV Citation list](https://btv-wiki.docs.cern.ch/PerformanceCalibration/Citations/)
 
 ----
 ## Environment set up
