@@ -218,7 +218,7 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
                 (events.Tau.pt > 20)
                 & (abs(events.Tau.dz) < 0.2)
                 & (abs(events.Tau.eta) < 2.3)
-                & (events.Tau.decayMode > 0)
+                & (events.Tau.decayMode >= 0)
                 & (events.Tau.decayMode != 5)
                 & (events.Tau.decayMode != 6)
                 & (events.Tau.decayMode != 7)
