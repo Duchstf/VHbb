@@ -6,7 +6,6 @@ Analysis framework for VHbb analysis
 
 
 ## Documentation
-* Higgs -> BB subgroup twiki: https://twiki.cern.ch/twiki/bin/view/CMS/HiggsBB
 * Twiki: https://twiki.cern.ch/twiki/bin/view/CMSPublic/BoostedVqqHbbRun2
 * iCMS AN Document Server: https://icms.cern.ch/tools/publications/notes/entries/AN/2022
 * CADI: https://cms.cern.ch/iCMS/analysisadmin/cadilines?awg=any&awgyear=2024
