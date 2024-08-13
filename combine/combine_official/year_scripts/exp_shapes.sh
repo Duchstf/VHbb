@@ -15,7 +15,7 @@ elif [[ "$PWD" == *"allyears"* ]]; then
 fi
 
 if [[ "$1" == "unblind" || "$1" == "unblind_sideband" ]]; then
-combine -M FitDiagnostics -m 125 output/testModel${year}/model_combined.root --setParameters rVH=1,rVV=1 --saveShapes --saveWithUncertainties --cminDefaultMinimizerStrategy 0 --robustFit=1
+combine -M FitDiagnostics -m 125 output/testModel${year}/model_combined.root --setParameters rVH=1,rVV=1 --freezeParameters rVH,rVV --saveShapes --saveWithUncertainties --cminDefaultMinimizerStrategy 0 --robustFit=1
 else
 #-t -1 keeps us from using the data.
 combine -M FitDiagnostics -m 125 output/testModel${year}/model_combined.root --setParameters rVH=1,rVV=1 --saveShapes --saveWithUncertainties --cminDefaultMinimizerStrategy 0 --robustFit=1 -t -1
