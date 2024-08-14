@@ -591,14 +591,14 @@ def vh_rhalphabet(tmpdir):
                     if do_systematics: sample.setParamEffect(sys_PNetXbb, sfunc_up, sfunc_down)
 
                 # V-tagged SF
-                if sName in ['VV','WH','ZH']:                                                 
-                    sample.scale(SF[year]['eff_SF'])
-                    if do_systematics:
-                        effect = 1.0 + SF[year]['eff_SF_ERR'] / SF[year]['eff_SF']
-                        sample.setParamEffect(sys_PNetVqq, effect)
+                # if sName in ['VV','WH','ZH']:                                                 
+                #     sample.scale(SF[year]['eff_SF'])
+                #     if do_systematics:
+                #         effect = 1.0 + SF[year]['eff_SF_ERR'] / SF[year]['eff_SF']
+                #         sample.setParamEffect(sys_PNetVqq, effect)
 
                 #Scale down to do background only fit
-                if sName in ['WH','ZH']: sample.scale(1e-5)
+                # if sName in ['WH','ZH']: sample.scale(1e-5)
 
                 ch.addSample(sample)
             # END loop over MC samples 

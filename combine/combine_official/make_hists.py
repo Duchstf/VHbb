@@ -83,7 +83,7 @@ def make_hists_signal(year, bbthr, qcdthr, signal_pickle_path, signal_out_path):
     if not os.path.isfile(signal_pickle_path): raise FileNotFoundError("You need to link the pickle file (using absolute paths)")
 
     #Read in the pickle file
-    pickle_hist =  pickle.load(open(signal_pickle_path,'rb')).integrate('region','signal').integrate('qcd2', slice(0., qcdthr)).integrate('pt1', slice(450, None), overflow='over')
+    pickle_hist =  pickle.load(open(signal_pickle_path,'rb')).integrate('region','signal').integrate('qcd2', slice(0., qcdthr)).integrate('pt1', slice(600, None), overflow='over')
     check_missing(pickle_hist)
 
     for i in range(len(mass_range)-1):
