@@ -377,7 +377,7 @@ def vh_rhalphabet(tmpdir):
     tf_MCtempl_params_final = tf_MCtempl(ptscaled, rhoscaled)
     
     # Start fitting data to mc transfer factor                   
-    with open('files/initial_vals_data.json') as f: initial_vals_data = np.array(json.load(f)['initial_vals'])
+    with open(f'files/initial_vals_TFres_{year}.json') as f: initial_vals_data = np.array(json.load(f)['initial_vals'])
     
     print((initial_vals_data.shape[0]-1,initial_vals_data.shape[1]-1))
 
@@ -597,7 +597,8 @@ def vh_rhalphabet(tmpdir):
                         effect = 1.0 + SF[year]['eff_SF_ERR'] / SF[year]['eff_SF']
                         sample.setParamEffect(sys_PNetVqq, effect)
 
-                # if sName in ['WH','ZH']: sample.scale(5.0)
+                #Scale down to do background only fit
+                if sName in ['WH','ZH']: sample.scale(1e-5)
 
                 ch.addSample(sample)
             # END loop over MC samples 
