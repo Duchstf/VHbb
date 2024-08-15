@@ -63,12 +63,16 @@ xs['TT_MTT700To1000'] = 6.455e+01
 xs['ST_s-channel_4f_leptonDecays'] = 3.549e+00 * BR_TLeptonic
 xs['ST_s-channel_4f_hadronicDecays'] = 3.549e+00 * BR_THadronic
 xs['ST_t-channel_antitop_4f_InclusiveDecays'] = 6.793e+01
+xs["ST_t-channel_antitop"] = 67.93
 xs['ST_t-channel_antitop_5f_InclusiveDecays'] = 7.174e+01
 xs['ST_t-channel_top_4f_InclusiveDecays'] = 1.134e+02
+xs["ST_t-channel_top"] = 113.4
 xs['ST_t-channel_top_5f_InclusiveDecays'] = 1.197e+02
 xs['ST_tW_antitop_5f_inclusiveDecays'] = 3.251e+01
+xs['ST_tW_antitop'] = 32.51
 xs['ST_tW_antitop_5f_NoFullyHadronicDecays'] = 3.251e+01 * BR_TLeptonic
 xs['ST_tW_top_5f_inclusiveDecays'] = 3.245e+01
+xs["ST_tW_top"] = 32.45
 xs['ST_tW_top_5f_NoFullyHadronicDecays'] = 3.245e+01 * BR_TLeptonic
 
 # W+jets W(qq)
@@ -125,12 +129,17 @@ xs['WW'] = 7.583e+01
 xs['WZ'] = 2.756e+01
 xs['ZZ'] = 1.214e+01
 
+#VV NLO
 xs['WWTo1L1Nu2Q_NLO'] = 5.090e+01
 xs['WWTo4Q_NLO'] = 5.157e+01
+
+xs['WZTo4Q_NLO'] = 8.030e+01
+xs['WZToLNu2B_NLO'] = 2.638e+01
 xs['WZTo1L1Nu2Q_NLO'] = 9.152e+00
 xs['WZTo2Q2L_NLO'] = 6.422e+00
+
 xs['ZZTo2Q2L_NLO'] = 3.705e+00
-xs['ZZTo2Q2Nu_NLO'] = 4.498e+00
+xs['ZZTo2Nu2Q_NLO'] = 4.498e+00
 xs['ZZTo4Q_NLO'] = 3.295e+00
 
 # Higgs

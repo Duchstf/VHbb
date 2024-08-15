@@ -1,2 +1,0 @@
-combineCards.py VBin0pass2018=VBin0pass2018.txt VBin0fail2018=VBin0fail2018.txt VBin1pass2018=VBin1pass2018.txt VBin1fail2018=VBin1fail2018.txt VBin2pass2018=VBin2pass2018.txt VBin2fail2018=VBin2fail2018.txt muonCRpass2018=muonCRpass2018.txt muonCRfail2018=muonCRfail2018.txt > model_combined.txt
-text2workspace.py model_combined.txt
