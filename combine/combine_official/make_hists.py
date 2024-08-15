@@ -22,7 +22,7 @@ qcd_WP = 0.0741
 mass_range = [40., 68., 110., 201.]
 
 #Same in make_cards.py
-samples = ['QCD','VV', 'VV_NLO', 'Wjets', 'Zjets',
+samples = ['QCD','VVNLO', 'Wjets', 'Zjets',
             'VBFDipoleRecoilOn','ggF','ttH', 'WH','ZH',
             'singlet', 'ttbar',
             'data']
@@ -74,71 +74,30 @@ def check_missing(pickle_hist):
     with open("files/sys_list.json", "w") as f: json.dump(sys_list, f)
     with open("files/Vmass.json", "w") as f:json.dump(mass_range, f)
 
-def make_hists_signal(year, bbthr, qcdthr, signal_pickle_path, signal_out_path):
+def make_hists_signal(year, fout):
 
-    #If file already exists remove it and create a new file
-    if os.path.isfile(signal_out_path): os.remove(signal_out_path)
-    fout = uproot3.create(signal_out_path)
+   processed_signal_dir =  f'/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/vhbb_official/{year}'
 
-    if not os.path.isfile(signal_pickle_path): raise FileNotFoundError("You need to link the pickle file (using absolute paths)")
+   for sample in samples:
+       
+        processed_sample = f'{processed_signal_dir}/{sample}.root'
+        h_file = uproot3.open(processed_sample)
 
-    #Read in the pickle file
-    pickle_hist =  pickle.load(open(signal_pickle_path,'rb')).integrate('region','signal').integrate('qcd2', slice(0., qcdthr)).integrate('pt1', slice(450, None), overflow='over')
-    check_missing(pickle_hist)
+        # List the contents of the source file
+        source_keys = h_file.keys()
 
-    for i in range(len(mass_range)-1):
+        # Iterate through each key in the source file and copy the object to the destination file
+        for key in source_keys:
+            obj = h_file[key]
+            obj_name = obj.name
 
-        print('Running for {} in {} mass region'.format(year, i))
-        msd2_int_range = slice(mass_range[i], mass_range[i+1])
-        sig = pickle_hist.integrate('msd2', msd2_int_range)
-        
-        #Split into Jet 1 score b-tag passing/failing region. 
-        for p in samples:
-            print('Processing sample: ', p)
-            
-            #Just initialize the values
-            hpass=None
-            hfail=None
-            
-            if p not in btag_SF_samples:
-                
-                hpass = sig.integrate('bb1',int_range=slice(bbthr,1.)).sum('genflavor1', overflow='under').integrate('process',p)
-                hfail = sig.integrate('bb1',int_range=slice(0.,bbthr)).sum('genflavor1', overflow='under').integrate('process',p)
-                          
-                for s in hfail.identifiers('systematic'):
-                        fout[f"Vmass_{i}_pass_{p}_{s}"] = hist.export1d(hpass.integrate('systematic',s))
-                        fout[f"Vmass_{i}_fail_{p}_{s}"] = hist.export1d(hfail.integrate('systematic',s))
-                
-            elif p == 'Wjets': #Divide Wjets into unmatched and matched
-                
-                hpass_qq = sig.integrate('bb1',int_range=slice(bbthr,1.)).integrate('genflavor1', int_range=slice(1, None)).integrate('process',p)
-                hfail_qq = sig.integrate('bb1',int_range=slice(0.,bbthr)).integrate('genflavor1', int_range=slice(1, None)).integrate('process',p)
-                
-                for s in hpass_qq.identifiers('systematic'):
-                    
-                    fout[f"Vmass_{i}_pass_{p + 'QQ'}_{s}"] = hist.export1d(hpass_qq.integrate('systematic',s))
-                    fout[f"Vmass_{i}_fail_{p + 'QQ'}_{s}"] = hist.export1d(hfail_qq.integrate('systematic',s))
-                    fout[f"Vmass_{i}_fail_{p + 'QQ'}_{s}"] = hist.export1d(hfail_qq.integrate('systematic',s))
-                
-                    fout[f"Vmass_{i}_fail_{p + 'QQ'}_{s}"] = hist.export1d(hfail_qq.integrate('systematic',s))       
-                
-            else: #Divide Zjets into Z(qq) and Z(bb)
-                
-                hpass = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',p)
-                hfail = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',p)
-                
-                hpass_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',p)
-                hfail_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',p)
-                
-                for s in hfail.identifiers('systematic'):
-                    fout[f"Vmass_{i}_pass_{p}_{s}"] = hist.export1d(hpass.integrate('systematic',s))
-                    fout[f"Vmass_{i}_fail_{p}_{s}"] = hist.export1d(hfail.integrate('systematic',s))
-                        
-                    fout[f"Vmass_{i}_pass_{p + 'bb'}_{s}"] = hist.export1d(hpass_bb.integrate('systematic',s))
-                    fout[f"Vmass_{i}_fail_{p + 'bb'}_{s}"] = hist.export1d(hfail_bb.integrate('systematic',s))
+            # Check if the object already exists in the destination file
+            if obj_name in fout:
+                print(f"Object {obj_name} already exists in the destination file. Skipping...")
+            else:
+                print(f"Copying {obj_name} to the destination file...")
+                fout[obj_name] = obj
 
-    #Create other theory systematics
-    # make_hist_TheorySyst(year, fout)
 
 def make_hists_muonCR(year, bbthr, muonCR_pickle_path, muonCR_out_path):
 
@@ -189,14 +148,15 @@ def main():
     qcdthr = qcd_WP
     print(f'QCD 2 {year} Threshold: ', qcdthr)
     
-    signal_pickle_path = '{}/{}.pkl'.format(year, 'signal')
     signal_out_path = '{}/signalregion.root'.format(year)
+    if os.path.isfile(signal_out_path): os.remove(signal_out_path) #If file already exists remove it and create a new file
+    signal_out_file = uproot3.create(signal_out_path)
 
     muonCR_pickle_path = '{}/{}.pkl'.format(year, 'muonCR')
     muonCR_out_path = '{}/muonCRregion.root'.format(year)
 
     #Make the hists for signal region and muon CR
-    make_hists_signal(year, bbthr, qcdthr, signal_pickle_path, signal_out_path)
+    make_hists_signal(year, signal_out_file)
     make_hists_muonCR(year, bbthr, muonCR_pickle_path, muonCR_out_path)
     
     return

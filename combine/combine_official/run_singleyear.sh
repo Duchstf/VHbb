@@ -17,9 +17,9 @@ else
 fi
 
 out_dir="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/"
+official_dir="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/vhbb_official/$1"
 
 #Define the pickling directory
-signal_pkl="$out_dir/pickle/vhbb_official/$1/h.pkl"
 muonCR_pkl="$out_dir/pickle/muonCR/$1/h.pkl"
 
 # Clean everything except for the pickle file
@@ -31,7 +31,6 @@ rm -rf plots
 rm -rf output
 
 #Symbolic linking the pickle files to save space
-ln -s ${signal_pkl} signal.pkl
 ln -s ${muonCR_pkl} muonCR.pkl
 
 #Return to the main directory
@@ -40,7 +39,7 @@ cd ..
 echo "finish cleaning and symbolic linking"
 
 #Make the histograms
-singularity exec -B ${PWD}:/srv -B $out_dir --pwd /srv /cvmfs/unpacked.cern.ch/registry.hub.docker.com/coffeateam/coffea-dask:latest python make_hists.py $1 > out.make_hists.txt
+singularity exec -B ${PWD}:/srv -B $out_dir --pwd /srv /cvmfs/unpacked.cern.ch/registry.hub.docker.com/coffeateam/coffea-dask:latest python make_hists.py $1 > out_make_hists.txt
 
 # Produce combine cards
 if [ "$2" == "unblind_sideband" ]; then
