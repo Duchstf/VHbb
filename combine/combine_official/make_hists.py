@@ -21,14 +21,6 @@ bb_WPs = { '2016APV_bb1': 0.9883, '2016_bb1': 0.9883, '2017_bb1': 0.9870, '2018_
 qcd_WP = 0.0741
 mass_range = [40., 68., 110., 201.]
 
-#Same in make_cards.py
-samples = ['QCD','VVNLO', 'Wjets', 'Zjets',
-            'VBFDipoleRecoilOn','ggF','ttH', 'WH','ZH',
-            'singlet', 'ttbar',
-            'data']
-
-samples_save = [x for x in samples + ['Zjetsbb', 'WjetsQQ'] if x != 'Wjets']
-btag_SF_samples = ['Wjets', 'Zjets']
 theory_syst_samples = ['VV','VBFDipoleRecoilOn','ggF','ttH', 'WH','ZH']
 muonCR_samples = ['QCD', 'singlet', 'ttbar', 'WLNu', "muondata"]
 
@@ -50,45 +42,6 @@ def make_hist_TheorySyst(year, fout):
         # Iterate through each key in the source file and copy the object to the destination file
         for key in source_keys:
             obj = theory_file[key]
-            obj_name = obj.name
-
-            # Check if the object already exists in the destination file
-            if obj_name in fout:
-                print(f"Object {obj_name} already exists in the destination file. Skipping...")
-            else:
-                print(f"Copying {obj_name} to the destination file...")
-                fout[obj_name] = obj
-
-def check_missing(pickle_hist):
-        
-    #Print sample names
-    hist_samples = [x.name for x in pickle_hist.identifiers('process')]
-    print("Available samples: ", hist_samples)
-
-    missing_items = [item for item in samples if item not in hist_samples]
-    if missing_items: raise ValueError(f"Missing items: {missing_items}")
-    
-    #Save the sample & systematics and massrange here and then load it in make_cards.py
-    with open("files/samples.json", "w") as f: json.dump(samples_save, f)
-    sys_list = [x.name for x in pickle_hist.identifiers('systematic')]
-    with open("files/sys_list.json", "w") as f: json.dump(sys_list, f)
-    with open("files/Vmass.json", "w") as f:json.dump(mass_range, f)
-
-def make_hists_signal(year, fout):
-
-   processed_signal_dir =  f'/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/vhbb_official/{year}'
-
-   for sample in samples:
-       
-        processed_sample = f'{processed_signal_dir}/{sample}.root'
-        h_file = uproot3.open(processed_sample)
-
-        # List the contents of the source file
-        source_keys = h_file.keys()
-
-        # Iterate through each key in the source file and copy the object to the destination file
-        for key in source_keys:
-            obj = h_file[key]
             obj_name = obj.name
 
             # Check if the object already exists in the destination file
@@ -147,16 +100,11 @@ def main():
 
     qcdthr = qcd_WP
     print(f'QCD 2 {year} Threshold: ', qcdthr)
-    
-    signal_out_path = '{}/signalregion.root'.format(year)
-    if os.path.isfile(signal_out_path): os.remove(signal_out_path) #If file already exists remove it and create a new file
-    signal_out_file = uproot3.create(signal_out_path)
 
     muonCR_pickle_path = '{}/{}.pkl'.format(year, 'muonCR')
     muonCR_out_path = '{}/muonCRregion.root'.format(year)
 
     #Make the hists for signal region and muon CR
-    make_hists_signal(year, signal_out_file)
     make_hists_muonCR(year, bbthr, muonCR_pickle_path, muonCR_out_path)
     
     return

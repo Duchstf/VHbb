@@ -44,6 +44,12 @@ samples = ['QCD',
 btag_SF_samples = ['Wjets', 'Zjets']
 samples_save = [x for x in samples + ['Zjetsbb', 'WjetsQQ'] if x != 'Wjets']
 
+def make_template_theory(filenames):
+    return
+
+def process_theory(fout, filenames):
+    return
+
 def make_template(filename):
 
     hist_name = 'h' #You need to define this manually, usually just keep it as "templates"
@@ -66,17 +72,10 @@ def make_template(filename):
 
     return template
 
-
-def process(sample, filename):
+def process(fout, sample, filename):
     """
     Slim each sample coffea file into a root file
     """
-
-    outpath = os.path.join(outdir, f'{sample}.root')
-
-    #If file already exists remove it and create a new file
-    if os.path.isfile(outpath): os.remove(outpath)
-    fout = uproot3.create(outpath)
 
     #Make the template for the specific sample
     template = make_template(filename)
@@ -146,12 +145,19 @@ def main():
     print(f"Directory '{outdir}' has been removed.")
     os.system('mkdir -p  %s' %outdir)
 
+    signal_out_path = '../vhbb_official/{}/signalregion.root'.format(year)
+    if os.path.isfile(signal_out_path): os.remove(signal_out_path) #If file already exists remove it and create a new file
+    signal_out_file = uproot3.create(signal_out_path)
+
     for sample in samples:
         sample_label = sample if sample != 'VBFDipoleRecoilOn' else 'VBFHToBBDipoleRecoilOn'
         coffea_file =  f'../coffea/{tag}/{year}/{year}_dask_{sample_label}.coffea'
 
         print(f"Processing sample: {sample}. Coffea file: {coffea_file}")
-        process(sample, coffea_file)
+        process(signal_out_file, sample, coffea_file)
+
+    #Now process theory systematics
+
 
 if __name__ == "__main__":
 

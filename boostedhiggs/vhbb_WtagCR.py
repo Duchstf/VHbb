@@ -136,15 +136,12 @@ class VHBB_WTagCR(processor.ProcessorABC):
         if isRealData: selection.add('lumimask', lumiMasks[self._year[:4]](events.run, events.luminosityBlock))
         else: selection.add('lumimask', np.ones(len(events), dtype='bool'))
 
-        if isRealData:
-            trigger = np.zeros(len(events), dtype='bool')
-            for t in self._muontriggers[self._year]:
-                if t in events.HLT.fields:
-                    trigger = trigger | events.HLT[t]
-            selection.add('muontrigger', trigger)
-            del trigger
-        else:
-            selection.add('muontrigger', np.ones(len(events), dtype='bool'))
+        trigger = np.zeros(len(events), dtype='bool')
+        for t in self._muontriggers[self._year]:
+            if t in events.HLT.fields:
+                trigger = trigger | events.HLT[t]
+        selection.add('muontrigger', trigger)
+        del trigger
 
         metfilter = np.ones(len(events), dtype='bool')
         for flag in self._met_filters[self._year]['data' if isRealData else 'mc']:

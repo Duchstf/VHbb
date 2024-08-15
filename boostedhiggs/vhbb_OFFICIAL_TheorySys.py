@@ -160,30 +160,24 @@ class VHbbProcessorOfficial_TheorySys(processor.ProcessorABC):
         if len(events) == 0: return output
 
         #Add triggers
-        if isRealData:
-            trigger = np.zeros(len(events), dtype='bool')
-            for t in self._triggers[self._year]:
-                if t in events.HLT.fields:
-                    trigger |= np.array(events.HLT[t])
-            selection.add('trigger', trigger)
-            del trigger
-        else:
-            selection.add('trigger', np.ones(len(events), dtype='bool'))
+        trigger = np.zeros(len(events), dtype='bool')
+        for t in self._triggers[self._year]:
+            if t in events.HLT.fields:
+                trigger |= np.array(events.HLT[t])
+        selection.add('trigger', trigger)
+        del trigger
+
+        #Add muon trigger
+        trigger = np.zeros(len(events), dtype='bool')
+        for t in self._muontriggers[self._year]:
+            if t in events.HLT.fields:
+                trigger = trigger | events.HLT[t]
+        selection.add('muontrigger', trigger)
+        del trigger
         
         #Add lumimask
         if isRealData: selection.add('lumimask', lumiMasks[self._year[:4]](events.run, events.luminosityBlock))
         else: selection.add('lumimask', np.ones(len(events), dtype='bool'))
-
-        #Add muon trigger
-        if isRealData:
-            trigger = np.zeros(len(events), dtype='bool')
-            for t in self._muontriggers[self._year]:
-                if t in events.HLT.fields:
-                    trigger = trigger | events.HLT[t]
-            selection.add('muontrigger', trigger)
-            del trigger
-        else:
-            selection.add('muontrigger', np.ones(len(events), dtype='bool'))
 
         #Met filter
         metfilter = np.ones(len(events), dtype='bool')

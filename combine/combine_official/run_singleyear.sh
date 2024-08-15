@@ -17,7 +17,7 @@ else
 fi
 
 out_dir="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/"
-official_dir="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/vhbb_official/$1"
+signalregion_file="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/vhbb_official/$1/signalregion.root"
 
 #Define the pickling directory
 muonCR_pkl="$out_dir/pickle/muonCR/$1/h.pkl"
@@ -32,6 +32,7 @@ rm -rf output
 
 #Symbolic linking the pickle files to save space
 ln -s ${muonCR_pkl} muonCR.pkl
+cp $signalregion_file signalregion.root
 
 #Return to the main directory
 cd ..
