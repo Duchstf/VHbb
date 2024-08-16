@@ -51,21 +51,33 @@ def make_template_theory(filenames):
 def process_theory(fout, filenames):
     return
 
-def make_template(filename):
+def make_template(filenames):
 
     hist_name = 'h' #You need to define this manually, usually just keep it as "templates"
     outsum = processor.dict_accumulator()
 
-    print(f"Loading {filename}:")
-    if os.path.isfile(filename):
-        out = util.load(filename)
-        outsum[hist_name] = out[0][hist_name]
-        outsum['sumw'] = out[0]['sumw']
-        del out
+    started = 0
+
+    for filename in filenames:
+
+        print("Loading: ", filename)
+        
+        if os.path.isfile(filename):
+            out = util.load(filename)
+
+            if started == 0:
+                outsum[hist_name] = out[0][hist_name]
+                outsum['sumw'] = out[0]['sumw']
+                started += 1
+            else:
+                outsum[hist_name].add(out[0][hist_name])
+                outsum['sumw'].add(out[0]['sumw'])
+
+            del out
 
     scale_lumi = {k: xs[k] * 1000 * lumis[year] / w for k, w in outsum['sumw'].items()} 
 
-     # Scale the output with luminosity
+    # Scale the output with luminosity
     outsum[hist_name].scale(scale_lumi, 'dataset')
     print(outsum[hist_name].identifiers('dataset'))
     template = outsum[hist_name].group('dataset', hist.Cat('process', 'Process'), pmap)
@@ -135,10 +147,10 @@ def process(fout, sample, filename):
 
     return
 
-def process_muonCR(fout, sample, filename):
+def process_muonCR(fout, sample, filenames):
 
     #Read in the pickle file
-    template = make_template(filename)
+    template = make_template(filenames)
 
     h = template.integrate('region','muoncontrol').sum('genflavor1', overflow='all')
 
@@ -169,17 +181,21 @@ def main():
     #Process main histograms 
     for sample in samples:
         sample_label = sample if sample != 'VBFDipoleRecoilOn' else 'VBFHToBBDipoleRecoilOn'
-        coffea_file =  f'../coffea/vhbb_official/{year}/{year}_dask_{sample_label}.coffea'
+        coffea_files =  [f'../coffea/vhbb_official/{year}/{year}_dask_{sample_label}.coffea']
 
-        print(f"Processing sample: {sample}. Coffea file: {coffea_file}")
-        process(out_file, sample, coffea_file)
+        #Zjets is too big
+        if sample == 'Zjets':
+            coffea_files = [f'../coffea/vhbb_official/{year}/{year}_dask_Zjets.coffea', f'../coffea/vhbb_official/{year}/{year}_dask_DYJets.coffea']
+
+        print(f"Processing sample: {sample}. Coffea files: {coffea_files}")
+        process(out_file, sample, coffea_files)
 
     #Process muon CR
     for sample in muonCR_samples:
-        coffea_file =  f'../coffea/muonCR/{year}/{year}_dask_{sample}.coffea'
+        coffea_files =  [f'../coffea/muonCR/{year}/{year}_dask_{sample}.coffea']
         
-        print(f"Processing muonCR sample: {sample}. Coffea file: {coffea_file}")
-        process_muonCR(out_file, sample, coffea_file)
+        print(f"Processing muonCR sample: {sample}. Coffea file: {coffea_files}")
+        process_muonCR(out_file, sample, coffea_files)
 
     #Now process theory systematics
 
