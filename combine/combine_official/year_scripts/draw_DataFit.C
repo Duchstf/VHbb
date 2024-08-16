@@ -78,7 +78,7 @@ void draw(int Vmass_bin, bool bb_pass,  bool log=true){
 
   /*DATA*/
   // Dummy variable to select the data branch
-  string data_file = "signalregion.root";
+  string data_file = "regions.root";
 
   string data_bb_region  = (bb_pass) ? "_pass_": "_fail_";
   string leading_name = "Vmass_" + to_string(Vmass_bin) + data_bb_region;

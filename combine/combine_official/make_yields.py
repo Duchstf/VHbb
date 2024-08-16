@@ -169,7 +169,7 @@ def main():
     print(f'QCD 2 {year} Threshold: ', qcdthr)
     
     signal_pickle_path = '{}/{}.pkl'.format(year, 'signal')
-    signal_out_path = '{}/signalregion.root'.format(year)
+    signal_out_path = '{}/regions.root'.format(year)
 
     muonCR_pickle_path = '{}/{}.pkl'.format(year, 'muonCR')
     muonCR_out_path = '{}/muonCRregion.root'.format(year)

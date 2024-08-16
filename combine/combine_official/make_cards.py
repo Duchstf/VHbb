@@ -124,8 +124,7 @@ def get_template(sName, bb_pass, V_bin, obs, syst, muon=False):
     """
     Read msd template from root file
     """
-    f = ROOT.TFile.Open('{}/signalregion.root'.format(year))
-    if muon: f = ROOT.TFile.Open('{}/muonCRregion.root'.format(year))
+    f = ROOT.TFile.Open('{}/regions.root'.format(year))
 
     #Jet 1 ParticleNet bb pass/failing region
     name_bb = 'pass' if bb_pass else 'fail'

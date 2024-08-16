@@ -45,7 +45,7 @@ void draw(int index, bool pass, bool charm, bool log=true){
   string name  = (pass) ? "_pass": "_fail";
   if (charm) name =  "charm" + name;
 
-  string filename = "signalregion.root";
+  string filename = "regions.root";
   TFile *f = new TFile(filename.c_str()); // Can use dataf and read all the distributions from there
 
   // Root specific stuff (can copy these for later use)

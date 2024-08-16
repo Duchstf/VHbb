@@ -16,13 +16,9 @@ else
     mkdir -p $1
 fi
 
-out_dir="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/"
-signalregion_file="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/vhbb_official/$1/signalregion.root"
+region_file="/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/vhbb_official/$1/regions.root"
 
-#Define the pickling directory
-muonCR_pkl="$out_dir/pickle/muonCR/$1/h.pkl"
-
-# Clean everything except for the pickle file
+# Clean everything
 cd $1
 
 # Remove files and symbolic links that don't match the patterns
@@ -31,16 +27,15 @@ rm -rf plots
 rm -rf output
 
 #Symbolic linking the pickle files to save space
-ln -s ${muonCR_pkl} muonCR.pkl
-cp $signalregion_file signalregion.root
+cp $region_file regions.root
 
 #Return to the main directory
 cd ..
 
-echo "finish cleaning and symbolic linking"
+echo "Finished cleaning and copying the region file."
 
 #Make the histograms
-singularity exec -B ${PWD}:/srv -B $out_dir --pwd /srv /cvmfs/unpacked.cern.ch/registry.hub.docker.com/coffeateam/coffea-dask:latest python make_hists.py $1 > out_make_hists.txt
+#singularity exec -B ${PWD}:/srv -B $out_dir --pwd /srv /cvmfs/unpacked.cern.ch/registry.hub.docker.com/coffeateam/coffea-dask:latest python make_hists.py $1 > out_make_hists.txt
 
 # Produce combine cards
 if [ "$2" == "unblind_sideband" ]; then
@@ -48,6 +43,7 @@ conda run -n combine --no-capture-output python make_cards.py $1 1 > out_make_ca
 else
 conda run -n combine --no-capture-output python make_cards.py $1 0 > out_make_cards.txt
 fi
+
 # Run the combine jobs
 cd $1
 
@@ -58,9 +54,9 @@ ln -s -f ../year_scripts/*.sh .
 
 conda run -n combine --no-capture-output ./make_workspace.sh > out_make_workspace.txt
 conda run -n combine --no-capture-output ./exp_shapes.sh $2 > out_exp_shapes.txt 
-conda run -n combine --no-capture-output ./exp_significance.sh $2 > significance.txt 
 
-#Significance for VV as well
+#Significance for VH and VV as well
+conda run -n combine --no-capture-output ./exp_significance.sh $2 > significance.txt 
 conda run -n combine --no-capture-output ./exp_significance_VV.sh $2 > significance_VV.txt 
 
 # Produce the relevant plots
