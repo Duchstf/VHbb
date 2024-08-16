@@ -133,8 +133,8 @@ xs['ZZ'] = 1.214e+01
 xs['WWTo1L1Nu2Q_NLO'] = 5.090e+01
 xs['WWTo4Q_NLO'] = 5.157e+01
 
-xs['WZTo4Q_NLO'] = 1.595e+01
-xs['WZToLNu2B_NLO'] = 2.638e+01
+xs['WZTo4Q_NLO'] = 2.343e+01
+xs['WZToLNu2B_NLO'] = 2.525e+00
 xs['WZTo1L1Nu2Q_NLO'] = 9.152e+00
 xs['WZTo2Q2L_NLO'] = 6.422e+00
 
