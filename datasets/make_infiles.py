@@ -7,7 +7,7 @@ python make_infiles.py
 """
 
 custom_list = ['VBFDipoleRecoilOn']
-target_list = ['VV', "VV_NLO"]
+target_list = ['Zjets', "DYJets"]
 
 import os
 import json
