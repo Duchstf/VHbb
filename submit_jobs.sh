@@ -4,3 +4,4 @@
 year=$1
 python submit/submit-official.py $year 
 python submit/submit-official.py $year
+python submit/submit-official.py $year
