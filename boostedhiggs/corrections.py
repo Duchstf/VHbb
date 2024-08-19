@@ -14,13 +14,13 @@ with importlib.resources.path("boostedhiggs.data", "corrections.pkl.gz") as path
     with gzip.open(path) as fin:
         compiled = pickle.load(fin)
 
-ddt = util.load(f"boostedhiggs/data/ddtmap_n2b1_UL.coffea")
+#ddt = util.load(f"boostedhiggs/data/ddtmap_n2b1_UL.coffea")
 ddt_dict = {}
 
 for year in ["2016APV", "2016", "2017","2018"]:
-    h = ddt[year].to_hist()
-    lookup = dense_lookup(h.view(), (h.axes[0].edges, h.axes[1].edges))
-    ddt_dict[year] = lookup
+#    h = ddt[year].to_hist()
+#    lookup = dense_lookup(h.view(), (h.axes[0].edges, h.axes[1].edges))
+    ddt_dict[year] = 0 #lookup
 
 # Msd correction for all years, 2016 used for both 2016, 2016 APV.
 msdcorr = {}
