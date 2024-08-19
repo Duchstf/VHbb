@@ -19,8 +19,6 @@ lumis = {
     "2018": 59.83
 }
 
-samples = ['data', 'QCD', 'WH','ZH', 'VV', 'Wjets', 'Zjets', 'VBFDipoleRecoilOn', 'ggF', 'singlet', 'ttH', 'ttbar']
-
 def plot_h(h, labels, name, year):
 
     labels = copy.copy(labels)
@@ -28,7 +26,7 @@ def plot_h(h, labels, name, year):
     if name == 'bb_pass': del labels['QCD'] #Delete QCD in the bb passing region
     mc = list(labels.values())
     
-     # Create figure and axis
+    # Create figure and axis
     fig = plt.figure()
     ax1 = fig.add_subplot(4, 1, (1, 3))
     plt.subplots_adjust(hspace=0)
@@ -115,8 +113,8 @@ def main():
     labels = {
         'TTbar': 'ttbar',
         'Single T': 'singlet',
-        'W(Lep.)':'Wjets',
-        # 'Z + jets':'Zjets', #'#2ca02c'
+        'W(Lep.)':'WLNu',
+        'Z + jets':'Zjets', #'#2ca02c'
         'QCD':'QCD',  
     }
 

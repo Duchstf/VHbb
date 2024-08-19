@@ -17,7 +17,7 @@ cd output/testModel${year}/
 
 . build.sh
 
-text2workspace.py model_combined.txt -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO 'map=.*/ZH:rVH[1,-9,10]' --PO verbose --PO 'map=.*/WH:rVH[1,-9,10]' --PO 'map=.*/VV:rVV[1,-9,10]' --PO 'map=.*/VVNLO:rVV[1,-9,10]'
+text2workspace.py model_combined.txt -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO 'map=.*/ZH:rVH[1,-9,10]' --PO verbose --PO 'map=.*/WH:rVH[1,-9,10]' --PO 'map=.*/VVNLO:rVV[1,-9,10]' ##--PO 'map=.*/VV:rVV[1,-9,10]'
 
 cd ../../
 

@@ -26,7 +26,7 @@ from boostedhiggs import VHbbProcessorOfficial as vhbb_processor
 tag = "vhbb_official"
 syst = True
 year = sys.argv[1]
-ignore_list = ['muondata', 'WWNLO', 'WZNLO', 'ZZNLO'] #Sample to ignore processing
+ignore_list = ['muondata', 'WWNLO', 'WZNLO', 'ZZNLO', 'WLNu'] #Sample to ignore processing
 
 from distributed import Client
 from lpcjobqueue import LPCCondorCluster
