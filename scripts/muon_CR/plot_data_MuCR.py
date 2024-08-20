@@ -114,7 +114,7 @@ def main():
         'TTbar': 'ttbar',
         'Single T': 'singlet',
         'W(Lep.)':'WLNu',
-        'Z + jets':'Zjets', #'#2ca02c'
+        #'Z + jets':'Zjets', #'#2ca02c'
         'QCD':'QCD',  
     }
 
