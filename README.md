@@ -10,6 +10,7 @@ Analysis framework for VHbb analysis
 * iCMS upload link: https://cms.cern.ch/iCMS/
 * iCMS AN Document Server: https://icms.cern.ch/tools/publications/notes/entries/AN/2022
 * CADI: https://cms.cern.ch/iCMS/analysisadmin/cadilines?awg=any&awgyear=2024
+* Pubtalk: https://cms-pub-talk.web.cern.ch/c/hig/hig-24-017/640
 
 ## References
 
