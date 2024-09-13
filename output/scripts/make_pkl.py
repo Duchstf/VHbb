@@ -45,8 +45,6 @@ def main():
     for filename in infiles:
 
         print("Loading "+filename)
-
-        if 'NLO' in filename: continue
         
         if os.path.isfile(filename):
             out = util.load(filename)

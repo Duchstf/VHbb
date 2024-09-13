@@ -4,7 +4,7 @@ Produce everything in the signalregion.root file
 
 Usage:
 
-python make_Regions.py <year>
+python make_regions.py <year>
 """
 
 import os, sys
@@ -27,7 +27,7 @@ with open('../../files/pmap.json') as f: pmap = json.load(f)
 with open('../../files/lumi.json') as f: lumis = json.load(f)
 
 #Working points
-bb_WPs = { '2016APV_bb1': 0.9883, '2016_bb1': 0.9883, '2017_bb1': 0.9870, '2018_bb1':  0.9880}
+bb_WPs = { '2016APV_bb1': 0.9883, '2016_bb1': 0.0, '2017_bb1': 0.9870, '2018_bb1':  0.9880}
 
 #Define the score threshold
 bbthr = bb_WPs[f'{year}_bb1']

@@ -176,7 +176,7 @@ class VHBB_WTagCR(processor.ProcessorABC):
 
         # Selections for muon control region
         selection.add('minjetkinmu',
-            (candidatejet.pt >= 200)
+            (candidatejet.pt >= 450)
             & (candidatejet.pt < 1200)
             & (candidatejet.msdcorr >= 40.)
             & (candidatejet.msdcorr < 201.)

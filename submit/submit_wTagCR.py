@@ -42,7 +42,7 @@ year = sys.argv[1]
 tag = "wTagCR"
 syst = False
 memory='6GB'
-CR_list = ['muondata','WLNu', 'ttbar', 'QCD', 'singlet', 'VVNLO']
+CR_list = ['muondata','WLNu', 'ttbar', 'QCD', 'singlet']
 
 env_extra = [f"export PYTHONPATH=$PYTHONPATH:{os.getcwd()}"]
 cluster = LPCCondorCluster( shared_temp_directory="/tmp", transfer_input_files=["boostedhiggs"], ship_env=True, memory=memory)
