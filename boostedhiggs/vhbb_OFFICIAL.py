@@ -208,7 +208,7 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
         #!Add selections------------------>
         #There is a list at the end which specifies the selections being used 
         selection.add('jet1kin', (abs(candidatejet.eta) < 2.5) & (candidatejet.pt >= 450))
-        selection.add('jet2kin', (secondjet.pt >= 200) & (abs(secondjet.eta) < 2.5))
+        selection.add('jet2kin', (abs(secondjet.eta) < 2.5) & (secondjet.pt >= 450))
 
         selection.add('jetacceptance',
             (candidatejet.msdcorr >= 40.)

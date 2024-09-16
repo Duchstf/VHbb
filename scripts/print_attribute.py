@@ -20,5 +20,9 @@ pylab.rcParams.update(params)
 import matplotlib as mpl
 mpl.rcParams['lines.linewidth'] = 5
 
-sample = "root://cmsxrootd.fnal.gov//store/user/lpcpfnano/cmantill/v2_3/2017/HToBB/WminusH_HToBB_WToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/WminusH_HToBB_WToQQ/230217_201146/0000/nano_mc2017_57.root"
+sample = "root://cmsxrootd-site.fnal.gov//store/mc/RunIISummer20UL17NanoAODv9/WZTo4Q_4f_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8/NANOAODSIM/106X_mc2017_realistic_v9-v2/130000/53E388A3-B5F6-104E-BECE-DDD5EA92C72E.root"
 events = NanoEventsFactory.from_root(sample, schemaclass=NanoAODSchema).events()
+
+print(dir(events))
+
+print(events.fields)

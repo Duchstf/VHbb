@@ -27,7 +27,7 @@ with open('../../files/pmap.json') as f: pmap = json.load(f)
 with open('../../files/lumi.json') as f: lumis = json.load(f)
 
 #Working points
-bb_WPs = { '2016APV_bb1': 0.9883, '2016_bb1': 0.0, '2017_bb1': 0.9870, '2018_bb1':  0.9880}
+bb_WPs = { '2016APV_bb1': 0.9883, '2016_bb1': 0.9883, '2017_bb1': 0.9870, '2018_bb1':  0.9880}
 
 #Define the score threshold
 bbthr = bb_WPs[f'{year}_bb1']
@@ -41,6 +41,7 @@ samples = ['QCD',
            'singlet', 'ttbar',
            'data']
 
+# samples = ['QCD']
 btag_SF_samples = ['Wjets', 'Zjets']
 muonCR_samples = ['QCD', 'singlet', 'ttbar', 'WLNu', "muondata"]
 samples_save = [x for x in samples + ['Zjetsbb', 'WjetsQQ'] if x != 'Wjets']
@@ -119,8 +120,8 @@ def process(fout, sample, filename):
             
         elif sample == 'Wjets': #Divide Wjets into unmatched and matched
             
-            hpass_qq = sig.integrate('bb1',int_range=slice(bbthr,1.)).integrate('genflavor1', int_range=slice(1, None)).integrate('process',sample)
-            hfail_qq = sig.integrate('bb1',int_range=slice(0.,bbthr)).integrate('genflavor1', int_range=slice(1, None)).integrate('process',sample)
+            hpass_qq = sig.integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',sample).integrate('genflavor1', int_range=slice(1, None))
+            hfail_qq = sig.integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',sample).integrate('genflavor1', int_range=slice(1, None))
             
             for s in hpass_qq.identifiers('systematic'):
                 

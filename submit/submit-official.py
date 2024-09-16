@@ -14,6 +14,7 @@ python submit/submit-official.py $year > dask.out 2>&1
 import os, sys
 import subprocess
 import uproot
+import utils 
 
 from coffea import processor, util
 from coffea.nanoevents import NanoAODSchema
@@ -26,7 +27,7 @@ from boostedhiggs import VHbbProcessorOfficial as vhbb_processor
 tag = "vhbb_official"
 syst = True
 year = sys.argv[1]
-ignore_list = ['muondata', 'WWNLO', 'WZNLO', 'ZZNLO', 'WLNu'] #Sample to ignore processing
+ignore_list = ['muondata','WLNu'] #Sample to ignore processing
 
 from distributed import Client
 from lpcjobqueue import LPCCondorCluster
@@ -48,7 +49,7 @@ cluster = LPCCondorCluster(
     shared_temp_directory="/tmp",
     transfer_input_files=["boostedhiggs"],
     ship_env=True,
-    memory="9GB"
+    memory="4GB"
 #    image="coffeateam/coffea-dask:0.7.11-fastjet-3.3.4.0rc9-ga05a1f8",
 )
 
@@ -67,47 +68,25 @@ with Client(cluster) as client:
         
         #Input PF nano for the year
         infiles = subprocess.getoutput("ls datasets/infiles/{}/{}_*.json".format(year, year)).split()
-    
-        for this_file in infiles:
-            index = ''.join(this_file.split("_")[1:]).split(".json")[0]
-            outfile = out_path + '{}_dask_{}.coffea'.format(year, index)
+
+        for sample_json in infiles:
             
-            if index in ignore_list:
-                print("{} is in ingore list, skipping ...".format(index))
+            #Sample name
+            sample_name = ''.join(sample_json.split("_")[1:]).split(".json")[0]
+            if sample_name in ignore_list:
+                print("{} is in ingore list, skipping ...".format(sample_name))
                 continue
-    
-            if os.path.isfile(outfile):
-                print("File " + outfile + " already exists. Skipping.")
-                continue 
             
-            else:
-                print("Begin running " + outfile)
-                print(datetime.now())
+            output_sample_dir = f'{out_path}{sample_name}'
 
-                uproot.open.defaults["xrootd_handler"] = uproot.source.xrootd.MultithreadedXRootDSource
+            #Make a folder according to sample name
+            os.system(f'mkdir -p {output_sample_dir}')
 
-                #RUN MAIN PROCESSOR
-                p = vhbb_processor(year=year, jet_arbitration='T_bvq' , systematics=syst)
-                args = {'savemetrics':True, 'schema':NanoAODSchema}
+            #Create sub-json files that belongs to the samples
+            utils.split_sample_json(sample_json, output_sample_dir)
 
-                #Safe to skip bad files for MC, not safe for data
-                skipBadFiles = 0 if 'data' in index else 1
-                output = processor.run_uproot_job(
-                    this_file,
-                    treename="Events",
-                    processor_instance=p,
-                    executor=processor.dask_executor,
-                    executor_args={
-                        "client": client,
-                        "schema": processor.NanoAODSchema,
-                        "treereduction": 2,
-                        "savemetrics": True,
-                        "skipbadfiles": skipBadFiles,
-                    },
-                    chunksize=50000,
-                )
+            #Create the processor
+            p = vhbb_processor(year=year, jet_arbitration='T_bvq' , systematics=syst)
 
-                #Save output files
-                util.save(output, outfile)
-                print("saved " + outfile)
-                print(datetime.now())
+            #Submit the sample
+            utils.submit_sample(output_sample_dir, client, p)

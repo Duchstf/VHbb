@@ -18,6 +18,9 @@ from boostedhiggs.corrections import (
     add_muonSFs,
 )
 
+#Import the working points
+from boostedhiggs.WPs import *
+
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +35,8 @@ class DDT(processor.ProcessorABC):
         
         self._year = year
         self._jet_arbitration = jet_arbitration
+        qcd_bins = qcd_WPs['{}_qcd'.format(self._year)]
+
 
         #Open the trigger files
         with open('files/muon_triggers.json') as f: self._muontriggers = json.load(f)
@@ -47,7 +52,7 @@ class DDT(processor.ProcessorABC):
                                         hist.Cat('dataset', 'Dataset'), hist.Cat('region', 'Region'),
                                         hist.Bin('rho', r"$\rho=ln(m^2_{reg}/p_T^2)$", 100, -7, -1.),
                                         hist.Bin('pt', r"$p_T$ (GeV)", 100, 200, 1350),
-                                        hist.Bin('qcd', r"$p_T$ (GeV)", 500, 0, 1.),)}
+                                        hist.Bin('qcd', r"ParticleNet QCD score", qcd_bins),)}
 
     def process(self, events): return self.process_shift(events)
 
@@ -80,9 +85,11 @@ class DDT(processor.ProcessorABC):
         
         #Pick the candidate jet based on different arbitration
         if self._jet_arbitration == 'T_bvc':
-            pnet_bvc = leadingjets.particleNetMD_Xbb / (leadingjets.particleNetMD_Xcc + leadingjets.particleNetMD_Xbb)                                                                                                    
-            indices = ak.argsort(pnet_bvc, axis=1, ascending = False)  #Higher b score for the Higgs candidate (more b like)                                                                      
-            candidatejet = ak.firsts(leadingjets[indices[:, 0:1]])  # candidate jet is more b-like (higher BvC score)                                                                        
+            pnet_bvq = leadingjets.particleNetMD_Xbb / (leadingjets.particleNetMD_Xcc + leadingjets.particleNetMD_Xbb + leadingjets.particleNetMD_Xqq)                                                                                                    
+            indices = ak.argsort(pnet_bvq, axis=1, ascending = False)  #Higher b score for the Higgs candidate (more b like)                                                                      
+            candidatejet = ak.firsts(leadingjets[indices[:, 0:1]])  # candidate jet is more b-like (higher BvC score)       
+            secondjet = ak.firsts(leadingjets[indices[:, 1:2]]) # second jet is more charm-like (larger BvC score) 
+                                                                 
         else: raise RuntimeError("Unknown candidate jet arbitration")
 
         #Exact qcd for Higgs candidate
