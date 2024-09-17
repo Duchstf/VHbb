@@ -68,17 +68,34 @@ class DDT(processor.ProcessorABC):
         output['sumw'][dataset] = ak.sum(events.genWeight)
         if len(events) == 0: return output
 
+        #Add triggers
+        trigger = np.zeros(len(events), dtype='bool')
+        for t in self._triggers[self._year]:
+            if t in events.HLT.fields:
+                trigger |= np.array(events.HLT[t])
+        selection.add('trigger', trigger)
+        del trigger
+
+        #Add muon trigger
+        trigger = np.zeros(len(events), dtype='bool')
+        for t in self._muontriggers[self._year]:
+            if t in events.HLT.fields:
+                trigger = trigger | events.HLT[t]
+        selection.add('muontrigger', trigger)
+        del trigger
+
         # MET Filter
         metfilter = np.ones(len(events), dtype='bool')
         for flag in self._met_filters[self._year]['mc']: metfilter &= np.array(events.Flag[flag])
         selection.add('metfilter', metfilter)
         del metfilter
 
+        #Fat Jet Processing
         fatjets = events.FatJet
-        fatjets['msdcorr'] = corrected_msoftdrop(fatjets)
+        fatjets['msdcorr'] = corrected_msoftdrop(fatjets, self._year)
         fatjets['qcdrho'] = 2 * np.log(fatjets.msdcorr / fatjets.pt)
 
-        candidatejets = fatjets[(fatjets.pt > 200) & fatjets.isTight] # this is loose in sampleContainer
+        candidatejets = fatjets[(fatjets.pt > 200) & (abs(fatjets.eta) < 2.5) & fatjets.isTight] # this is loose in sampleContainer
 
         # Only consider first two to match generators
         leadingjets = candidatejets[:, :2]  
@@ -92,27 +109,36 @@ class DDT(processor.ProcessorABC):
                                                                  
         else: raise RuntimeError("Unknown candidate jet arbitration")
 
-        #Exact qcd for Higgs candidate
+        #Exact qcd for V candidate
         qcd = secondjet.particleNetMD_QCD
         
         #There is a list at the end which specifies the selections being used     
-        selection.add('jetacceptance', (candidatejet.pt>200))
-        selection.add('jetid', candidatejet.isTight)
         selection.add('met', events.MET.pt < 140.)
 
+        #Lepton veto
         goodmuon = ((events.Muon.pt > 10) & (abs(events.Muon.eta) < 2.4) & (events.Muon.pfRelIso04_all < 0.25) & events.Muon.looseId)
         nmuons = ak.sum(goodmuon, axis=1)
         leadingmuon = ak.firsts(events.Muon[goodmuon])
 
-        goodelectron = ( (events.Electron.pt > 10) & (abs(events.Electron.eta) < 2.5) & (events.Electron.cutBased >= events.Electron.LOOSE))
-        nelectrons = ak.sum(goodelectron, axis=1)
+        electrons_selection = ((events.Electron.pt > 10) & (abs(events.Electron.eta) < 2.5) & (events.Electron.cutBased >= events.Electron.LOOSE))
+        goodelectrons = events.Electron[electrons_selection]
+        nelectrons = ak.sum(electrons_selection, axis=1)
 
-        ntaus = ak.sum(((events.Tau.pt > 20)
-                        & (abs(events.Tau.eta) < 2.3) & (events.Tau.rawIso < 5)
-                        & (events.Tau.idDeepTau2017v2p1VSjet)
-                        & ak.all(events.Tau.metric_table(events.Muon[goodmuon]) > 0.4, axis=2)
-                        & ak.all(events.Tau.metric_table(events.Electron[goodelectron]) > 0.4, axis=2)),
-                       axis=1)
+        ntaus = ak.sum(
+            (
+                (events.Tau.pt > 20)
+                & (abs(events.Tau.dz) < 0.2)
+                & (abs(events.Tau.eta) < 2.3)
+                & (events.Tau.decayMode >= 0)
+                & (events.Tau.decayMode != 5)
+                & (events.Tau.decayMode != 6)
+                & (events.Tau.decayMode != 7)
+                & (events.Tau.idDeepTau2017v2p1VSe >= 2)
+                & (events.Tau.idDeepTau2017v2p1VSjet >= 16)
+                & (events.Tau.idDeepTau2017v2p1VSmu >= 8)
+            ),
+            axis=1,
+        )
 
         selection.add('noleptons', (nmuons == 0) & (nelectrons == 0) & (ntaus == 0))
                 
@@ -122,13 +148,12 @@ class DDT(processor.ProcessorABC):
         #Add different weights
         add_pileup_weight(weights, events.Pileup.nPU, self._year)
         add_VJets_kFactors(weights, events.GenPart, dataset)
-        #add_jetTriggerSF(weights, ak.firsts(fatjets), self._year, selection)
 
         if self._year in ("2016APV", "2016", "2017"): weights.add("L1Prefiring", events.L1PreFiringWeight.Nom, events.L1PreFiringWeight.Up, events.L1PreFiringWeight.Dn)
         logger.debug("Weight statistics: %r" % weights.weightStatistics)
             
         #!LIST OF THE SELECTIONS APPLIED
-        regions = { 'signal': ['metfilter', 'jetid', 'jetacceptance', 'met', 'noleptons']}
+        regions = { 'signal': ['metfilter', 'met', 'noleptons']}
 
         def fill(region, systematic, wmod=None):
             

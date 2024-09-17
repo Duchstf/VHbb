@@ -109,11 +109,11 @@ def submit_processor(year, tag, processor, memory, ignore_list=None, target_list
                 #Sample name
                 sample_name = ''.join(sample_json.split("_")[1:]).split(".json")[0]
 
-                if ignore_list & (sample_name in ignore_list):
-                    print("{} is in ingore list, skipping ...".format(sample_name))
-                    continue
+                if ignore_list is not None and sample_name in ignore_list:
+                        print("{} is in ingore list, skipping ...".format(sample_name))
+                        continue
                 
-                if target_list & (sample_name not in target_list):
+                if target_list is not None and sample_name not in target_list:
                     print("{} is not in target list, skipping ...".format(sample_name))
                     continue
 
