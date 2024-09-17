@@ -31,7 +31,7 @@ def normalize(val, cut):
 
 class DDT(processor.ProcessorABC):
     
-    def __init__(self, year='2017', jet_arbitration='T_bvc'):
+    def __init__(self, year='2017', jet_arbitration='T_bvq'):
         
         self._year = year
         self._jet_arbitration = jet_arbitration
@@ -84,16 +84,16 @@ class DDT(processor.ProcessorABC):
         leadingjets = candidatejets[:, :2]  
         
         #Pick the candidate jet based on different arbitration
-        if self._jet_arbitration == 'T_bvc':
+        if self._jet_arbitration == 'T_bvq':
             pnet_bvq = leadingjets.particleNetMD_Xbb / (leadingjets.particleNetMD_Xcc + leadingjets.particleNetMD_Xbb + leadingjets.particleNetMD_Xqq)                                                                                                    
             indices = ak.argsort(pnet_bvq, axis=1, ascending = False)  #Higher b score for the Higgs candidate (more b like)                                                                      
-            candidatejet = ak.firsts(leadingjets[indices[:, 0:1]])  # candidate jet is more b-like (higher BvC score)       
-            secondjet = ak.firsts(leadingjets[indices[:, 1:2]]) # second jet is more charm-like (larger BvC score) 
+            candidatejet = ak.firsts(leadingjets[indices[:, 0:1]])  # candidate jet is more b-like (higher BvQ score)       
+            secondjet = ak.firsts(leadingjets[indices[:, 1:2]])
                                                                  
         else: raise RuntimeError("Unknown candidate jet arbitration")
 
         #Exact qcd for Higgs candidate
-        qcd1 = candidatejet.particleNetMD_QCD
+        qcd = secondjet.particleNetMD_QCD
         
         #There is a list at the end which specifies the selections being used     
         selection.add('jetacceptance', (candidatejet.pt>200))
@@ -143,7 +143,7 @@ class DDT(processor.ProcessorABC):
             output['h'].fill(dataset=dataset, region=region,
                              rho=normalize(candidatejet.qcdrho, cut),
                              pt=normalize(candidatejet.pt, cut),
-                             qcd=normalize(qcd1, cut),
+                             qcd=normalize(qcd, cut),
                              weight=weight)
 
         #Fill histogram

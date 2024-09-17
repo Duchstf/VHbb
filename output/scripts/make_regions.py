@@ -182,19 +182,26 @@ def main():
     #Process main histograms 
     for sample in samples:
         sample_label = sample if sample != 'VBFDipoleRecoilOn' else 'VBFHToBBDipoleRecoilOn'
-        coffea_files =  [f'../coffea/vhbb_official/{year}/{year}_dask_{sample_label}.coffea']
 
-        #Zjets is too big
+        #Get the sample output dir and then the infiles
+        year_dir = f'../coffea/vhbb_official/{year}'
+
+        #Group DYJets into Zjets
         if sample == 'Zjets':
-            coffea_files = [f'../coffea/vhbb_official/{year}/{year}_dask_Zjets.coffea', f'../coffea/vhbb_official/{year}/{year}_dask_DYJets.coffea']
+            sample_infiles = subprocess.getoutput(f"ls {year_dir}/Zjets/*.coffea").split() + subprocess.getoutput(f"ls {year_dir}/DYJets/*.coffea").split()
 
-        print(f"Processing sample: {sample}. Coffea files: {coffea_files}")
-        process(out_file, sample, coffea_files)
+        else:
+            sample_infiles = subprocess.getoutput(f"ls {year_dir}/{sample_label}/*.coffea").split()
+
+
+        print("---------------")
+        print(f"Processing sample: {sample}")
+        print(f"Coffea Files: {sample_infiles}")
+        process(out_file, sample, sample_infiles)
 
     #Process muon CR
     for sample in muonCR_samples:
         coffea_files =  [f'../coffea/muonCR/{year}/{year}_dask_{sample}.coffea']
-        
         print(f"Processing muonCR sample: {sample}. Coffea file: {coffea_files}")
         process_muonCR(out_file, sample, coffea_files)
 

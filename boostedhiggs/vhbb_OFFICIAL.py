@@ -102,7 +102,7 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
                 hist.Cat('region', 'Region'),
                 hist.Cat('systematic', 'Systematic'),
                 hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
-                hist.Bin('msd2', r'Jet 2 $m_{sd}$', [ 40.,  47., 50., 54., 68.,  75.,  82.,  89.,  96., 103., 110., 201.]),
+                hist.Bin('msd2', r'Jet 2 $m_{sd}$', [ 40.,  47., 50., 68., 110., 201.]),
 
                 hist.Bin('bb1', r'Jet 1 Paticle Net B Score', bb_bins),
                 hist.Bin('qcd2', r'Jet 2 Paticle Net QCD Score', qcd_bins),
