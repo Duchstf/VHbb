@@ -26,6 +26,7 @@ from boostedhiggs.corrections import (
     met_factory,
     lumiMasks,
     get_VetoMap,
+    qcd_ddt_shift
 )
 
 #Import the working points
@@ -72,7 +73,7 @@ def ak4_jets(events, year):
 class VHbbProcessorOfficial(processor.ProcessorABC):
     
     def __init__(self, year='2017', jet_arbitration='T_bvq',
-                 tightMatch=True, ewkHcorr=True, systematics=True):
+                 tightMatch=True, ewkHcorr=True, systematics=False):
         
         self._year = year
         self._ewkHcorr = ewkHcorr
@@ -89,7 +90,6 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
         
         #Scan thresholds for bb
         bb_bins = bb_WPs['{}_bb'.format(self._year)]
-        qcd_bins = qcd_WPs['{}_qcd'.format(self._year)]
         
         #Create the histogram.
         self.make_output = lambda: {
@@ -105,7 +105,6 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
                 hist.Bin('msd2', r'Jet 2 $m_{sd}$', [ 40.,  47., 50., 68., 110., 201.]),
 
                 hist.Bin('bb1', r'Jet 1 Paticle Net B Score', bb_bins),
-                hist.Bin('qcd2', r'Jet 2 Paticle Net QCD Score', qcd_bins),
 
                 hist.Bin('genflavor1', 'Gen. jet 1 flavor', [1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
                 hist.Bin('genflavor2', 'Gen. jet 2 flavor', [1, 2, 3, 4]), #1 light, 2 charm, 3 b, 4 upper edge. B falls into 3-4.
@@ -203,7 +202,8 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
         else: raise RuntimeError("Unknown candidate jet arbitration")
         
         bb1 = candidatejet.particleNetMD_Xbb / (candidatejet.particleNetMD_Xbb + candidatejet.particleNetMD_QCD) #Exact B scores for Higgs candidate
-        qcd2 = secondjet.particleNetMD_QCD #Exact C scores for V candidate
+        qcd_shifted = secondjet.particleNetMD_QCD - qcd_ddt_shift(secondjet.pt, secondjet.rho, self._year) #Exact C scores for V candidate
+        selection.add('qcd_fail', qcd_shifted < 0)
         
         #!Add selections------------------>
         #There is a list at the end which specifies the selections being used 
@@ -314,7 +314,7 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
         else: systematics = [shift_name]
             
         #!LIST OF THE SELECTIONS APPLIED
-        signal_selection = ['trigger', 'lumimask', 'metfilter', 'jet1kin', 'jet2kin', 'jetid', 'jetacceptance', 'met', 'noleptons','njets']
+        signal_selection = ['trigger', 'lumimask', 'metfilter', 'jet1kin', 'jet2kin', 'jetid', 'jetacceptance', 'met', 'noleptons','njets', 'qcd_fail']
 
         regions = {'signal': signal_selection}
 
@@ -341,7 +341,6 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
                 msd2=normalize(msd2_matched, cut),
 
                 bb1=normalize(bb1, cut),
-                qcd2=normalize(qcd2, cut),
 
                 genflavor1=normalize(genflavor1, cut),
                 genflavor2=normalize(genflavor2, cut),

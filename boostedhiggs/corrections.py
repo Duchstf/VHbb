@@ -5,6 +5,8 @@ import pickle
 import cloudpickle
 import importlib.resources
 import correctionlib
+import os 
+
 from coffea.lookup_tools.lookup_base import lookup_base
 from coffea.lookup_tools.dense_lookup import dense_lookup
 from coffea import lookup_tools
@@ -14,13 +16,31 @@ with importlib.resources.path("boostedhiggs.data", "corrections.pkl.gz") as path
     with gzip.open(path) as fin:
         compiled = pickle.load(fin)
 
-#ddt = util.load(f"boostedhiggs/data/ddtmap_n2b1_UL.coffea")
-ddt_dict = {}
+def qcd_ddt_shift(pt, rho, year):
+    # Define an inner function that works on individual pt and rho values
 
-for year in ["2016APV", "2016", "2017","2018"]:
-#    h = ddt[year].to_hist()
-#    lookup = dense_lookup(h.view(), (h.axes[0].edges, h.axes[1].edges))
-    ddt_dict[year] = 0 #lookup
+    smooth_ddtmap = np.load(f'boostedhiggs/data/ddtmap_{year}.npy')
+    pt_edges = np.load("boostedhiggs/data/ddtmap_ptedges.npy")
+    rho_edges = np.load("boostedhiggs/data/ddtmap_rhoedges.npy")
+
+    def get_ddt_value_single(pt_val, rho_val):
+        if not pt_val or not rho_val: return None
+
+        # Clip pt and rho to the valid ranges of the edges
+        pt_val = np.clip(pt_val, pt_edges[0], pt_edges[-1] - 1e-5)  # Clip within the pt bin edges
+        rho_val = np.clip(rho_val, rho_edges[0], rho_edges[-1] - 1e-5)  # Clip within the rho bin edges
+
+        # Find the pt bin index
+        pt_bin = np.digitize([pt_val], pt_edges)[0] - 1
+        rho_bin = np.digitize([rho_val], rho_edges)[0] - 1
+        
+        # Get the corresponding value from the smooth_ddtmap
+        return smooth_ddtmap[pt_bin, rho_bin]
+    
+    # Apply the get_ddt_value_single function element-wise to pt and rho using ak.Array's map-like behavior
+    ddt_values = ak.Array([get_ddt_value_single(p, r) for p, r in zip(pt, rho)])
+    
+    return ddt_values
 
 # Msd correction for all years, 2016 used for both 2016, 2016 APV.
 msdcorr = {}
@@ -48,9 +68,6 @@ def corrected_msoftdrop(fatjets, year):
     corrected_mass = msdfjcorr * corr
 
     return corrected_mass
-
-def n2ddt_shift(fatjets, year='2017'):
-    return ddt_dict[year](fatjets.pt, fatjets.qcdrho)
 
 def powheg_to_nnlops(genpt):
     return compiled['powheg_to_nnlops'](genpt)

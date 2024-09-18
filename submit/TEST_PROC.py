@@ -14,17 +14,17 @@ import os,sys
 sys.path.append('/srv')
 
 fileset = {
-    "test": [
-         "root://cmsxrootd-site.fnal.gov//store/mc/RunIISummer20UL18NanoAODv9/QCD_HT100to200_TuneCP5_PSWeights_13TeV-madgraph-pythia8/NANOAODSIM/106X_upgrade2018_realistic_v16_L1v1-v1/2520000/C9C073BD-47D3-8F43-A809-EDA7FFBF176E.root"]
+    "QCD": [
+         "root://cmsxrootd-site.fnal.gov//store/mc/RunIISummer20UL16NanoAODv9/QCD_HT300to500_TuneCP5_PSWeights_13TeV-madgraph-pythia8/NANOAODSIM/106X_mcRun2_asymptotic_v17-v1/260000/527D7EFD-7081-6B42-8A3B-F3ED40C989C3.root"]
 }
 
 #autoreload forces the kernel to reload the processor to include any new changes
-from boostedhiggs import VHBB_WTagCR as vhbb_processor
+from boostedhiggs import DDT as vhbb_processor
 
 import time
 tstart = time.time()
 
-p = vhbb_processor(year='2018', jet_arbitration='T_bvq')
+p = vhbb_processor(year='2016', jet_arbitration='T_bvq')
 
 #Run Coffea code using uproot
 dummy = processor.run_uproot_job(

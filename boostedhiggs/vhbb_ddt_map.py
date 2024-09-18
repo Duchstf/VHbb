@@ -35,7 +35,7 @@ class DDT(processor.ProcessorABC):
         
         self._year = year
         self._jet_arbitration = jet_arbitration
-        qcd_bins = qcd_WPs['{}_qcd'.format(self._year)]
+        qcd_bins = [round(x,4) for x in list(np.linspace(0.,1.,500))]
 
 
         #Open the trigger files
@@ -166,9 +166,9 @@ class DDT(processor.ProcessorABC):
 
             #! FILL THE HISTOGRAM
             output['h'].fill(dataset=dataset, region=region,
-                             rho=normalize(candidatejet.qcdrho, cut),
-                             pt=normalize(candidatejet.pt, cut),
-                             qcd=normalize(qcd, cut),
+                             rho=normalize(secondjet.qcdrho, cut),
+                             pt=normalize(secondjet.pt, cut),
+                             qcd=normalize(secondjet.particleNetMD_QCD, cut),
                              weight=weight)
 
         #Fill histogram

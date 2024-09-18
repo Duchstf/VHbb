@@ -2,10 +2,7 @@
 Make DDT MAP Script.
 
 Usage:
-python make_ddt.py 2017 <qcd cut value>
-
-Example:
-python make_ddt.py 2017 0.0922
+python make_ddt.py <year>
 '''
 import json
 import matplotlib.pyplot as plt
@@ -16,6 +13,14 @@ plt.style.use(hep.style.ROOT)
 import scipy.ndimage as sc
 import math
 import pickle
+
+import os, sys
+import subprocess
+import json
+from coffea import processor, util, hist
+import pickle
+
+year = sys.argv[1]
 
 import matplotlib.pylab as pylab
 params = {'legend.fontsize': 'medium',
@@ -85,24 +90,6 @@ def plot_dist(h, year):
     plt.xlabel(r"$\rho=ln(m^2_{SD}/p_T^2)$")
     plt.savefig(f'plots/{year}_pt_rho_dist.pdf', bbox_inches='tight')
 
-def export_to_coffea_hist(smooth_ddtmap, pt_edges, rho_edges, year):
-    # Define the histogram
-    h = hist.Hist(f"ddt_map_{year}", hist.Bin("rho", "Log(m^2_SD / p_T^2)", rho_edges), hist.Bin("pt", "p_T [GeV]", pt_edges))
-    
-    # Since we are setting the values directly into the histogram, 
-    # we need to ensure the histogram's internal storage matches our data shape
-    # We assume smooth_ddtmap is organized with rho as the first axis and pt as the second axis
-    assert smooth_ddtmap.shape == (len(rho_edges) - 1, len(pt_edges) - 1)
-
-    # Assign values directly to the histogram's storage
-    h.values()[()] = smooth_ddtmap  # Transpose to align the axes correctly with pt as the outer axis
-    
-    #plot to make sure:
-    hist.plot2d(h, xaxis='rho',  patch_opts={'norm': plt.Normalize(vmin=0, vmax=0.15)})
-    plt.xlabel(r"$\rho=\ln(m^2_{SD}/p_T^2)$")
-    plt.ylabel(r"$p_T$ [GeV]")
-    plt.savefig(f'plots/{year}_ddt_map_check.pdf', bbox_inches='tight')
-    # with open(f"../../boostedhiggs/data/ddt_map_{year}.pkl", "wb") as f: pickle.dump(h, f)
 
 def derive_ddt(h, year, eff=0.10):
     print("Total QCD Yield (ignoring overflow): ", h.sum('pt', 'qcd', 'rho').values()[()])
@@ -119,7 +106,7 @@ def derive_ddt(h, year, eff=0.10):
     index_qcd_cut =  np.apply_along_axis(lambda x: x.searchsorted(eff), axis = 2, arr = cdf)
     index_to_cut_value = lambda x: qcd_cuts[x]
     ddtmap = index_to_cut_value(index_qcd_cut) #This is the ddt map
-    smooth_ddtmap=sc.filters.gaussian_filter(ddtmap,1,mode='nearest')
+    smooth_ddtmap=sc.filters.gaussian_filter(ddtmap,3,mode='nearest')
     print("Max QCD Cut: ", np.max(ddtmap))
     print("Min QCD Cut: ", np.min(ddtmap))
     
@@ -132,10 +119,10 @@ def derive_ddt(h, year, eff=0.10):
     x_step = rho_edges[1] - rho_edges[0]
     y_step = pt_edges[1] - pt_edges[0]
     extent = [rho_edges[0], rho_edges[-1] + x_step, pt_edges[0], pt_edges[-1] + y_step]
-    im = plt.imshow(smooth_ddtmap, cmap='viridis', aspect='auto', extent=extent, vmin=0., vmax=0.15)  # Display the data as an image, 'viridis' is a color map
+    im = plt.imshow(smooth_ddtmap, cmap='viridis', aspect='auto', extent=extent, vmin=0., vmax=0.2)  # Display the data as an image, 'viridis' is a color map
 
     # Add a colorbar to show the color scale
-    plt.colorbar(im, label=f'QCD Cuts at {int(eff*100)} %')
+    plt.colorbar(im, label=f'QCD Cuts at {round(eff*100)} %')
     
     # Add labels and title if desired
     plt.xlabel(r"$\rho=ln(m^2_{SD}/p_T^2)$")
@@ -145,27 +132,73 @@ def derive_ddt(h, year, eff=0.10):
     # Show the plot
     plt.savefig(f'plots/{year}_ddt_map.pdf', bbox_inches='tight')
     
-    export_to_coffea_hist(smooth_ddtmap, pt_edges, rho_edges, year)
+    return smooth_ddtmap, pt_edges, rho_edges
     
 def find_QCD_eff(h, qcd_cut):
     print("Finding qcd efficiency")
+    print(h.sum('pt', 'qcd', 'rho'))
     total = h.sum('pt', 'qcd', 'rho').values()[()]
     remaining = h.integrate('qcd', slice(0.,qcd_cut)).sum('pt', 'rho').values()[()]
     eff = remaining/total
     print(f"QCD Efficiency for {qcd_cut}: ", round(eff,4))
     return eff
+
+def make_hist(out_dir):
+
+    #Load all the files
+    with open('../../files/xsec.json') as f: xs = json.load(f)     
+    with open('../../files/pmap.json') as f: pmap = json.load(f)
+    with open('../../files/lumi.json') as f: lumis = json.load(f)
+
+    hist_name = 'h' #You need to define this manually, usually just keep it as "templates"
+            
+    infiles = subprocess.getoutput(f"ls {out_dir}/*.coffea").split()
+    outsum = processor.dict_accumulator()
+
+    started = 0
+    for filename in infiles:
+
+        print("Loading "+filename)
+        
+        if os.path.isfile(filename):
+            out = util.load(filename)
+
+            if started == 0:
+                outsum[hist_name] = out[0][hist_name]
+                outsum['sumw'] = out[0]['sumw']
+                started += 1
+            else:
+                outsum[hist_name].add(out[0][hist_name])
+                outsum['sumw'].add(out[0]['sumw'])
+
+            del out
+
+    scale_lumi = {k: xs[k] * 1000 * lumis[year] / w for k, w in outsum['sumw'].items()} 
+
+    # Scale the output with luminosity
+    outsum[hist_name].scale(scale_lumi, 'dataset')
+    print(outsum[hist_name].identifiers('dataset'))
+    templates = outsum[hist_name].group('dataset', hist.Cat('process', 'Process'), pmap)
+
+    del outsum
+
+    return templates
     
 def main():
+
+    out_dir = f'../../output/coffea/DDT/{year}/QCD'
     
-    year = sys.argv[1]
-    cut = sys.argv[2]
-    pickle_path = f'../../output/pickle/ddt_map/{year}/h.pkl'
-    h = pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('process', 'QCD')
+    h = make_hist(out_dir).integrate('region', 'signal').integrate('process' ,'QCD')
     
     #Derive the ddtmap
     #plot_dist(h, year)
-    eff = find_QCD_eff(h, qcd_cut=float(cut))
-    derive_ddt(h,year,eff=eff)
+    eff = find_QCD_eff(h, qcd_cut=0.0741)
+    smooth_ddtmap, pt_edges, rho_edges = derive_ddt(h, year, eff=eff)
+    
+    data_dir = f'../../boostedhiggs/data'
+    np.save(f'{data_dir}/ddtmap_{year}.npy', smooth_ddtmap)
+    np.save(f'{data_dir}/ddtmap_ptedges.npy', pt_edges)
+    np.save(f'{data_dir}/ddtmap_rhoedges.npy', rho_edges)
     
 if __name__ == "__main__":
     main()
