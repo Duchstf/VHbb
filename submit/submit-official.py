@@ -18,10 +18,10 @@ sys.path.append('/srv')
 
 from boostedhiggs import VHbbProcessorOfficial as vhbb_processor
 tag = "vhbb_official"
-syst = False
+syst = True
 year = sys.argv[1]
 ignore_list = ['muondata','WLNu'] #Sample to ignore processing
-#target_list = ['data', 'QCD']
+# target_list = ['data', 'QCD']
 processor = vhbb_processor(year=year, jet_arbitration='T_bvq', systematics=syst)
 
 utils.submit_processor(year, tag, processor, '2GB', ignore_list=ignore_list)

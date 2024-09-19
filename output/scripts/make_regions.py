@@ -94,7 +94,7 @@ def process(fout, sample, filename):
     #Make the template for the specific sample
     template = make_template(filename)
 
-    h = template.integrate('region','signal').integrate('pt1', slice(600, None), overflow='over').sum('genflavor2', overflow='under')
+    h = template.integrate('region','signal').integrate('pt1', slice(450, None), overflow='over').integrate('qcd2', slice(0., qcdthr)).sum('genflavor2', overflow='under')
 
     #Make hists for different mass ranges
     for i in range(len(mass_range)-1):

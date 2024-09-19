@@ -25,8 +25,7 @@ from boostedhiggs.corrections import (
     add_jec_variables,
     met_factory,
     lumiMasks,
-    get_VetoMap,
-    qcd_ddt_shift
+    get_VetoMap
 )
 
 #Import the working points
@@ -103,6 +102,7 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
                 hist.Cat('region', 'Region'),
                 hist.Cat('systematic', 'Systematic'),
                 hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
+                hist.Bin('msd2', r'Jet 2 $m_{sd}$', [40., 68., 110., 201.]),
 
                 hist.Bin('bb1', r'Jet 1 Paticle Net B Score', bb_bins),
                 hist.Bin('qcd2', r'Jet 2 Paticle Net QCD Score', qcd_bins),
@@ -314,8 +314,7 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
         else: systematics = [shift_name]
             
         #!LIST OF THE SELECTIONS APPLIED
-        selection.add('VSelection', (msd2_matched >= 68.) & (msd2_matched <= 110.))
-        signal_selection = ['trigger', 'lumimask', 'metfilter', 'jet1kin', 'jet2kin', 'jetid', 'jetacceptance', 'met', 'noleptons','njets', 'VSelection']
+        signal_selection = ['trigger', 'lumimask', 'metfilter', 'jet1kin', 'jet2kin', 'jetid', 'jetacceptance', 'met', 'noleptons','njets']
 
         regions = {'signal': signal_selection}
 
@@ -339,6 +338,7 @@ class VHbbProcessorOfficial(processor.ProcessorABC):
                 region=region,
                 systematic=sname,
                 msd1=normalize(msd1_matched, cut),
+                msd2=normalize(msd2_matched, cut),
 
                 bb1=normalize(bb1, cut),
                 qcd2=normalize(qcd2,cut),
