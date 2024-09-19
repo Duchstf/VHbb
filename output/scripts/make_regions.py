@@ -35,13 +35,13 @@ qcdthr = 0.0741
 mass_range = [40., 68., 110., 201.]
 
 #List the samples
-samples = ['QCD',
-           'VV', 'VVNLO', 'Wjets', 'Zjets',
-           'VBFDipoleRecoilOn','ggF','ttH', 'WH','ZH',
-           'singlet', 'ttbar',
-           'data']
+# samples = ['QCD',
+#            'VV', 'VVNLO', 'Wjets', 'Zjets',
+#            'VBFDipoleRecoilOn','ggF','ttH', 'WH','ZH',
+#            'singlet', 'ttbar',
+#            'data']
 
-# samples = ['QCD']
+samples = ['QCD', 'data']
 btag_SF_samples = ['Wjets', 'Zjets']
 muonCR_samples = ['QCD', 'singlet', 'ttbar', 'WLNu', "muondata"]
 samples_save = [x for x in samples + ['Zjetsbb', 'WjetsQQ'] if x != 'Wjets']
@@ -94,7 +94,7 @@ def process(fout, sample, filename):
     #Make the template for the specific sample
     template = make_template(filename)
 
-    h = template.integrate('region','signal').integrate('qcd2', slice(0., qcdthr)).integrate('pt1', slice(450, None), overflow='over').sum('genflavor2', overflow='under')
+    h = template.integrate('region','signal').integrate('pt1', slice(600, None), overflow='over').sum('genflavor2', overflow='under')
 
     #Make hists for different mass ranges
     for i in range(len(mass_range)-1):

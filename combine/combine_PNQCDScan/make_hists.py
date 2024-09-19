@@ -43,7 +43,7 @@ samples_save = [x for x in samples + ['Zjetsbb', 'WjetsQQ'] if x != 'Wjets']
 
 btag_SF_samples = ['Wjets', 'Zjets']
 
-QCD2_THRES = 0.2104
+QCD2_THRES = 0.0741
 
 def check_missing(pickle_hist):
         
@@ -100,7 +100,7 @@ def main():
         raise FileNotFoundError("You need to link the pickle file (using absolute paths)")
 
     #Read in the pickle file
-    pickle_hist =  pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('qcd2', slice(0., QCD2_THRES))
+    pickle_hist =  pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('qcd2', slice(QCD2_THRES, 1.0))
     check_missing(pickle_hist)
     
     #Save a list of mass categories to a file to be used in make_cards

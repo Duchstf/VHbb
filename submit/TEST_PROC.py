@@ -19,7 +19,7 @@ fileset = {
 }
 
 #autoreload forces the kernel to reload the processor to include any new changes
-from boostedhiggs import DDT as vhbb_processor
+from boostedhiggs import VHbbProcessorOfficial as vhbb_processor
 
 import time
 tstart = time.time()
