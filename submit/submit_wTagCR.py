@@ -82,7 +82,7 @@ with Client(cluster) as client:
                 uproot.open.defaults["xrootd_handler"] = uproot.source.xrootd.MultithreadedXRootDSource
 
                 #RUN MAIN PROCESSOR
-                p = VHBB_WTagCR(year=year, jet_arbitration='T_bvq' , systematics=syst)
+                p = VHBB_WTagCR(year=year, jet_arbitration='pt' , systematics=syst)
                 args = {'savemetrics':True, 'schema':NanoAODSchema}
 
                 #Safe to skip bad files for MC, not safe for data

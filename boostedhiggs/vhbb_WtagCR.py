@@ -165,6 +165,8 @@ class VHBB_WTagCR(processor.ProcessorABC):
             pnet_bvq = leadingjets.particleNetMD_Xbb / (leadingjets.particleNetMD_Xcc + leadingjets.particleNetMD_Xbb + leadingjets.particleNetMD_Xqq)                                                                                       
             indices = ak.argsort(pnet_bvq, axis=1, ascending = False) #Higher b score for the Higgs candidate (more b like)                                                            
             candidatejet = ak.firsts(leadingjets[indices[:, 0:1]]) # candidate jet is more b-like (higher BvC score)
+        elif self._jet_arbitration == 'pt':
+            candidatejet = candidatejets[:,0]
 
         else: raise RuntimeError("Unknown candidate jet arbitration")
 

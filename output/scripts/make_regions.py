@@ -35,13 +35,13 @@ qcdthr = 0.0741
 mass_range = [40., 68., 110., 201.]
 
 #List the samples
-# samples = ['QCD',
-#            'VV', 'VVNLO', 'Wjets', 'Zjets',
-#            'VBFDipoleRecoilOn','ggF','ttH', 'WH','ZH',
-#            'singlet', 'ttbar',
-#            'data']
+samples = ['QCD',
+           'VV', 'VVNLO', 'Wjets', 'Zjets',
+           'VBFDipoleRecoilOn','ggF','ttH', 'WH','ZH',
+           'singlet', 'ttbar',
+           'data']
 
-samples = ['QCD', 'data']
+# samples = ['QCD', 'data']
 btag_SF_samples = ['Wjets', 'Zjets']
 muonCR_samples = ['QCD', 'singlet', 'ttbar', 'WLNu', "muondata"]
 samples_save = [x for x in samples + ['Zjetsbb', 'WjetsQQ'] if x != 'Wjets']
@@ -185,13 +185,7 @@ def main():
 
         #Get the sample output dir and then the infiles
         year_dir = f'../coffea/vhbb_official/{year}'
-
-        #Group DYJets into Zjets
-        if sample == 'Zjets':
-            sample_infiles = subprocess.getoutput(f"ls {year_dir}/Zjets/*.coffea").split() + subprocess.getoutput(f"ls {year_dir}/DYJets/*.coffea").split()
-
-        else:
-            sample_infiles = subprocess.getoutput(f"ls {year_dir}/{sample_label}/*.coffea").split()
+        sample_infiles = subprocess.getoutput(f"ls {year_dir}/{sample_label}/*.coffea").split()
 
 
         print("---------------")

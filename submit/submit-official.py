@@ -24,4 +24,4 @@ ignore_list = ['muondata','WLNu'] #Sample to ignore processing
 # target_list = ['data', 'QCD']
 processor = vhbb_processor(year=year, jet_arbitration='T_bvq', systematics=syst)
 
-utils.submit_processor(year, tag, processor, '2GB', ignore_list=ignore_list)
+utils.submit_processor(year, tag, processor, '4GB', ignore_list=ignore_list)

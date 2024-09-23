@@ -24,7 +24,7 @@ from boostedhiggs import VHbbProcessorOfficial as vhbb_processor
 import time
 tstart = time.time()
 
-p = vhbb_processor(year='2016', jet_arbitration='T_bvq')
+p = vhbb_processor(year='2016', jet_arbitration='T_bvq', systematics=True)
 
 #Run Coffea code using uproot
 dummy = processor.run_uproot_job(
