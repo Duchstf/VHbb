@@ -149,60 +149,25 @@ class VHBB_WTagCR(processor.ProcessorABC):
         selection.add('metfilter', metfilter)
         del metfilter
 
-        fatjets = events.FatJet
-        fatjets['msdcorr'] = corrected_msoftdrop(fatjets, self._year)
-        fatjets['qcdrho'] = 2 * np.log(fatjets.msdcorr / fatjets.pt)
-        fatjets['msdcorr_full'] = fatjets['msdcorr']
-
-        candidatejets = fatjets[ (fatjets.pt > 200) & (abs(fatjets.eta) < 2.5)  & fatjets.isTight]  # this is loose in sampleContainer
-        candidatejets = candidatejets[:, :2]  # Only consider first two to match generators
-        
-        #Pick the candidate jet based on different arbitration
-        if self._jet_arbitration == 'T_bvq':
-            #Order the jets based on particle net scores
-            leadingjets = candidatejets[:, 0:2]
-            
-            pnet_bvq = leadingjets.particleNetMD_Xbb / (leadingjets.particleNetMD_Xcc + leadingjets.particleNetMD_Xbb + leadingjets.particleNetMD_Xqq)                                                                                       
-            indices = ak.argsort(pnet_bvq, axis=1, ascending = False) #Higher b score for the Higgs candidate (more b like)                                                            
-            candidatejet = ak.firsts(leadingjets[indices[:, 0:1]]) # candidate jet is more b-like (higher BvC score)
-        elif self._jet_arbitration == 'pt':
-            candidatejet = candidatejets[:,0]
-
-        else: raise RuntimeError("Unknown candidate jet arbitration")
-
-        qcd1 = candidatejet.particleNetMD_QCD
-
-        #!Add selections------------------>
-        #There is a list at the end which specifies the selections being used  
-        selection.add('jetid', candidatejet.isTight)
-
-        # Selections for muon control region
-        selection.add('minjetkinmu',
-            (candidatejet.pt >= 450)
-            & (candidatejet.pt < 1200)
-            & (candidatejet.msdcorr >= 40.)
-            & (candidatejet.msdcorr < 201.)
-            & (abs(candidatejet.eta) < 2.5))
-
-        #Count the number of ak4 jets that are away
-        ak4_jets_events = ak4_jets(events, self._year)
-        
-        jets = ak4_jets_events[:, :4]
-        dphi = abs(jets.delta_phi(candidatejet))
-        ak4_away = jets[dphi > 0.8] 
-        selection.add('ak4btagMedium08', ak.max(ak4_away.btagDeepFlavB, axis=1, mask_identity=False) > self._btagSF._btagwp)
-
+        #MET Selection
         met = events.MET 
-        selection.add('met', met.pt < 140.)
         selection.add('met40p', met.pt > 40.)
 
-        #Lepton vetos
+        #Select the muon and b-tagged jets
         goodmuon = ((events.Muon.pt > 10) & (abs(events.Muon.eta) < 2.4) & (events.Muon.pfRelIso04_all < 0.25) & events.Muon.looseId)
         nmuons = ak.sum(goodmuon, axis=1)
         leadingmuon = ak.firsts(events.Muon[goodmuon])
-        selection.add('tightMuon', (leadingmuon.tightId) & (leadingmuon.pt > 53.))
+        selection.add('MuonKin', (leadingmuon.tightId) & (leadingmuon.pt > 55.)  & (abs(leadingmuon.eta) < 2.1))
         selection.add('ptrecoW200', (leadingmuon + met).pt > 200.)
+        
+        #There should be a b-tagged jet in the same hemisphere
+        ak4_jets_events = ak4_jets(events, self._year)
+        jets = ak4_jets_events[:, :4]
+        dphi = abs(jets.delta_phi(leadingmuon))
+        btag_jets_muon = jets[dphi <= 0.8] 
+        selection.add('ak4btagMedium08', ak.max(btag_jets_muon.btagDeepFlavB, axis=1, mask_identity=False) > self._btagSF._btagwp)
 
+        #Veto all the other leptons
         goodelectron = ((events.Electron.pt > 10) & (abs(events.Electron.eta) < 2.5) & (events.Electron.cutBased >= events.Electron.LOOSE))
         nelectrons = ak.sum(goodelectron, axis=1)
 
@@ -221,11 +186,28 @@ class VHBB_WTagCR(processor.ProcessorABC):
             ),
             axis=1,
         )
-
-        selection.add('noleptons', (nmuons == 0) & (nelectrons == 0) & (ntaus == 0))
         selection.add('onemuon', (nmuons == 1) & (nelectrons == 0) & (ntaus == 0))
-        selection.add('muonkin', (leadingmuon.pt > 55.) & (abs(leadingmuon.eta) < 2.1))
-        selection.add('muonDphiAK8', abs(leadingmuon.delta_phi(candidatejet)) > 2*np.pi/3)
+
+        #Select the jets in the opposite hemisphere
+        fatjets = events.FatJet
+        fatjets['msdcorr'] = corrected_msoftdrop(fatjets, self._year)
+        ak8_jets = fatjets[ (fatjets.pt > 200) & (abs(fatjets.eta) < 2.5)  & fatjets.isTight][:, :4]  # this is loose in sampleContainer
+
+        #Calculate dphi between leadingmuon and fatjets
+        fatjets_dphi = abs(ak8_jets.delta_phi(leadingmuon))
+        candidatejets = ak8_jets[fatjets_dphi > 2*np.pi/3]
+        indices = ak.argsort(candidatejets.pt, axis=1, ascending = False)
+        candidatejet = ak.firsts(candidatejets[indices[:,0:1]]) 
+        qcd1 = candidatejet.particleNetMD_QCD
+
+        #Some kinematic requirements for the candidatejet
+        selection.add('jetacceptance',
+            (candidatejet.msdcorr >= 40.)
+            & (candidatejet.msdcorr < 201.)
+            & (candidatejet.pt >= 450)
+            & (candidatejet.pt < 1200)
+            & (abs(candidatejet.eta) < 2.5)
+        )
 
         if isRealData: genflavor1 = ak.zeros_like(candidatejet.pt)
         else:
@@ -261,7 +243,7 @@ class VHBB_WTagCR(processor.ProcessorABC):
         #----------------
 
         #!LIST OF THE SELECTIONS APPLIED
-        regions = { 'tnp': ['muontrigger','lumimask','metfilter', 'tightMuon', 'onemuon',  'met40p', 'ptrecoW200', 'ak4btagMedium08','muonDphiAK8', 'minjetkinmu']}
+        regions = { 'tnp': ['muontrigger','lumimask','metfilter', 'MuonKin', 'onemuon',  'met40p', 'ptrecoW200', 'ak4btagMedium08', 'jetacceptance']}
         
         if shift_name is None: systematics = [None] + list(weights.variations)
         else: systematics = [shift_name]
