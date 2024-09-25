@@ -1,18 +1,8 @@
 from imports import *
 
 def main():
-    year=sys.argv[1]
-    bb_WPs = { '2016APV_bb1': 0.9883, '2016_bb1': 0.9883, '2017_bb1': 0.9870, '2018_bb1':  0.9880}
-    qcd_WPs = { '2016APV_qcd2': 0.0541, '2016_qcd2': 0.0882, '2017_qcd2': 0.0541, '2018_qcd2':  0.0741}
 
-    bbthr = bb_WPs[f"{year}_bb1"]
-    qcdthr = qcd_WPs[f"{year}_qcd2"]
-
-    pickle_path = f'/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/pickle/vhbb_official/{year}/h.pkl' #Need to be defined manually
-    sig_0 =  pickle.load(open(pickle_path,'rb')).integrate('region','signal').integrate('systematic', 'nominal').sum('genflavor1', 'msd1', overflow='under')
-    sig = sig_0.integrate('qcd2', slice(0., qcdthr)).integrate('pt1', slice(450, None), overflow='over').integrate('msd2', slice(68,110))
-
-    print(sig)
+    regions_path = "/uscms_data/d3/dhoang/VH_analysis/CMSSW_10_2_13/src/VHbb/output/vhbb_official/"
     
     all_H = ['WH', 'ZH', 'ggF', 'VBFDipoleRecoilOn', 'ttH']
     H_samples = [['WH', 'ZH'], 'ggF', 'VBFDipoleRecoilOn', 'ttH']
@@ -58,8 +48,8 @@ def main():
     ax.set_xlabel('Higgs Process Fraction')
 
     ax.legend(loc='center left', bbox_to_anchor=(1, 0.5), edgecolor='black', frameon=True, borderpad=1)
-    plt.savefig(f'plots/H_comp_{year}.pdf', bbox_inches='tight')
-    plt.savefig(f'plots/H_comp_{year}.png', bbox_inches='tight')
+    plt.savefig(f'plots/H_comp_{year}_all.pdf', bbox_inches='tight')
+    plt.savefig(f'plots/H_comp_{year}_all.png', bbox_inches='tight')
         
 
 main()
