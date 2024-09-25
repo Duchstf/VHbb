@@ -1,18 +1,18 @@
 Combination of wsfSinglePass=wsfSinglePass.txt  wsfSingleFail=wsfSingleFail.txt
 imax 2 number of bins
 jmax 1 number of processes minus 1
-kmax 165 number of nuisance parameters
+kmax 169 number of nuisance parameters
 ----------------------------------------------------------------------------------------------------------------------------------
 shapes *              wsfSingleFail  sfModel.root sfModel:wsfSingleFail_$PROCESS sfModel:wsfSingleFail_$PROCESS_$SYSTEMATIC
 shapes *              wsfSinglePass  sfModel.root sfModel:wsfSinglePass_$PROCESS sfModel:wsfSinglePass_$PROCESS_$SYSTEMATIC
 ----------------------------------------------------------------------------------------------------------------------------------
 bin          wsfSinglePass  wsfSingleFail
-observation  2755           12121        
+observation  551            2238         
 ----------------------------------------------------------------------------------------------------------------------------------
 bin                                                 wsfSinglePass  wsfSinglePass  wsfSingleFail  wsfSingleFail
 process                                             wqq            qcd            wqq            qcd          
 process                                             0              1              0              1            
-rate                                                1134.635       1804.344       3049.825       8437.81      
+rate                                                139.215        562.47         309.527        2192.697     
 ----------------------------------------------------------------------------------------------------------------------------------
 CMS_jecs                lnN                         1.02           1.02           1.02           1.02         
 CMS_lumi                lnN                         1.023          1.023          1.023          1.023        
@@ -89,12 +89,15 @@ wsfSingleFail_wqq_mcstat_bin27   shape              -              -            
 wsfSingleFail_wqq_mcstat_bin28   shape              -              -              1.0            -            
 wsfSingleFail_wqq_mcstat_bin29   shape              -              -              1.0            -            
 wsfSingleFail_wqq_mcstat_bin3   shape               -              -              1.0            -            
-wsfSingleFail_wqq_mcstat_bin31   shape              -              -              1.0            -            
+wsfSingleFail_wqq_mcstat_bin30   shape              -              -              1.0            -            
 wsfSingleFail_wqq_mcstat_bin32   shape              -              -              1.0            -            
 wsfSingleFail_wqq_mcstat_bin33   shape              -              -              1.0            -            
 wsfSingleFail_wqq_mcstat_bin34   shape              -              -              1.0            -            
-wsfSingleFail_wqq_mcstat_bin37   shape              -              -              1.0            -            
+wsfSingleFail_wqq_mcstat_bin35   shape              -              -              1.0            -            
+wsfSingleFail_wqq_mcstat_bin36   shape              -              -              1.0            -            
+wsfSingleFail_wqq_mcstat_bin38   shape              -              -              1.0            -            
 wsfSingleFail_wqq_mcstat_bin4   shape               -              -              1.0            -            
+wsfSingleFail_wqq_mcstat_bin42   shape              -              -              1.0            -            
 wsfSingleFail_wqq_mcstat_bin5   shape               -              -              1.0            -            
 wsfSingleFail_wqq_mcstat_bin6   shape               -              -              1.0            -            
 wsfSingleFail_wqq_mcstat_bin7   shape               -              -              1.0            -            
@@ -170,9 +173,10 @@ wsfSinglePass_wqq_mcstat_bin27   shape              1.0            -            
 wsfSinglePass_wqq_mcstat_bin28   shape              1.0            -              -              -            
 wsfSinglePass_wqq_mcstat_bin29   shape              1.0            -              -              -            
 wsfSinglePass_wqq_mcstat_bin3   shape               1.0            -              -              -            
-wsfSinglePass_wqq_mcstat_bin32   shape              1.0            -              -              -            
+wsfSinglePass_wqq_mcstat_bin33   shape              1.0            -              -              -            
 wsfSinglePass_wqq_mcstat_bin34   shape              1.0            -              -              -            
-wsfSinglePass_wqq_mcstat_bin37   shape              1.0            -              -              -            
+wsfSinglePass_wqq_mcstat_bin35   shape              1.0            -              -              -            
+wsfSinglePass_wqq_mcstat_bin38   shape              1.0            -              -              -            
 wsfSinglePass_wqq_mcstat_bin4   shape               1.0            -              -              -            
 wsfSinglePass_wqq_mcstat_bin5   shape               1.0            -              -              -            
 wsfSinglePass_wqq_mcstat_bin6   shape               1.0            -              -              -            
@@ -181,7 +185,7 @@ wsfSinglePass_wqq_mcstat_bin8   shape               1.0            -            
 wsfSinglePass_wqq_mcstat_bin9   shape               1.0            -              -              -            
 effSF_un_effect_wsfSinglePass_qcd  rateParam wsfSinglePass qcd (1.0*@0) effSF_un 
 effSF_effect_wsfSinglePass_wqq  rateParam wsfSinglePass wqq (1.0*@0) effSF 
-effSF_un_effect_wsfSingleFail_qcd  rateParam wsfSingleFail qcd (((1-@0)*0.21384033645870604)+1) effSF_un 
-effSF_effect_wsfSingleFail_wqq  rateParam wsfSingleFail wqq (((1-@0)*0.37203276659583984)+1) effSF 
+effSF_un_effect_wsfSingleFail_qcd  rateParam wsfSingleFail qcd (((1-@0)*0.2565194815642938)+1) effSF_un 
+effSF_effect_wsfSingleFail_wqq  rateParam wsfSingleFail wqq (((1-@0)*0.4497663640080847)+1) effSF 
 effSF extArg sfModel.root:sfModel
 effSF_un extArg sfModel.root:sfModel
