@@ -49,7 +49,7 @@ def shape_to_num(var, nom, clip=1.5):
 def smass(sName):
     if sName in ['ggF','VBF','WH','ZH','ttH', 'VBFDipoleRecoilOn']:
         _mass = 125.
-    elif sName in ['Wjets', 'WjetsUM','WjetsQQ','EWKW','ttbar','singlet','VV','VVNLO']:
+    elif sName in ['Wjets', 'WjetsUM','WjetsQQ','EWKW','ttbar','singlet','VVNLO']:
         _mass = 80.379
     elif sName in ['Zjets','Zjetsbb','EWKZ','EWKZbb']:
         _mass = 91.
@@ -590,14 +590,14 @@ def vh_rhalphabet(tmpdir):
                     if do_systematics: sample.setParamEffect(sys_PNetXbb, sfunc_up, sfunc_down)
 
                 #V-tagged SF
-                if sName in ['VV','VVNLO','WH','ZH']:                                                 
+                if sName in ['VVNLO','WH','ZH']:                                                 
                     sample.scale(SF[year]['eff_SF'])
                     if do_systematics:
                         effect = 1.0 + SF[year]['eff_SF_ERR'] / SF[year]['eff_SF']
                         sample.setParamEffect(sys_PNetVqq, effect)
 
                 #Scale down to do background only fit
-                # if sName in ['WH','ZH']: sample.scale(1e-5)
+                # if sName in ['WH','ZH', 'VVNLO']: sample.scale(1e-5)
 
                 ch.addSample(sample)
             # END loop over MC samples 

@@ -41,7 +41,7 @@ from boostedhiggs import VHBB_WTagCR
 year = sys.argv[1]
 tag = "wTagCR"
 syst = False
-memory='6GB'
+memory='4GB'
 CR_list = ['muondata','WLNu', 'ttbar', 'QCD', 'singlet']
 
 env_extra = [f"export PYTHONPATH=$PYTHONPATH:{os.getcwd()}"]

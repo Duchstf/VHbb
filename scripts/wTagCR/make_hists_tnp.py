@@ -47,7 +47,7 @@ def main():
     fout[f"data_obs_fail_nominal"] = hist.export1d(hfail_data)
 
     # samples included
-    p = ["ttbar","singlet","QCD","Wjets","Zjets"]
+    p = ["ttbar","singlet","WLNu", "QCD"]
 
     # matched
     hpass_matched = tnp.integrate('qcd1',int_range=slice(0.,qcdthr)).integrate('process',p).integrate('genflavor1',int_range=slice(1,4))
