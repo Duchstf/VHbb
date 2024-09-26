@@ -69,7 +69,7 @@ def ak4_jets(events, year):
 
 class VHBB_WTagCR(processor.ProcessorABC):
     
-    def __init__(self, year='2017', jet_arbitration='T_bvq', systematics=False):
+    def __init__(self, year='2017', jet_arbitration='qq', systematics=False):
         
         self._year = year
         self._jet_arbitration = jet_arbitration
