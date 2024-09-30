@@ -597,7 +597,8 @@ def vh_rhalphabet(tmpdir):
                         sample.setParamEffect(sys_PNetVqq, effect)
 
                 #Scale down to do background only fit
-                # if sName in ['WH','ZH', 'VVNLO']: sample.scale(1e-5)
+                if unblind_sideband:
+                    if sName in ['WH','ZH', 'VVNLO']: sample.scale(1e-4)
 
                 ch.addSample(sample)
             # END loop over MC samples 

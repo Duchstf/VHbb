@@ -159,13 +159,6 @@ class VHBB_WTagCR(processor.ProcessorABC):
         leadingmuon = ak.firsts(events.Muon[goodmuon])
         selection.add('MuonKin', (leadingmuon.tightId) & (leadingmuon.pt > 55.)  & (abs(leadingmuon.eta) < 2.1))
         selection.add('ptrecoW200', (leadingmuon + met).pt > 200.)
-        
-        #There should be a b-tagged jet in the same hemisphere
-        ak4_jets_events = ak4_jets(events, self._year)
-        jets = ak4_jets_events[:, :4]
-        dphi = abs(jets.delta_phi(leadingmuon))
-        btag_jets_muon = jets[dphi <= 0.8] 
-        selection.add('ak4btagMedium08', ak.max(btag_jets_muon.btagDeepFlavB, axis=1, mask_identity=False) > self._btagSF._btagwp)
 
         #Veto all the other leptons
         goodelectron = ((events.Electron.pt > 10) & (abs(events.Electron.eta) < 2.5) & (events.Electron.cutBased >= events.Electron.LOOSE))
@@ -196,9 +189,19 @@ class VHBB_WTagCR(processor.ProcessorABC):
         #Calculate dphi between leadingmuon and fatjets
         fatjets_dphi = abs(ak8_jets.delta_phi(leadingmuon))
         candidatejets = ak8_jets[fatjets_dphi > 2*np.pi/3]
-        indices = ak.argsort(candidatejets.pt, axis=1, ascending = False)
+
+        #Arbitrate them by two prong scores
+        pnet_qq = candidatejets.particleNetMD_Xcc + candidatejets.particleNetMD_Xbb + candidatejets.particleNetMD_Xqq                                                                                   
+        indices = ak.argsort(pnet_qq, axis=1, ascending = False)
         candidatejet = ak.firsts(candidatejets[indices[:,0:1]]) 
         qcd1 = candidatejet.particleNetMD_QCD
+
+        #There should be a b-tagged jet
+        ak4_jets_events = ak4_jets(events, self._year)
+        jets = ak4_jets_events[:, :4]
+        dphi = abs(jets.delta_phi(candidatejet))
+        btag_jets_muon = jets[dphi > 0.8] 
+        selection.add('ak4btagMedium08', ak.max(btag_jets_muon.btagDeepFlavB, axis=1, mask_identity=False) > self._btagSF._btagwp)
 
         #Some kinematic requirements for the candidatejet
         selection.add('jetacceptance',

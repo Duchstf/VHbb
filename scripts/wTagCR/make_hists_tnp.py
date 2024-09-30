@@ -35,8 +35,10 @@ def main():
     picklename = f'templates/{year}/h.pkl'
     if not os.path.isfile(picklename): raise FileNotFoundError("You need to link the pickle file (using absolute paths)")
 
+    new_bins_msd1 = hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201)
+
     # Read the histogram from the pickle file
-    tnp = pickle.load(open(picklename,'rb')).integrate('region','tnp')
+    tnp = pickle.load(open(picklename,'rb')).integrate('region','tnp').rebin('msd1', new_bins_msd1)
 
     # data first
     p = "muondata"
@@ -50,8 +52,8 @@ def main():
     p = ["ttbar","singlet","WLNu", "QCD"]
 
     # matched
-    hpass_matched = tnp.integrate('qcd1',int_range=slice(0.,qcdthr)).integrate('process',p).integrate('genflavor1',int_range=slice(1,4))
-    hfail_matched = tnp.integrate('qcd1',int_range=slice(qcdthr,1.)).integrate('process',p).integrate('genflavor1',int_range=slice(1,4))
+    hpass_matched = tnp.integrate('qcd1',int_range=slice(0.,qcdthr)).integrate('process',p).integrate('genflavor1',int_range=slice(1,3))
+    hfail_matched = tnp.integrate('qcd1',int_range=slice(qcdthr,1.)).integrate('process',p).integrate('genflavor1',int_range=slice(1,3))
     fout["matched_pass_nominal"] = hist.export1d(hpass_matched)
     fout["matched_fail_nominal"] = hist.export1d(hfail_matched)
 
