@@ -79,8 +79,9 @@ def add_pdf_weight(weights, pdf_weights):
 
     nweights = len(weights.weight())
     nom = np.ones(nweights)
+    weights_length = np.asarray(pdf_weights).shape[1]
 
-    for i in range(0,103):
+    for i in range(0,weights_length):
         weights.add('PDF_weight_'+str(i), nom, pdf_weights[:,i])
 
 # All 9 scale variations
@@ -90,8 +91,9 @@ def add_scalevar(weights, var_weights):
 
     nweights = len(weights.weight())
     nom = np.ones(nweights)
+    weights_length = np.asarray(var_weights).shape[1]
 
-    for i in range(0,9):
+    for i in range(0,weights_length):
         weights.add('scalevar_'+str(i), nom, var_weights[:,i])
 
 # Jennet adds PS weights

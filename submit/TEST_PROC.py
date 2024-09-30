@@ -14,12 +14,13 @@ import os,sys
 sys.path.append('/srv')
 
 fileset = {
-    "QCD": [
-         "root://cmsxrootd-site.fnal.gov//store/mc/RunIISummer20UL16NanoAODv9/QCD_HT300to500_TuneCP5_PSWeights_13TeV-madgraph-pythia8/NANOAODSIM/106X_mcRun2_asymptotic_v17-v1/260000/527D7EFD-7081-6B42-8A3B-F3ED40C989C3.root"]
+    # "WminusH_HToBB_WToQQ": ["root://cmsxrootd-site.fnal.gov//store/mc/RunIISummer20UL18NanoAODv9/WminusH_HToBB_WToQQ_M-125_TuneCP5_13TeV-powheg-pythia8/NANOAODSIM/106X_upgrade2018_realistic_v16_L1v1-v1/70000/BA771CBA-53E3-C74E-A67A-C8B248353201.root"]
+    "WWTo1L1Nu2Q_NLO": [
+         "root://cmsxrootd-site.fnal.gov//store/mc/RunIISummer20UL18NanoAODv9/WWTo1L1Nu2Q_4f_TuneCP5_13TeV-amcatnloFXFX-pythia8/NANOAODSIM/106X_upgrade2018_realistic_v16_L1v1-v1/60000/E9F0F284-9256-2F42-A191-2AB133595762.root"]
 }
 
 #autoreload forces the kernel to reload the processor to include any new changes
-from boostedhiggs import VHBB_WTagCR as vhbb_processor
+from boostedhiggs import VHbbProcessorTheory as vhbb_processor
 
 import time
 tstart = time.time()

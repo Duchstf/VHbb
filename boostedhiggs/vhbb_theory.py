@@ -73,7 +73,7 @@ def ak4_jets(events, year):
 
     return jets
 
-class VHbbProcessorOfficial_TheorySys(processor.ProcessorABC):
+class VHbbProcessorTheory(processor.ProcessorABC):
     
     def __init__(self, year='2017', jet_arbitration='T_bvq',
                  tightMatch=True, ewkHcorr=True, systematics=True):
@@ -212,7 +212,7 @@ class VHbbProcessorOfficial_TheorySys(processor.ProcessorABC):
         #!Add selections------------------>
         #There is a list at the end which specifies the selections being used 
         selection.add('jet1kin', (abs(candidatejet.eta) < 2.5) & (candidatejet.pt >= 450))
-        selection.add('jet2kin', (secondjet.pt >= 200) & (abs(secondjet.eta) < 2.5))
+        selection.add('jet2kin', (secondjet.pt >= 450) & (abs(secondjet.eta) < 2.5))
 
         selection.add('jetacceptance',
             (candidatejet.msdcorr >= 40.)
@@ -266,7 +266,7 @@ class VHbbProcessorOfficial_TheorySys(processor.ProcessorABC):
             genflavor2 = ak.zeros_like(secondjet.pt)
         else:
             weights.add('genweight', events.genWeight)
-            if 'HToBB' in dataset:
+            if 'HToBB' in dataset or 'NLO' in dataset:
                 if self._ewkHcorr: add_HiggsEW_kFactors(weights, events.GenPart, dataset)
 
                 # Jennet adds theory variations                                                                               
