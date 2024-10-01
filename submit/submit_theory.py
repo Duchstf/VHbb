@@ -22,4 +22,4 @@ year = sys.argv[1]
 target_list = ['ttH', 'ggF', 'VVNLO', 'VBFHToBBDipoleRecoilOn','ZH', 'WH'] #Sample to ignore processing
 processor = vhbb_processor(year=year, jet_arbitration='T_bvq', systematics=syst)
 
-utils.submit_processor(year, tag, processor, '4GB', target_list=target_list)
+utils.submit_processor(year, tag, processor, '8GB', target_list=target_list)

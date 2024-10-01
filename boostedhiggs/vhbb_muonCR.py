@@ -53,7 +53,7 @@ def ak4_jets(events, year):
     # https://cms-jerc.web.cern.ch/Recommendations/#jet-veto-maps
 
     jets_selection = ((jets.pt > 30.) & 
-                      (abs(jets.eta) < 5.0) & 
+                      (abs(jets.eta) < 2.5) & 
                       (jets.isTight) & 
                       (jets.chEmEF + jets.neEmEF < 0.9) & 
                       ((jets.pt >= 50) | ((jets.pt < 50) & (jets.puId & 2) == 2)))
@@ -198,7 +198,7 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
 
         # Selections for muon control region
         selection.add('minjetkinmu',
-            (candidatejet.pt >= 400)
+            (candidatejet.pt >= 450)
             & (candidatejet.pt < 1200)
             & (candidatejet.msdcorr >= 40.)
             & (candidatejet.msdcorr < 201.)
