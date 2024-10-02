@@ -112,8 +112,7 @@ def make_validbins(validbins, nVmass):
         validbins_pass = np.copy(validbins)
 
         #Unblind certain bins for pass regions
-        if i != 1: validbins_pass[4:12] = False
-        else: validbins_pass[4:16] = False
+        if i == 1: validbins_pass[4:16] = False
 
         validbins_list[i]['pass'] =  validbins_pass
 
@@ -448,7 +447,7 @@ def vh_rhalphabet(tmpdir):
                     sample.autoMCStats(lnN=True) 
 
                     ##--------------------Experimental Systematics-------------------
-                    sample.setParamEffect(sys_eleveto, 1.30)
+                    sample.setParamEffect(sys_eleveto, 1.005)
                     sample.setParamEffect(sys_muveto, 1.005)
                     sample.setParamEffect(sys_tauveto, 1.05)
 

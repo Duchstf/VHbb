@@ -77,14 +77,22 @@ conda run -n combine --no-capture-output ./build.sh > build.out
 cd ../../
 ln -s -f ../year_scripts/*.sh .
 
-conda run -n combine --no-capture-output ./exp_shapes.sh $2 > exp_shapes.out 
-conda run -n combine --no-capture-output ./exp_significance.sh $2 > significance_VH.txt
-conda run -n combine --no-capture-output ./exp_significance_VV.sh $2 > significance_VV.txt 
+conda run -n combine --no-capture-output ./exp_shapes.sh $1 > exp_shapes.out 
+
+if ["$1" == "unblind_sideband" ]; then
+    echo "Background only fit. Skipping significance calculation."
+else
+  conda run -n combine --no-capture-output ./exp_significance.sh $1 > significance_VH.txt
+  conda run -n combine --no-capture-output ./exp_significance_VV.sh $1 > significance_VV.txt 
+fi
+
 
 #Plot
 add_all='--cats VBin0fail:VBin0fail*;VBin0pass:VBin0pass*;VBin1fail:VBin1fail*;VBin1pass:VBin1pass*;VBin2fail:VBin2fail*;VBin2pass:VBin2pass*;muonCRfail:muonCRfail*;muonCRpass:muonCRpass*'
-if [ "$2" == "unblind" ]; then
+if [ "$1" == "unblind" ]; then
     conda run -n plot --no-capture-output combine_postfits -i fitDiagnosticsTest.root $add_all -o plots/test_plot --data --style ../files/style_D.yml --onto qcd --sigs VH --bkgs QCD,qcd,ttbar,singlet,WjetsQQ,Zjets,Zjetsbb,VV,H,WLNu  --rmap 'VH:rVH' --project-signals 3 --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p 
+elif ["$1" == "unblind_sideband" ]; then
+    conda run -n plot --no-capture-output combine_postfits -i fitDiagnosticsTest.root -o plots/test_plot --data --style ../files/style_D.yml --onto qcd --bkgs QCD,qcd,ttbar,singlet,WjetsQQ,Zjets,Zjetsbb,H,WLNu  --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p 
 else
     conda run -n plot --no-capture-output combine_postfits -i fitDiagnosticsTest.root $add_all -o plots/test_plot --MC --style ../files/style_D.yml --onto qcd --sigs VH --bkgs QCD,qcd,ttbar,singlet,WjetsQQ,Zjets,Zjetsbb,VV,H,WLNu  --rmap 'VH:rVH' --project-signals 3 --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p 
 fi

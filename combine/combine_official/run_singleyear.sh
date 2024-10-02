@@ -56,8 +56,13 @@ conda run -n combine --no-capture-output ./make_workspace.sh > out_make_workspac
 conda run -n combine --no-capture-output ./exp_shapes.sh $2 > out_exp_shapes.txt 
 
 #Significance for VH and VV as well
-conda run -n combine --no-capture-output ./exp_significance.sh $2 > significance.txt 
-conda run -n combine --no-capture-output ./exp_significance_VV.sh $2 > significance_VV.txt 
+if "$2" == "unblind_sideband" ]]; then
+    echo "Background only fit. Skipping significance calculation."
+else
+    conda run -n combine --no-capture-output ./exp_significance.sh $2 > significance.txt 
+    conda run -n combine --no-capture-output ./exp_significance_VV.sh $2 > significance_VV.txt 
+fi
+
 
 if [[ "$2" == "unblind" || "$2" == "unblind_sideband" ]]; then
     conda run -n plot --no-capture-output combine_postfits -i fitDiagnosticsTest.root -o plots/test_plot --data --style ../files/style_D.yml --onto qcd --bkgs QCD,qcd,ttbar,singlet,WjetsQQ,Zjets,Zjetsbb,H,WLNu  --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p 
