@@ -35,16 +35,14 @@ qcdthr = 0.0741
 mass_range = [40., 68., 110., 201.]
 
 #List the samples
-samples = ['QCD',
-           'VV', 'VVNLO', 'Wjets', 'Zjets',
+samples = ['QCD', 'VVNLO', 'Wjets', 'Zjets',
            'VBFDipoleRecoilOn','ggF','ttH', 'WH','ZH',
            'singlet', 'ttbar',
            'data']
 
 # samples = ['QCD', 'data']
-btag_SF_samples = ['Wjets', 'Zjets']
+split_samples = ['Wjets', 'Zjets', 'VVNLO']
 muonCR_samples = ['QCD', 'singlet', 'ttbar', 'WLNu', "muondata"]
-samples_save = [x for x in samples + ['Zjetsbb', 'WjetsQQ'] if x != 'Wjets']
 
 def make_template_theory(filenames):
     return
@@ -109,7 +107,7 @@ def process(fout, sample, filename):
         hpass=None
         hfail=None
 
-        if sample not in btag_SF_samples:
+        if sample not in split_samples:
             
             hpass = sig.integrate('bb1',int_range=slice(bbthr,1.)).sum('genflavor1', overflow='under').integrate('process',sample)
             hfail = sig.integrate('bb1',int_range=slice(0.,bbthr)).sum('genflavor1', overflow='under').integrate('process',sample)
@@ -131,7 +129,7 @@ def process(fout, sample, filename):
             
                 fout[f"Vmass_{i}_fail_{sample + 'QQ'}_{s}"] = hist.export1d(hfail_qq.integrate('systematic',s))       
             
-        else: #Divide Zjets into Z(qq) and Z(bb)
+        elif sample == 'Zjets': #Divide Zjets into Z(qq) and Z(bb)
             
             hpass = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',sample)
             hfail = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',sample)
@@ -145,6 +143,21 @@ def process(fout, sample, filename):
                     
                 fout[f"Vmass_{i}_pass_{sample + 'bb'}_{s}"] = hist.export1d(hpass_bb.integrate('systematic',s))
                 fout[f"Vmass_{i}_fail_{sample + 'bb'}_{s}"] = hist.export1d(hfail_bb.integrate('systematic',s))
+        
+        elif sample == 'VVNLO': #Divide VV into VbbVqq and VqqVqq
+
+            hpass = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',sample)
+            hfail = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',sample)
+            
+            hpass_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',sample)
+            hfail_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',sample)
+
+            for s in hfail.identifiers('systematic'):
+                fout[f"Vmass_{i}_pass_VqqVqq_{s}"] = hist.export1d(hpass.integrate('systematic',s))
+                fout[f"Vmass_{i}_fail_VqqVqq_{s}"] = hist.export1d(hfail.integrate('systematic',s))
+                    
+                fout[f"Vmass_{i}_pass_VbbVqq_{s}"] = hist.export1d(hpass_bb.integrate('systematic',s))
+                fout[f"Vmass_{i}_fail_VbbVqq_{s}"] = hist.export1d(hfail_bb.integrate('systematic',s))
 
     return
 

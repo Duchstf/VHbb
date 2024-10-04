@@ -22,6 +22,14 @@ Example:
 python make_cards.py 2017
 '''
 
+#Define the magnitude of the e-veto uncertainty for each year
+e_veto_val = {
+    '2016':1.1,
+    '2016APV':1.1,
+    '2017':1.07,
+    '2018':1.03
+}
+
 # Tell me if my sample is too small to care about
 def badtemp_ma(hvalues, mask=None):
     # Need minimum size & more than 1 non-zero bins                                                                                                                                   
@@ -42,14 +50,14 @@ def shape_to_num(var, nom, clip=1.5):
         var_rate = clip*nom_rate
 
     if var_rate < 0:
-        var_rate = 0
+        var_rate = 0. #For numerical stability
 
     return var_rate/nom_rate
 
 def smass(sName):
     if sName in ['ggF','VBF','WH','ZH','ttH', 'VBFDipoleRecoilOn']:
         _mass = 125.
-    elif sName in ['Wjets', 'WjetsUM','WjetsQQ','EWKW','ttbar','singlet','VVNLO']:
+    elif sName in ['Wjets', 'WjetsUM','WjetsQQ','EWKW','ttbar','singlet','VVNLO', 'VbbVqq', 'VqqVqq']:
         _mass = 80.379
     elif sName in ['Zjets','Zjetsbb','EWKZ','EWKZbb']:
         _mass = 91.
@@ -204,6 +212,7 @@ def vh_rhalphabet(tmpdir):
     #ParticleNet-MD systematics
     sys_PNetXbb = rl.NuisanceParameter('CMS_eff_bb_{}'.format(year), 'lnN') #Xbb
     sys_PNetVqq = rl.NuisanceParameter('CMS_eff_2prong_{}'.format(year), 'lnN') #V scale factor uncertainty
+    sys_PNetVjets = rl.NuisanceParameter('CMS_eff_unmatched_{}'.format(year), 'lnN') #V+jets scale factor uncertainty
     
     #All derived W-tagged CR, shape systematics in all the masses.
     sys_smear = rl.NuisanceParameter('CMS_hbb_smear_{}'.format(year), 'shape')
@@ -447,7 +456,7 @@ def vh_rhalphabet(tmpdir):
                     sample.autoMCStats(lnN=True) 
 
                     ##--------------------Experimental Systematics-------------------
-                    sample.setParamEffect(sys_eleveto, 1.005)
+                    sample.setParamEffect(sys_eleveto, e_veto_val[year])
                     sample.setParamEffect(sys_muveto, 1.005)
                     sample.setParamEffect(sys_tauveto, 1.05)
 
@@ -459,7 +468,12 @@ def vh_rhalphabet(tmpdir):
                         eff_up = shape_to_num(syst_up,nominal)
                         eff_do = shape_to_num(syst_do,nominal)
 
-                        sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
+                        if eff_up == 0.:
+                            sample.setParamEffect(sys_dict[sys], eff_do)
+                        elif eff_do == 0.:
+                            sample.setParamEffect(sys_dict[sys], eff_up)
+                        else:
+                            sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
 
                     # Scale and Smear
                     mtempl = AffineMorphTemplate(templ)
@@ -581,7 +595,7 @@ def vh_rhalphabet(tmpdir):
                     ##----------------------END Theory Systematics (TODO)-------------------
                                 
                 # Add ParticleNetSFs last!
-                if sName in ['ggF','VBFDipoleRecoilOn','WH','ZH','ggZH','ttH','Zjetsbb']:
+                if sName in ['ggF','VBFDipoleRecoilOn','WH','ZH','ggZH','ttH','Zjetsbb', 'VbbVqq']:
                     sf, sfunc_up, sfunc_down = passfailSF(sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, mask=mask,
                                                           SF=PnetSF['central'], SF_unc_up=PnetSF['up'], SF_unc_down=-PnetSF['down'],
                                                           muon = False)
@@ -589,15 +603,22 @@ def vh_rhalphabet(tmpdir):
                     if do_systematics: sample.setParamEffect(sys_PNetXbb, sfunc_up, sfunc_down)
 
                 #V-tagged SF
-                if sName in ['VVNLO','WH','ZH']:                                                 
+                if sName in ['VbbVqq', 'VqqVqq','WH','ZH']:                                                 
                     sample.scale(SF[year]['eff_SF'])
                     if do_systematics:
                         effect = 1.0 + SF[year]['eff_SF_ERR'] / SF[year]['eff_SF']
                         sample.setParamEffect(sys_PNetVqq, effect)
 
+                #V-taggeed SF for V+jets
+                if sName in ['Zjets', 'Zjetsbb', 'WjetsQQ']:                                                 
+                    sample.scale(SF[year]['unmatched_SF'])
+                    if do_systematics:
+                        effect = 1.0 + SF[year]['unmatched_SF_ERR'] / SF[year]['unmatched_SF']
+                        sample.setParamEffect(sys_PNetVjets, effect)
+
                 #Scale down to do background only fit
                 if unblind_sideband:
-                    if sName in ['WH','ZH', 'VVNLO']: sample.scale(1e-4)
+                    if sName in ['WH','ZH', 'VbbVqq', 'VqqVqq']: sample.scale(1e-4)
 
                 ch.addSample(sample)
             # END loop over MC samples 
