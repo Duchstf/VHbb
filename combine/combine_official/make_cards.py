@@ -13,6 +13,7 @@ rl.util.install_roofit_helpers()
 eps=0.0000001
 do_muon_CR = True
 do_systematics = True
+theory_syst = True
 
 '''
 python make_cards.py [year]
@@ -231,21 +232,25 @@ def vh_rhalphabet(tmpdir):
     pdf_Higgs_VBF = rl.NuisanceParameter('pdf_Higgs_VBF','lnN')
     pdf_Higgs_VH  = rl.NuisanceParameter('pdf_Higgs_VH','lnN')
     pdf_Higgs_ttH = rl.NuisanceParameter('pdf_Higgs_ttH','lnN')
+    pdf_VV = rl.NuisanceParameter('pdf_VV','lnN')
 
     scale_ggF = rl.NuisanceParameter('QCDscale_ggF', 'lnN')
     scale_VBF = rl.NuisanceParameter('QCDscale_VBF', 'lnN')
     scale_VH = rl.NuisanceParameter('QCDscale_VH', 'lnN')
     scale_ttH = rl.NuisanceParameter('QCDscale_ttH', 'lnN')
+    scale_VV = rl.NuisanceParameter('QCDscale_VV', 'lnN')
 
     isr_ggF = rl.NuisanceParameter('UEPS_ISR_ggF', 'lnN')
     isr_VBF = rl.NuisanceParameter('UEPS_ISR_VBF', 'lnN')
     isr_VH = rl.NuisanceParameter('UEPS_ISR_VH', 'lnN')
     isr_ttH = rl.NuisanceParameter('UEPS_ISR_ttH', 'lnN')
+    isr_VV = rl.NuisanceParameter('UEPS_ISR_VV', 'lnN')
 
     fsr_ggF = rl.NuisanceParameter('UEPS_FSR_ggF', 'lnN')
     fsr_VBF = rl.NuisanceParameter('UEPS_FSR_VBF', 'lnN')
     fsr_VH = rl.NuisanceParameter('UEPS_FSR_VH', 'lnN')
     fsr_ttH = rl.NuisanceParameter('UEPS_FSR_ttH', 'lnN')
+    fsr_VV = rl.NuisanceParameter('UEPS_FSR_VV', 'lnN')
     
     #Now start setting up the fit
     with open('files/lumi.json') as f: lumi = json.load(f)
@@ -499,100 +504,117 @@ def vh_rhalphabet(tmpdir):
 
                     ##--------------------END Experimental Systematics---------------------
 
-                    ##----------------------Theory Systematics (TODO)----------------------
-                    """
-                    # uncertainties on V+jets                 
-                    if sName in ['WjetsQQ']:
-                        for sys in Wjets_thsysts:
-                            syst_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst=sys+'Up')[0]
-                            syst_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst=sys+'Down')[0]
-                                
-                            eff_up = shape_to_num(syst_up,nominal)
-                            eff_do = shape_to_num(syst_do,nominal)
-                                
-                            sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
+                    ##----------------------Theory Systematics ----------------------
+                    if theory_syst:
+                        # uncertainties on V+jets                 
+                        if sName in ['WjetsQQ']:
+                            for sys in Wjets_thsysts:
+                                syst_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst=sys+'Up')[0]
+                                syst_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst=sys+'Down')[0]
+                                    
+                                eff_up = shape_to_num(syst_up,nominal)
+                                eff_do = shape_to_num(syst_do,nominal)
+                                    
+                                sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
 
-                    elif sName in ['Zjets','Zjetsbb']:
-                        for sys in Zjets_thsysts:
-                            syst_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst=sys+'Up')[0]
-                            syst_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst=sys+'Down')[0]
-                                
-                            eff_up = shape_to_num(syst_up,nominal)
-                            eff_do = shape_to_num(syst_do,nominal)
+                        elif sName in ['Zjets','Zjetsbb']:
+                            for sys in Zjets_thsysts:
+                                syst_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst=sys+'Up')[0]
+                                syst_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst=sys+'Down')[0]
+                                    
+                                eff_up = shape_to_num(syst_up,nominal)
+                                eff_do = shape_to_num(syst_do,nominal)
 
-                            sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
+                                sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
 
-                    # QCD scale and PDF uncertainties on Higgs signal    
-                    elif sName in ['ggF','VBFDipoleRecoilOn','WH','ZH','ggZH','ttH']: #to add VV
-                        fsr_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='UEPS_FSRUp')[0]
-                        fsr_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='UEPS_FSRDown')[0]
-                        eff_fsr_up = np.sum(fsr_up)/np.sum(nominal)
-                        eff_fsr_do = np.sum(fsr_do)/np.sum(nominal)
+                        # QCD scale and PDF uncertainties on Higgs signal    
+                        elif sName in ['ggF','VBFDipoleRecoilOn','WH','ZH','ggZH','ttH', 'VqqVqq', 'VbbVqq']: #to add VV
+                            fsr_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='UEPS_FSRUp')[0]
+                            fsr_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='UEPS_FSRDown')[0]
+                            eff_fsr_up = np.sum(fsr_up)/np.sum(nominal)
+                            eff_fsr_do = np.sum(fsr_do)/np.sum(nominal)
 
-                        isr_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='UEPS_ISRUp')[0]
-                        isr_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='UEPS_ISRDown')[0]
-                        eff_isr_up = np.sum(isr_up)/np.sum(nominal)
-                        eff_isr_do = np.sum(isr_do)/np.sum(nominal)
+                            isr_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='UEPS_ISRUp')[0]
+                            isr_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='UEPS_ISRDown')[0]
+                            eff_isr_up = np.sum(isr_up)/np.sum(nominal)
+                            eff_isr_do = np.sum(isr_do)/np.sum(nominal)
 
-                        
-                        pdf_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='PDF_weightUp')[0]
-                        pdf_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='PDF_weightDown')[0]
-                        eff_pdf_up = np.sum(pdf_up)/np.sum(nominal)
-                        eff_pdf_do = np.sum(pdf_do)/np.sum(nominal)
-
-                        if sName == 'ggF':
-                            scale_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_7ptUp')[0]
-                            scale_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_7ptDown')[0]
                             
-                            eff_scale_up = np.sum(scale_up)/np.sum(nominal)
-                            eff_scale_do = np.sum(scale_do)/np.sum(nominal)
+                            pdf_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='PDF_weightUp')[0]
+                            pdf_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='PDF_weightDown')[0]
+                            eff_pdf_up = np.sum(pdf_up)/np.sum(nominal)
+                            eff_pdf_do = np.sum(pdf_do)/np.sum(nominal)
 
-                            sample.setParamEffect(scale_ggF,eff_scale_up,eff_scale_do)
-                            sample.setParamEffect(pdf_Higgs_ggF,eff_pdf_up,eff_pdf_do)
-                            sample.setParamEffect(fsr_ggF,eff_fsr_up,eff_fsr_do)
-                            sample.setParamEffect(isr_ggF,eff_isr_up,eff_isr_do)
-                        
-                        elif sName == 'VBFDipoleRecoilOn':
-                            scale_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_3ptUp')[0]
-                            scale_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_3ptDown')[0]
+                            if sName == 'ggF':
+                                scale_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_7ptUp')[0]
+                                scale_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_7ptDown')[0]
+                                
+                                eff_scale_up = np.sum(scale_up)/np.sum(nominal)
+                                eff_scale_do = np.sum(scale_do)/np.sum(nominal)
 
-                            eff_scale_up = np.sum(scale_up)/np.sum(nominal)
-                            eff_scale_do = np.sum(scale_do)/np.sum(nominal)
+                                sample.setParamEffect(scale_ggF,eff_scale_up,eff_scale_do)
+                                sample.setParamEffect(pdf_Higgs_ggF,eff_pdf_up,eff_pdf_do)
+                                sample.setParamEffect(fsr_ggF,eff_fsr_up,eff_fsr_do)
+                                sample.setParamEffect(isr_ggF,eff_isr_up,eff_isr_do)
+                            
+                            elif sName == 'VBFDipoleRecoilOn':
+                                scale_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_3ptUp')[0]
+                                scale_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_3ptDown')[0]
 
-                            sample.setParamEffect(scale_VBF,eff_scale_up,eff_scale_do)
-                            sample.setParamEffect(pdf_Higgs_VBF,eff_pdf_up,eff_pdf_do)
-                            sample.setParamEffect(fsr_VBF,eff_fsr_up,eff_fsr_do)
-                            sample.setParamEffect(isr_VBF,eff_isr_up,eff_isr_do)
-                        
-                        elif sName in ['WH','ZH','ggZH']:
+                                eff_scale_up = np.sum(scale_up)/np.sum(nominal)
+                                eff_scale_do = np.sum(scale_do)/np.sum(nominal)
 
-                            scale_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_3ptUp')[0]
-                            scale_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_3ptDown')[0]
+                                sample.setParamEffect(scale_VBF,eff_scale_up,eff_scale_do)
+                                sample.setParamEffect(pdf_Higgs_VBF,eff_pdf_up,eff_pdf_do)
+                                sample.setParamEffect(fsr_VBF,eff_fsr_up,eff_fsr_do)
+                                sample.setParamEffect(isr_VBF,eff_isr_up,eff_isr_do)
+                            
+                            elif sName in ['WH','ZH','ggZH']:
 
-                            eff_scale_up = np.sum(scale_up)/np.sum(nominal)
-                            eff_scale_do = np.sum(scale_do)/np.sum(nominal)
+                                scale_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_3ptUp')[0]
+                                scale_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_3ptDown')[0]
 
-                            if eff_scale_do < 0:
-                                eff_scale_do = eff_scale_up
+                                eff_scale_up = np.sum(scale_up)/np.sum(nominal)
+                                eff_scale_do = np.sum(scale_do)/np.sum(nominal)
 
-                            sample.setParamEffect(scale_VH,eff_scale_up,eff_scale_do)
-                            sample.setParamEffect(pdf_Higgs_VH,eff_pdf_up,eff_pdf_do)
-                            sample.setParamEffect(fsr_VH,eff_fsr_up,eff_fsr_do)
-                            sample.setParamEffect(isr_VH,eff_isr_up,eff_isr_do)
-                        
-                        elif sName == 'ttH':
-                            scale_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_7ptUp')[0]
-                            scale_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_7ptDown')[0]
+                                if eff_scale_do < 0:
+                                    eff_scale_do = eff_scale_up
 
-                            eff_scale_up = np.sum(scale_up)/np.sum(nominal)
-                            eff_scale_do = np.sum(scale_do)/np.sum(nominal)
+                                sample.setParamEffect(scale_VH,eff_scale_up,eff_scale_do)
+                                sample.setParamEffect(pdf_Higgs_VH,eff_pdf_up,eff_pdf_do)
+                                sample.setParamEffect(fsr_VH,eff_fsr_up,eff_fsr_do)
+                                sample.setParamEffect(isr_VH,eff_isr_up,eff_isr_do)
+                            
+                            elif sName == 'ttH':
+                                scale_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_7ptUp')[0]
+                                scale_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_7ptDown')[0]
 
-                            sample.setParamEffect(scale_ttH,eff_scale_up,eff_scale_do)
-                            sample.setParamEffect(pdf_Higgs_ttH,eff_pdf_up,eff_pdf_do)
-                            sample.setParamEffect(fsr_ttH,eff_fsr_up,eff_fsr_do)
-                            sample.setParamEffect(isr_ttH,eff_isr_up,eff_isr_do)
-                        """
-                    ##----------------------END Theory Systematics (TODO)-------------------
+                                eff_scale_up = np.sum(scale_up)/np.sum(nominal)
+                                eff_scale_do = np.sum(scale_do)/np.sum(nominal)
+
+                                sample.setParamEffect(scale_ttH,eff_scale_up,eff_scale_do)
+                                sample.setParamEffect(pdf_Higgs_ttH,eff_pdf_up,eff_pdf_do)
+                                sample.setParamEffect(fsr_ttH,eff_fsr_up,eff_fsr_do)
+                                sample.setParamEffect(isr_ttH,eff_isr_up,eff_isr_do)
+
+                            elif sName in ['VqqVqq', 'VbbVqq']:
+                                scale_up = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_3ptUp')[0]
+                                scale_do = get_template(sName=sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, syst='scalevar_3ptDown')[0]
+
+                                eff_scale_up = np.sum(scale_up)/np.sum(nominal)
+                                eff_scale_do = np.sum(scale_do)/np.sum(nominal)
+
+                                if eff_scale_do < 0:
+                                    eff_scale_do = eff_scale_up
+
+                                if eff_pdf_do < 0:
+                                    eff_pdf_do = eff_pdf_up
+
+                                sample.setParamEffect(scale_VV,eff_scale_up,eff_scale_do)
+                                sample.setParamEffect(pdf_VV,eff_pdf_up,eff_pdf_do)
+                                sample.setParamEffect(fsr_VV,eff_fsr_up,eff_fsr_do)
+                                sample.setParamEffect(isr_VV,eff_isr_up,eff_isr_do)
+                        ##----------------------END Theory Systematics -------------------
                                 
                 # Add ParticleNetSFs last!
                 if sName in ['ggF','VBFDipoleRecoilOn','WH','ZH','ggZH','ttH','Zjetsbb', 'VbbVqq']:
