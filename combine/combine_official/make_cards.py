@@ -50,9 +50,6 @@ def shape_to_num(var, nom, clip=1.5):
     if abs(var_rate/nom_rate) > clip:
         var_rate = clip*nom_rate
 
-    if var_rate < 0:
-        var_rate = 0. #For numerical stability
-
     return var_rate/nom_rate
 
 def smass(sName):
@@ -142,10 +139,18 @@ def get_template(sName, bb_pass, V_bin, obs, syst, muon=False):
 
     sumw = []
     sumw2 = []
-    
+
+    #Filter out nonsense negative values
+    filter_neg = (V_bin == 'Vmass_2') & (year == '2016') & (~bb_pass) & (sName == 'VbbVqq')
+
     for i in range(1, h.GetNbinsX()+1):
-        sumw += [h.GetBinContent(i)]
-        sumw2 += [h.GetBinError(i)*h.GetBinError(i)]
+
+        if filter_neg & (h.GetBinContent(i) < 0) & (not unblind_sideband):
+            sumw += [0.]
+            sumw2 += [h.GetBinError(i)*h.GetBinError(i)]
+        else:
+            sumw += [h.GetBinContent(i)]
+            sumw2 += [h.GetBinError(i)*h.GetBinError(i)]
 
     return (np.array(sumw), obs.binning, obs.name, np.array(sumw2))
 
@@ -473,12 +478,9 @@ def vh_rhalphabet(tmpdir):
                         eff_up = shape_to_num(syst_up,nominal)
                         eff_do = shape_to_num(syst_do,nominal)
 
-                        if eff_up == 0.:
-                            sample.setParamEffect(sys_dict[sys], eff_do)
-                        elif eff_do == 0.:
-                            sample.setParamEffect(sys_dict[sys], eff_up)
-                        else:
-                            sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
+                        if eff_do < 0: eff_do = eff_up
+                        
+                        sample.setParamEffect(sys_dict[sys], eff_up, eff_do)
 
                     # Scale and Smear
                     mtempl = AffineMorphTemplate(templ)
@@ -604,11 +606,10 @@ def vh_rhalphabet(tmpdir):
                                 eff_scale_up = np.sum(scale_up)/np.sum(nominal)
                                 eff_scale_do = np.sum(scale_do)/np.sum(nominal)
 
-                                if eff_scale_do < 0:
-                                    eff_scale_do = eff_scale_up
-
-                                if eff_pdf_do < 0:
-                                    eff_pdf_do = eff_pdf_up
+                                if eff_scale_do < 0: eff_scale_do = eff_scale_up
+                                if eff_pdf_do < 0: eff_pdf_do = eff_pdf_up
+                                if eff_fsr_do < 0.: eff_fsr_do = eff_fsr_up
+                                if eff_isr_do < 0.: eff_isr_do = eff_isr_up
 
                                 sample.setParamEffect(scale_VV,eff_scale_up,eff_scale_do)
                                 sample.setParamEffect(pdf_VV,eff_pdf_up,eff_pdf_do)
