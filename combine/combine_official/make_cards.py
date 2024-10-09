@@ -88,6 +88,30 @@ def passfailSF(sName, bb_pass, V_bin, obs, mask,
 
         return sf, sfup, sfdown
 
+def arbitrationSF(sName, bb_pass, V_bin, obs, mask,
+                SF=1, SF_unc_up=0.05, SF_unc_down=-0.05, muon=False):
+    """
+    Return (SF, SF_unc) for a pass/fail scale factor. 
+    If bb_pass just return the normal scale factor.
+    If it's fail we need to make sure pass + fail = constant
+    """
+
+    if V_bin=='Vmass_1': return SF, 1. + SF_unc_up / SF, 1. + SF_unc_down / SF
+    elif V_bin=='Vmass_2':
+        SF_unc = (SF_unc_up + SF_unc_down)/2.
+
+        h_bin1 = get_template(sName, bb_pass=bb_pass, V_bin='Vmass_1', obs=obs, syst='nominal', muon=muon)
+        h_bin2 = get_template(sName, bb_pass=bb_pass, V_bin='Vmass_2', obs=obs, syst='nominal', muon=muon)
+
+        yield_bin1 = np.sum(h_bin1[0] * mask)
+        yield_bin2 = np.sum(h_bin2[0] * mask)
+
+        sf = 1 - (yield_bin1 * (SF - 1) / yield_bin2)
+        sfup = 1. - (SF_unc * yield_bin1/yield_bin2)/sf
+        sfdown = 1/sfup
+
+        return sf, sfup, sfdown
+
 def one_bin(template):
     try:
         h_vals, h_edges, h_key, h_variances = template
@@ -219,6 +243,7 @@ def vh_rhalphabet(tmpdir):
     sys_PNetXbb = rl.NuisanceParameter('CMS_eff_bb_{}'.format(year), 'lnN') #Xbb
     sys_PNetVqq = rl.NuisanceParameter('CMS_eff_2prong_{}'.format(year), 'lnN') #V scale factor uncertainty
     sys_PNetVjets = rl.NuisanceParameter('CMS_eff_unmatched_{}'.format(year), 'lnN') #V+jets scale factor uncertainty
+    sys_arbitration = rl.NuisanceParameter('arbitration_{}'.format(year), 'lnN') #arbitration uncertainty
     
     #All derived W-tagged CR, shape systematics in all the masses.
     sys_smear = rl.NuisanceParameter('CMS_hbb_smear_{}'.format(year), 'shape')
@@ -624,6 +649,11 @@ def vh_rhalphabet(tmpdir):
                                                           muon = False)
                     sample.scale(sf)
                     if do_systematics: sample.setParamEffect(sys_PNetXbb, sfunc_up, sfunc_down)
+                
+                #Mis-tagging Arbitration SF
+                if sName in ['ZH', 'WH'] and Vmass_bin in ['Vmass_1', 'Vmass_2']:
+                    sf, sfunc_up, sfunc_down = arbitrationSF(sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, mask=mask)
+                    sample.setParamEffect(sys_arbitration, sfunc_up, sfunc_down)
 
                 #V-tagged SF
                 if sName in ['VbbVqq', 'VqqVqq','WH','ZH']:                                                 
@@ -781,7 +811,7 @@ def vh_rhalphabet(tmpdir):
         tqqpass.setParamEffect(tqqnormSF, 1 * tqqnormSF)
         tqqfail.setParamEffect(tqqnormSF, 1 * tqqnormSF)
 
-    #-------------------------END MUON CONTROL REGION-------------------------------
+        #-------------------------END MUON CONTROL REGION-------------------------------
 
     with open(os.path.join(str(tmpdir), 'testModel_{}.pkl'.format(year)), 'wb') as fout: pickle.dump(model, fout)
     model.renderCombine(os.path.join(str(tmpdir), 'testModel_{}'.format(year)))
