@@ -89,14 +89,9 @@ def passfailSF(sName, bb_pass, V_bin, obs, mask,
         return sf, sfup, sfdown
 
 def arbitrationSF(sName, bb_pass, V_bin, obs, mask,
-                SF=1, SF_unc_up=0.05, SF_unc_down=-0.05, muon=False):
-    """
-    Return (SF, SF_unc) for a pass/fail scale factor. 
-    If bb_pass just return the normal scale factor.
-    If it's fail we need to make sure pass + fail = constant
-    """
+                SF=1, SF_unc_up=0.05, SF_unc_down=0.05, muon=False):
 
-    if V_bin=='Vmass_1': return SF, 1. + SF_unc_up / SF, 1. + SF_unc_down / SF
+    if V_bin=='Vmass_1': return SF, 1. + SF_unc_up / SF, 1. - SF_unc_down / SF
     elif V_bin=='Vmass_2':
         SF_unc = (SF_unc_up + SF_unc_down)/2.
 
@@ -245,6 +240,9 @@ def vh_rhalphabet(tmpdir):
     sys_PNetVjets = rl.NuisanceParameter('CMS_eff_unmatched_{}'.format(year), 'lnN') #V+jets scale factor uncertainty
     sys_arbitration = rl.NuisanceParameter('arbitration_{}'.format(year), 'lnN') #arbitration uncertainty
     
+    #Bias systematics
+    bias_sys = rl.NuisanceParameter('bias_{}'.format(year), 'lnN')
+    
     #All derived W-tagged CR, shape systematics in all the masses.
     sys_smear = rl.NuisanceParameter('CMS_hbb_smear_{}'.format(year), 'shape')
     sys_scale = rl.NuisanceParameter('CMS_hbb_scale_{}'.format(year), 'shape')
@@ -252,35 +250,35 @@ def vh_rhalphabet(tmpdir):
     # Theory systematics are correlated across years
     # V + jets, not year in name and correlated accross year
     for sys in ['d1kappa_EW', 'Z_d2kappa_EW', 'Z_d3kappa_EW', 'W_d2kappa_EW', 'W_d3kappa_EW', 'd1K_NLO', 'd2K_NLO', 'd3K_NLO']:
-        sys_dict[sys] = rl.NuisanceParameter('CMS_hbb_{}'.format(sys), 'lnN')
+        sys_dict[sys] = rl.NuisanceParameter('CMS_hbb_{}_{}'.format(sys,year), 'lnN')
         
     Zjets_thsysts = ['d1kappa_EW', 'Z_d2kappa_EW', 'Z_d3kappa_EW', 'd1K_NLO', 'd2K_NLO']
     Wjets_thsysts = ['d1kappa_EW', 'W_d2kappa_EW', 'W_d3kappa_EW', 'd1K_NLO', 'd2K_NLO', 'd3K_NLO']
     
     #TODO: Add VV for these theory systematics
-    pdf_Higgs_ggF = rl.NuisanceParameter('pdf_Higgs_ggF','lnN')
-    pdf_Higgs_VBF = rl.NuisanceParameter('pdf_Higgs_VBF','lnN')
-    pdf_Higgs_VH  = rl.NuisanceParameter('pdf_Higgs_VH','lnN')
-    pdf_Higgs_ttH = rl.NuisanceParameter('pdf_Higgs_ttH','lnN')
-    pdf_VV = rl.NuisanceParameter('pdf_VV','lnN')
+    pdf_Higgs_ggF = rl.NuisanceParameter('pdf_Higgs_ggF_{}'.format(year),'lnN')
+    pdf_Higgs_VBF = rl.NuisanceParameter('pdf_Higgs_VBF_{}'.format(year),'lnN')
+    pdf_Higgs_VH  = rl.NuisanceParameter('pdf_Higgs_VH_{}'.format(year),'lnN')
+    pdf_Higgs_ttH = rl.NuisanceParameter('pdf_Higgs_ttH_{}'.format(year),'lnN')
+    pdf_VV = rl.NuisanceParameter('pdf_VV_{}'.format(year),'lnN')
 
-    scale_ggF = rl.NuisanceParameter('QCDscale_ggF', 'lnN')
-    scale_VBF = rl.NuisanceParameter('QCDscale_VBF', 'lnN')
-    scale_VH = rl.NuisanceParameter('QCDscale_VH', 'lnN')
-    scale_ttH = rl.NuisanceParameter('QCDscale_ttH', 'lnN')
-    scale_VV = rl.NuisanceParameter('QCDscale_VV', 'lnN')
+    scale_ggF = rl.NuisanceParameter('QCDscale_ggF_{}'.format(year), 'lnN')
+    scale_VBF = rl.NuisanceParameter('QCDscale_VBF_{}'.format(year), 'lnN')
+    scale_VH = rl.NuisanceParameter('QCDscale_VH_{}'.format(year), 'lnN')
+    scale_ttH = rl.NuisanceParameter('QCDscale_ttH_{}'.format(year), 'lnN')
+    scale_VV = rl.NuisanceParameter('QCDscale_VV_{}'.format(year), 'lnN')
 
-    isr_ggF = rl.NuisanceParameter('UEPS_ISR_ggF', 'lnN')
-    isr_VBF = rl.NuisanceParameter('UEPS_ISR_VBF', 'lnN')
-    isr_VH = rl.NuisanceParameter('UEPS_ISR_VH', 'lnN')
-    isr_ttH = rl.NuisanceParameter('UEPS_ISR_ttH', 'lnN')
-    isr_VV = rl.NuisanceParameter('UEPS_ISR_VV', 'lnN')
+    isr_ggF = rl.NuisanceParameter('UEPS_ISR_ggF_{}'.format(year), 'lnN')
+    isr_VBF = rl.NuisanceParameter('UEPS_ISR_VBF_{}'.format(year), 'lnN')
+    isr_VH = rl.NuisanceParameter('UEPS_ISR_VH_{}'.format(year), 'lnN')
+    isr_ttH = rl.NuisanceParameter('UEPS_ISR_ttH_{}'.format(year), 'lnN')
+    isr_VV = rl.NuisanceParameter('UEPS_ISR_VV_{}'.format(year), 'lnN')
 
-    fsr_ggF = rl.NuisanceParameter('UEPS_FSR_ggF', 'lnN')
-    fsr_VBF = rl.NuisanceParameter('UEPS_FSR_VBF', 'lnN')
-    fsr_VH = rl.NuisanceParameter('UEPS_FSR_VH', 'lnN')
-    fsr_ttH = rl.NuisanceParameter('UEPS_FSR_ttH', 'lnN')
-    fsr_VV = rl.NuisanceParameter('UEPS_FSR_VV', 'lnN')
+    fsr_ggF = rl.NuisanceParameter('UEPS_FSR_ggF_{}'.format(year), 'lnN')
+    fsr_VBF = rl.NuisanceParameter('UEPS_FSR_VBF_{}'.format(year), 'lnN')
+    fsr_VH = rl.NuisanceParameter('UEPS_FSR_VH_{}'.format(year), 'lnN')
+    fsr_ttH = rl.NuisanceParameter('UEPS_FSR_ttH_{}'.format(year), 'lnN')
+    fsr_VV = rl.NuisanceParameter('UEPS_FSR_VV_{}'.format(year), 'lnN')
     
     #Now start setting up the fit
     with open('files/lumi.json') as f: lumi = json.load(f)
@@ -653,7 +651,12 @@ def vh_rhalphabet(tmpdir):
                 #Mis-tagging Arbitration SF
                 if sName in ['ZH', 'WH'] and Vmass_bin in ['Vmass_1', 'Vmass_2']:
                     sf, sfunc_up, sfunc_down = arbitrationSF(sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, mask=mask)
+                    sample.scale(sf)
                     sample.setParamEffect(sys_arbitration, sfunc_up, sfunc_down)
+
+                #Bias systematics
+                if sName in ['ZH', 'WH'] :
+                    sample.setParamEffect(bias_sys, 1.07)
 
                 #V-tagged SF
                 if sName in ['VbbVqq', 'VqqVqq','WH','ZH']:                                                 

@@ -48,4 +48,4 @@ conda run -n combine --no-capture-output combine -M FitDiagnostics --expectSigna
 
 cd ../../../
 #Plot results
-conda run -n plot --no-capture-output python results.py --dir templates/${year}/${year}_FitSingle --year $year
+conda run -n plot --no-capture-output python results.py --dir templates/${year}/${year}_FitSingle --year $year --fit prefit
