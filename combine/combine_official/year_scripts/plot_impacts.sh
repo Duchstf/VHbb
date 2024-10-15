@@ -17,5 +17,5 @@ fi
 #Then run these interactively
 modelfile=output/testModel${year}/model_combined.root
 
-combineTool.py -M Impacts -d $modelfile -m 125 -o impacts.json --exclude 'rgx{qcdparams*}' -t -1 --redefineSignalPOIs rVH --blind
+combineTool.py -M Impacts -d $modelfile -m 125 -o impacts.json --exclude 'rgx{qcdparams*}' --redefineSignalPOIs rVH --blind
 plotImpacts.py -i impacts.json -o impacts
