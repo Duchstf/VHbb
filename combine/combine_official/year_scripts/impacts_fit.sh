@@ -20,10 +20,10 @@ modelfile=output/testModel${year}/model_combined.root
 taskname="run_impacts"
 
 # Do initial fit
-combineTool.py -M Impacts -d $modelfile -m 125 --doInitialFit --robustFit 1 -t -1 --redefineSignalPOIs rVH --setParameters rVH=1  
+combineTool.py -M Impacts -d $modelfile -m 125 --doInitialFit --robustFit 1 --redefineSignalPOIs rVH --setParameters rVH=1  
 
 # Do more fits
-combineTool.py -M Impacts -d $modelfile -m 125 --doFits --robustFit 1 -t -1 --redefineSignalPOIs rVH --setParameters rVH=1  --job-mode condor --exclude 'rgx{qcdparams*}' --sub-opts='+JobFlavour = "workday"' --task-name $taskname 
+combineTool.py -M Impacts -d $modelfile -m 125 --doFits --robustFit 1 --redefineSignalPOIs rVH --setParameters rVH=1  --job-mode condor --exclude 'rgx{qcdparams*}' --sub-opts='+JobFlavour = "workday"' --task-name $taskname 
 
 #Then add -spool to condor_submit
 #Then run plot_impacs.sh
