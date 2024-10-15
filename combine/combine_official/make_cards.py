@@ -672,9 +672,9 @@ def vh_rhalphabet(tmpdir):
                         effect = 1.0 + SF[year]['unmatched_SF_ERR'] / SF[year]['unmatched_SF']
                         sample.setParamEffect(sys_PNetVjets, effect)
 
-                #Scale down to do background only fit
-                if unblind_sideband:
-                    if sName in ['WH','ZH', 'VbbVqq', 'VqqVqq']: sample.scale(1e-4)
+                # #Scale down to do background only fit
+                # if unblind_sideband:
+                #     if sName in ['WH','ZH', 'VbbVqq', 'VqqVqq']: sample.scale(1e-4)
 
                 ch.addSample(sample)
             # END loop over MC samples 
@@ -683,7 +683,7 @@ def vh_rhalphabet(tmpdir):
             ch.setObservation(data_obs, read_sumw2=True)
             
             #Blind bins
-            if unblind_sideband: ch.mask = validbins_list[iBin][bb_region]
+            # if unblind_sideband: ch.mask = validbins_list[iBin][bb_region]
 
             print(f"TEST, {iBin}, {bb_region}, {validbins_list[iBin][bb_region]}")
     
@@ -835,8 +835,8 @@ def main():
     unblind_sideband_input = sys.argv[2].lower()
 
     if unblind_sideband_input in ['true', '1', 'yes', 'y']: unblind_sideband = True
-    elif unblind_sideband_input in ['false', '0', 'no', 'n']: unblind_sideband = False 
-
+    else: unblind_sideband = False
+    
     #Print out some info and make the output directory
     print(f"Running for {year}. Unblind SideBand: {unblind_sideband}." )
 
