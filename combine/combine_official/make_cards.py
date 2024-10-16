@@ -55,9 +55,9 @@ def shape_to_num(var, nom, clip=1.5):
 def smass(sName):
     if sName in ['ggF','VBF','WH','ZH','ttH', 'VBFDipoleRecoilOn']:
         _mass = 125.
-    elif sName in ['Wjets', 'WjetsUM','WjetsQQ','EWKW','ttbar','singlet','VVNLO', 'VbbVqq', 'VqqVqq']:
+    elif sName in ['Wjets', 'WjetsUM','WjetsQQ','EWKW','ttbar','singlet', 'VqqVqq']:
         _mass = 80.379
-    elif sName in ['Zjets','Zjetsbb','EWKZ','EWKZbb']:
+    elif sName in ['Zjets','Zjetsbb','EWKZ','EWKZbb', 'VbbVqq']:
         _mass = 91.
     else:
         raise ValueError("What is {}".format(sName))
@@ -438,7 +438,7 @@ def vh_rhalphabet(tmpdir):
     
     #Exclude QCD from MC samples
     samps = [str(x) for x in samples if str(x) not in ['QCD','data']] 
-    sigs = ['ZH','WH']
+    sigs = ['WH', 'ZH']
     
     # Fill actual fit model with the expected fit value for every process except for QCD
     # Model need to know the signal, and background
@@ -641,7 +641,7 @@ def vh_rhalphabet(tmpdir):
                         ##----------------------END Theory Systematics -------------------
                                 
                 # Add ParticleNetSFs last!
-                if sName in ['ggF','VBFDipoleRecoilOn','WH','ZH','ggZH','ttH','Zjetsbb', 'VbbVqq']:
+                if sName in ['ggF','VBFDipoleRecoilOn','WH','ZH','ggZH','ttH','Zjetsbb']:
                     sf, sfunc_up, sfunc_down = passfailSF(sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, mask=mask,
                                                           SF=PnetSF['central'], SF_unc_up=PnetSF['up'], SF_unc_down=-PnetSF['down'],
                                                           muon = False)

@@ -186,7 +186,7 @@ def process_theory(fout, sample, filenames):
     
     #Reduce the systematics
     to_reduce_list = ['PDF_weight', 'scalevar']
-    h = template.integrate('region','signal').integrate('qcd2', slice(0., qcdthr)).integrate('pt1', slice(450, None), overflow='over').sum('genflavor2', overflow='under')
+    h = template.integrate('region','signal').integrate('qcd2', slice(0., qcdthr)).integrate('pt1', slice(450, None), overflow='over')
 
     for i in range(len(mass_range)-1):
         print('Running for {} in {} mass region'.format(year, i))
@@ -195,8 +195,8 @@ def process_theory(fout, sample, filenames):
 
         if sample != 'VVNLO':
 
-            hpass = sig.integrate('bb1',int_range=slice(bbthr,1.)).sum('genflavor1', overflow='under').integrate('process',sample)
-            hfail = sig.integrate('bb1',int_range=slice(0.,bbthr)).sum('genflavor1', overflow='under').integrate('process',sample)
+            hpass = sig.integrate('bb1',int_range=slice(bbthr,1.)).sum('genflavor1', overflow='under').integrate('process',sample).sum('genflavor2', overflow='under')
+            hfail = sig.integrate('bb1',int_range=slice(0.,bbthr)).sum('genflavor1', overflow='under').integrate('process',sample).sum('genflavor2', overflow='under')
 
             for s in hfail.identifiers('systematic'):
                 #Export systematics normally if not reduce
@@ -227,11 +227,11 @@ def process_theory(fout, sample, filenames):
             fout[f"Vmass_{i}_fail_{sample}_{pdf_weights_syst}Down"] = hist.export1d(pdf_weights_fail_down)
 
         else:
-            hpass = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',sample)
-            hfail = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',sample)
+            hpass = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',sample).integrate('genflavor2', int_range=slice(1,4))
+            hfail = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',sample).integrate('genflavor2', int_range=slice(1,4))
             
-            hpass_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',sample)
-            hfail_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',sample)
+            hpass_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',sample).integrate('genflavor2', int_range=slice(1,4))
+            hfail_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',sample).integrate('genflavor2', int_range=slice(1,4))
 
             for s in hfail.identifiers('systematic'):
 
@@ -292,7 +292,7 @@ def process(fout, sample, filename):
     #Make the template for the specific sample
     template = make_template(filename)
 
-    h = template.integrate('region','signal').integrate('pt1', slice(450, None), overflow='over').integrate('qcd2', slice(0., qcdthr)).sum('genflavor2', overflow='under')
+    h = template.integrate('region','signal').integrate('pt1', slice(450, None), overflow='over').integrate('qcd2', slice(0., qcdthr))
 
     #Make hists for different mass ranges
     for i in range(len(mass_range)-1):
@@ -309,8 +309,8 @@ def process(fout, sample, filename):
 
         if sample not in split_samples:
             
-            hpass = sig.integrate('bb1',int_range=slice(bbthr,1.)).sum('genflavor1', overflow='under').integrate('process',sample)
-            hfail = sig.integrate('bb1',int_range=slice(0.,bbthr)).sum('genflavor1', overflow='under').integrate('process',sample)
+            hpass = sig.integrate('bb1',int_range=slice(bbthr,1.)).sum('genflavor1', overflow='under').integrate('process',sample).sum('genflavor2', overflow='under')
+            hfail = sig.integrate('bb1',int_range=slice(0.,bbthr)).sum('genflavor1', overflow='under').integrate('process',sample).sum('genflavor2', overflow='under')
                         
             for s in hfail.identifiers('systematic'):
                     fout[f"Vmass_{i}_pass_{sample}_{s}"] = hist.export1d(hpass.integrate('systematic',s))
@@ -318,8 +318,8 @@ def process(fout, sample, filename):
             
         elif sample == 'Wjets': #Divide Wjets into unmatched and matched
             
-            hpass_qq = sig.integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',sample).integrate('genflavor1', int_range=slice(1, None))
-            hfail_qq = sig.integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',sample).integrate('genflavor1', int_range=slice(1, None))
+            hpass_qq = sig.integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',sample).integrate('genflavor1', int_range=slice(1, None)).sum('genflavor2', overflow='under')
+            hfail_qq = sig.integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',sample).integrate('genflavor1', int_range=slice(1, None)).sum('genflavor2', overflow='under')
             
             for s in hpass_qq.identifiers('systematic'):
                 
@@ -331,11 +331,11 @@ def process(fout, sample, filename):
             
         elif sample == 'Zjets': #Divide Zjets into Z(qq) and Z(bb)
             
-            hpass = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',sample)
-            hfail = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',sample)
+            hpass = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',sample).sum('genflavor2', overflow='under')
+            hfail = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',sample).sum('genflavor2', overflow='under')
             
-            hpass_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',sample)
-            hfail_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',sample)
+            hpass_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',sample).sum('genflavor2', overflow='under')
+            hfail_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',sample).sum('genflavor2', overflow='under')
             
             for s in hfail.identifiers('systematic'):
                 fout[f"Vmass_{i}_pass_{sample}_{s}"] = hist.export1d(hpass.integrate('systematic',s))
@@ -346,11 +346,11 @@ def process(fout, sample, filename):
         
         elif sample == 'VVNLO': #Divide VV into VbbVqq and VqqVqq
 
-            hpass = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',sample)
-            hfail = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',sample)
+            hpass = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',sample).integrate('genflavor2', int_range=slice(1,4))
+            hfail = sig.integrate('genflavor1', int_range=slice(1,3)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',sample).integrate('genflavor2', int_range=slice(1,4))
             
-            hpass_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',sample)
-            hfail_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',sample)
+            hpass_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(bbthr,1.)).integrate('process',sample).integrate('genflavor2', int_range=slice(1,4))
+            hfail_bb = sig.integrate('genflavor1', int_range=slice(3,4)).integrate('bb1',int_range=slice(0.,bbthr)).integrate('process',sample).integrate('genflavor2', int_range=slice(1,4))
 
             for s in hfail.identifiers('systematic'):
                 fout[f"Vmass_{i}_pass_VqqVqq_{s}"] = hist.export1d(hpass.integrate('systematic',s))
