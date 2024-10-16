@@ -62,7 +62,7 @@ done
 combine_command+="\n"
 
 # Add the text2workspace command
-combine_command+="text2workspace.py model_combined.txt -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO 'map=.*/ZH:rVH[1,-9,10]' --PO verbose --PO 'map=.*/WH:rVH[1,-9,10]' --PO 'map=.*/VV:rVV[1,-9,10]' \n"
+combine_command+="text2workspace.py model_combined.txt -P HiggsAnalysis.CombinedLimit.PhysicsModel:multiSignalModel --PO verbose  --PO 'map=.*(ZH|WH).*:rVH[1,-5,5]'  --PO 'map=.*(VqqVqq|VbbVqq).*:rVV[1,-5,5]' \n"
 
 # Remove trailing space
 combine_command=$(echo -e "$combine_command" | sed 's/[[:space:]]*$//')
