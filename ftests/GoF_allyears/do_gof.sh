@@ -10,7 +10,8 @@ if [[ "$1" -eq 0 ]]; then
 elif [[ "$1" -eq 1 ]]; then
     combine -M GoodnessOfFit -d $allyears_model --algo $ALGO -n DataGoF$ALGO
 elif [[ "$1" -eq 2 ]]; then
-    combineTool.py -M GoodnessOfFit model_combined.root --algo $ALGO -t 5 --toysFrequentist -n GoFs$ALGO --job-mode condor --sub-opts='+JobFlavour = "workday"' --task-name VH$ALGO -s 1:100:1    
+    rm higgsCombineGoFs$ALGO.GoodnessOfFit.mH120.*.root
+    combineTool.py -M GoodnessOfFit $allyears_model --algo $ALGO -t 30 --toysFrequentist -n GoFs$ALGO --job-mode condor --sub-opts='+JobFlavour = "workday"' --task-name VH$ALGO -s 1:100:1    
 elif [[ "$1" -eq 3 ]]; then 
     hadd -f allgofs$ALGO.root higgsCombineGoFs$ALGO.GoodnessOfFit.mH120.*.root
 elif [[ "$1" -eq 4 ]]; then 
