@@ -33,7 +33,7 @@ def main():
     tag=f"pt{pt}rho{rho}"
 
     #Condor working directory
-    workdir = f'/eos/uscms/store/user/dhoang/vh_ftests/DataTF/{year}/'
+    workdir = f'/eos/uscms/store/user/dhoang/vh_ftests/DataTFUnblind/{year}/'
     os.system(f'mkdir -p {workdir}')
     print("CONDOR work dir: ", workdir)
 

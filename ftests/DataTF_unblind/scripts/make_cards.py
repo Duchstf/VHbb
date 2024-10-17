@@ -55,7 +55,7 @@ def shape_to_num(var, nom, clip=1.5):
 def smass(sName):
     if sName in ['ggF','VBF','WH','ZH','ttH', 'VBFDipoleRecoilOn']:
         _mass = 125.
-    elif sName in ['Wjets', 'WjetsUM','WjetsQQ','EWKW','ttbar','singlet','VVNLO', 'VqqVqq']:
+    elif sName in ['Wjets', 'WjetsUM','WjetsQQ','EWKW','ttbar','singlet', 'VqqVqq']:
         _mass = 80.379
     elif sName in ['Zjets','Zjetsbb','EWKZ','EWKZbb', 'VbbVqq']:
         _mass = 91.
@@ -148,7 +148,7 @@ def get_template(sName, bb_pass, V_bin, obs, syst, muon=False):
     """
     Read msd template from root file
     """
-    f = ROOT.TFile.Open('{}/regions.root'.format(year))
+    f = ROOT.TFile.Open('../regions.root'.format(year))
 
     #Jet 1 ParticleNet bb pass/failing region
     name_bb = 'pass' if bb_pass else 'fail'
@@ -281,11 +281,11 @@ def vh_rhalphabet(tmpdir):
     fsr_VV = rl.NuisanceParameter('UEPS_FSR_VV_{}'.format(year), 'lnN')
     
     #Now start setting up the fit
-    with open('files/lumi.json') as f: lumi = json.load(f)
-    with open("files/samples.json", "r") as f: samples = json.load(f)
-    with open("files/Vmass.json", "r") as f: VmassBins = np.asarray(json.load(f))
-    with open('files/pnet-b.json', "r") as f: PnetSF = json.load(f)[year]['hp']['mutag']['ptbin0']
-    with open('files/V_tagged_SFs.json') as f: SF = json.load(f)
+    with open('../files/lumi.json') as f: lumi = json.load(f)
+    with open("../files/samples.json", "r") as f: samples = json.load(f)
+    with open("../files/Vmass.json", "r") as f: VmassBins = np.asarray(json.load(f))
+    with open('../files/pnet-b.json', "r") as f: PnetSF = json.load(f)[year]['hp']['mutag']['ptbin0']
+    with open('../files/V_tagged_SFs.json') as f: SF = json.load(f)
     
     print("Current mass bins: ", VmassBins)
     nVmass = len(VmassBins) - 1
@@ -341,7 +341,7 @@ def vh_rhalphabet(tmpdir):
         # Initial values
         # {"initial_vals":[[1,1]]} in json file (1st pt and 1st in rho)                                                               
         print('Initial fit values read from file initial_vals*')
-        with open(f'files/initial_vals_TFMC_{year}.json') as f: initial_vals = np.array(json.load(f)['initial_vals'])
+        with open(f'../files/initial_vals_TFMC_{year}.json') as f: initial_vals = np.array(json.load(f)['initial_vals'])
         print("Initial fit values: ", initial_vals)
         print("Poly Shape: ", (initial_vals.shape[0]-1, initial_vals.shape[1]-1))
         
@@ -402,7 +402,7 @@ def vh_rhalphabet(tmpdir):
             fitfailed_qcd += 1
 
             new_values = np.array(pvalues).reshape(tf_MCtempl.parameters.shape)
-            with open(f"files/initial_vals_TFMC_{year}.json", "w") as outfile: json.dump({"initial_vals":new_values.tolist()},outfile)
+            with open(f"../files/initial_vals_TFMC_{year}.json", "w") as outfile: json.dump({"initial_vals":new_values.tolist()},outfile)
 
         else:
             print("Fitted!!!")
@@ -417,7 +417,7 @@ def vh_rhalphabet(tmpdir):
     tf_MCtempl_params_final = tf_MCtempl(ptscaled, rhoscaled)
     
     # Start fitting data to mc transfer factor                   
-    with open(f'files/initial_vals_TFres_{year}.json') as f: initial_vals_data = np.array(json.load(f)['initial_vals'])
+    with open(f'initial_vals.json') as f: initial_vals_data = np.array(json.load(f)['initial_vals'])
     
     print((initial_vals_data.shape[0]-1,initial_vals_data.shape[1]-1))
 
@@ -438,7 +438,7 @@ def vh_rhalphabet(tmpdir):
     
     #Exclude QCD from MC samples
     samps = [str(x) for x in samples if str(x) not in ['QCD','data']] 
-    sigs = ['ZH','WH']
+    sigs = ['WH', 'ZH']
     
     # Fill actual fit model with the expected fit value for every process except for QCD
     # Model need to know the signal, and background
@@ -641,7 +641,7 @@ def vh_rhalphabet(tmpdir):
                         ##----------------------END Theory Systematics -------------------
                                 
                 # Add ParticleNetSFs last!
-                if sName in ['ggF','VBFDipoleRecoilOn','WH','ZH','ggZH','ttH','Zjetsbb', 'VbbVqq']:
+                if sName in ['ggF','VBFDipoleRecoilOn','WH','ZH','ggZH','ttH','Zjetsbb']:
                     sf, sfunc_up, sfunc_down = passfailSF(sName, bb_pass=isPass, V_bin=Vmass_bin, obs=msd, mask=mask,
                                                           SF=PnetSF['central'], SF_unc_up=PnetSF['up'], SF_unc_down=-PnetSF['down'],
                                                           muon = False)
@@ -840,7 +840,7 @@ def main():
     #Print out some info and make the output directory
     print(f"Running for {year}. Unblind SideBand: {unblind_sideband}." )
 
-    outdir = 'output'
+    outdir = 'output'.format(year)
     if not os.path.exists(outdir): os.mkdir(outdir)
 
     #Produce the cards

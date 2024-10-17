@@ -9,7 +9,7 @@ cd ftests
 #Make the directory for baseline and alternative hypothesis
 test1=pt${pt}rho${rho}_vs_pt${pt}rho$((${rho}+1))
 
-jobs_dir=/eos/uscms/store/user/dhoang/vh_ftests/DataTF/$year
+jobs_dir=/eos/uscms/store/user/dhoang/vh_ftests/DataTFUnblind/$year
 
 #Remove the compare directory if it exists
 for dir in "$test1"

@@ -2,7 +2,7 @@
 Plot single gof 
 Example:
 
-python plot_single_gof.py  --year 2016 ../2016/ftests/pt0rho0_vs_pt0rho1/baseline_obs.root  ../2016/ftests/pt0rho0_vs_pt0rho1/higgsCombineToys.baseline.GoodnessOfFit.mH125.total.root
+python plot_single_gof.py  --year 2016APV ../2016APV/ftests/pt0rho1_vs_pt0rho2/baseline_obs.root  ../2016APV/ftests/pt0rho1_vs_pt0rho2/higgsCombineToys.baseline.GoodnessOfFit.mH125.total.root
 """
 import matplotlib
 matplotlib.use("Agg")
@@ -27,6 +27,7 @@ def get_vals(fname):
 
 def gofplot(datafile, mcfile, year=2017, savename='fplotX', nbins=130, algo='saturated'):
     gofs = np.array(get_vals(mcfile))
+    gofs = gofs[(gofs < 300) & (gofs > -300)]
     gof_data = get_vals(datafile)[0]
 
     print("XXXXXXX")

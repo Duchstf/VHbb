@@ -1,0 +1,28 @@
+# Datacard for <Channel (muonCRpass2016APV) instance at 0x7f9e11f58910> generated on 2024-10-16 15:28:14.135367
+imax 1 # number of categories ('bins' but here we are using shape templates)
+jmax 3 # number of samples minus 1
+kmax 11 # number of nuisance parameters
+shapes * muonCRpass2016APV testModel_2016APV.root testModel_2016APV:muonCRpass2016APV_$PROCESS testModel_2016APV:muonCRpass2016APV_$PROCESS_$SYSTEMATIC
+bin muonCRpass2016APV
+observation 93.000
+bin                                   muonCRpass2016APV  muonCRpass2016APV  muonCRpass2016APV  muonCRpass2016APV
+process                                             QCD               WLNu              ttbar            singlet
+process                                               1                  2                  3                  4
+rate                                              6.828              1.808             84.721              2.687
+CMS_hbb_e_veto_2016APV lnN                       1.0050             1.0050             1.0050             1.0050
+CMS_hbb_mu_trigger_2016APV lnN                        -      0.9949/1.0051      0.9971/1.0029      0.9961/1.0040
+CMS_hbb_tau_veto_2016APV lnN                     1.0500             1.0500             1.0500             1.0500
+CMS_lumi_13TeV_2016APV lnN                       1.0100             1.0100             1.0100             1.0100
+CMS_lumi_13TeV_correlated lnN                    1.0060             1.0060             1.0060             1.0060
+CMS_mu_id_2016APV lnN                                 -      0.9966/1.0034      0.9971/1.0029      0.9971/1.0029
+CMS_mu_iso_2016APV lnN                                -      0.9997/1.0003      0.9997/1.0003      0.9996/1.0004
+muonCRpass2016APV_QCD_mcstat lnN                 1.5535                  -                  -                  -
+muonCRpass2016APV_WLNu_mcstat lnN                     -             1.1878                  -                  -
+muonCRpass2016APV_singlet_mcstat lnN                  -                  -                  -             1.2967
+muonCRpass2016APV_ttbar_mcstat lnN                    -                  -             1.0277                  -
+tqqeffSF_2016APV extArg testModel_2016APV.root:testModel_2016APV
+tqqnormSF_2016APV extArg testModel_2016APV.root:testModel_2016APV
+tqqeffSF_2016APV_effect_muonCRpass2016APV_ttbar rateParam muonCRpass2016APV ttbar (1*@0) tqqeffSF_2016APV
+tqqeffSF_2016APV_effect_muonCRpass2016APV_singlet rateParam muonCRpass2016APV singlet (1*@0) tqqeffSF_2016APV
+tqqnormSF_2016APV_effect_muonCRpass2016APV_ttbar rateParam muonCRpass2016APV ttbar (1*@0) tqqnormSF_2016APV
+tqqnormSF_2016APV_effect_muonCRpass2016APV_singlet rateParam muonCRpass2016APV singlet (1*@0) tqqnormSF_2016APV

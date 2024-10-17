@@ -1,0 +1,29 @@
+# Datacard for <Channel (muonCRfail2017) instance at 0x7fb0e83b8ee0> generated on 2024-10-16 14:34:52.035848
+imax 1 # number of categories ('bins' but here we are using shape templates)
+jmax 3 # number of samples minus 1
+kmax 12 # number of nuisance parameters
+shapes * muonCRfail2017 testModel_2017.root testModel_2017:muonCRfail2017_$PROCESS testModel_2017:muonCRfail2017_$PROCESS_$SYSTEMATIC
+bin muonCRfail2017
+observation 6322.000
+bin                                     muonCRfail2017  muonCRfail2017  muonCRfail2017  muonCRfail2017
+process                                            QCD            WLNu           ttbar         singlet
+process                                              1               2               3               4
+rate                                           432.507         633.251        4988.944         467.869
+CMS_hbb_e_veto_2017 lnN                         1.0050          1.0050          1.0050          1.0050
+CMS_hbb_mu_trigger_2017 lnN                          -   0.9981/1.0019   0.9983/1.0017   0.9981/1.0019
+CMS_hbb_tau_veto_2017 lnN                       1.0500          1.0500          1.0500          1.0500
+CMS_lumi_13TeV_2017 lnN                         1.0200          1.0200          1.0200          1.0200
+CMS_lumi_13TeV_correlated lnN                   1.0090          1.0090          1.0090          1.0090
+CMS_lumi_13TeV_correlated_20172018 lnN          1.0060          1.0060          1.0060          1.0060
+CMS_mu_id_2017 lnN                                   -   0.9986/1.0014   0.9988/1.0012   0.9988/1.0012
+CMS_mu_iso_2017 lnN                                  -   0.9997/1.0003   0.9997/1.0003   0.9997/1.0003
+muonCRfail2017_QCD_mcstat lnN                   1.1365               -               -               -
+muonCRfail2017_WLNu_mcstat lnN                       -          1.0169               -               -
+muonCRfail2017_singlet_mcstat lnN                    -               -               -          1.0222
+muonCRfail2017_ttbar_mcstat lnN                      -               -          1.0029               -
+tqqeffSF_2017 extArg testModel_2017.root:testModel_2017
+tqqnormSF_2017 extArg testModel_2017.root:testModel_2017
+tqqeffSF_2017_effect_muonCRfail2017_ttbar rateParam muonCRfail2017 ttbar (((1-@0)*0.03210055993405173)+1) tqqeffSF_2017
+tqqeffSF_2017_effect_muonCRfail2017_singlet rateParam muonCRfail2017 singlet (((1-@0)*0.03210055993405173)+1) tqqeffSF_2017
+tqqnormSF_2017_effect_muonCRfail2017_ttbar rateParam muonCRfail2017 ttbar (1*@0) tqqnormSF_2017
+tqqnormSF_2017_effect_muonCRfail2017_singlet rateParam muonCRfail2017 singlet (1*@0) tqqnormSF_2017

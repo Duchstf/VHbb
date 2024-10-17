@@ -1,0 +1,15 @@
+#!/usr/bin/env condor_submit
+
+executable              = run_ftest_job.sh
+arguments               = 0 1 /eos/uscms/store/user/dhoang/vh_ftests/DataTFUnblind/2017/pt0rho1 8
+should_transfer_files   = YES
+transfer_input_files    = compare.py, pt0rho1, pt0rho2
+when_to_transfer_output = ON_EXIT_OR_EVICT
+request_memory          = 2000
++ApptainerImage = "/cvmfs/singularity.opensciencegrid.org/cmssw/cms:rhel7"
+
+output                  = logs/pt0rho1_8.out
+error                   = logs/pt0rho1_8.err
+log                     = logs/pt0rho1_8.log
+
+Queue 1 

@@ -160,11 +160,11 @@ def get_template(sName, bb_pass, V_bin, obs, syst, muon=False):
     sumw2 = []
 
     #Filter out nonsense negative values
-    filter_neg = (V_bin == 'Vmass_2') & (year == '2016') & (~bb_pass) & (sName == 'VbbVqq')
+    # filter_neg = (V_bin == 'Vmass_2') & (year == '2016') & (~bb_pass) & (sName == 'VbbVqq')
 
     for i in range(1, h.GetNbinsX()+1):
 
-        if filter_neg & (h.GetBinContent(i) < 0) & (not unblind_sideband):
+        if h.GetBinContent(i) < 0:
             sumw += [0.]
             sumw2 += [h.GetBinError(i)*h.GetBinError(i)]
         else:
@@ -508,7 +508,7 @@ def vh_rhalphabet(tmpdir):
                     # Scale and Smear
                     mtempl = AffineMorphTemplate(templ)
 
-                    if sName not in ['QCD']:
+                    if sName not in ['QCD', 'singlet', 'ttbar']:
 
                         # shift
                         realshift = SF[year]['scale_SF_ERR']/smass('Wjets') * smass(sName)
