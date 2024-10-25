@@ -73,6 +73,9 @@ chmod +x build.sh
 #Run the build script
 conda run -n combine --no-capture-output ./build.sh > build.out
 
+#Run CCC test
+conda run -n combine --no-capture-output combine -M ChannelCompatibilityCheck -d model_combined.root --cminDefaultMinimizerStrategy 0 --robustFit 1 -m 125 -n VH --saveFitResult --setParameters rVV=1,rVH=1 --redefineSignalPOI=rVV -g 2016APV -g 2016 -g 2017 -g 2018
+
 #After that run the expected shape and significance scripts
 cd ../../
 ln -s -f ../year_scripts/*.sh .
