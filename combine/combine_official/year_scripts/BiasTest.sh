@@ -17,7 +17,7 @@ rm *bias*
 
 modelfile=output/testModel${year}/model_combined.root
 
-for bias in 0 1 `seq 5 5 100`
+for bias in {1..5}
     do
     combineTool.py -M FitDiagnostics --setParameters rVV=1,rVH=$bias --freezeParameters rVV -n bias$bias -d $modelfile --cminDefaultMinimizerStrategy 0 --robustFit=1 -t 20 -s 1:50:1 --toysFrequentist --job-mode condor --sub-opts='+JobFlavour = "workday"' --task-name VH$bias
     condor_submit -spool condor_VH$bias.sub

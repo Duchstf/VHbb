@@ -1,4 +1,4 @@
-for bias in 0 1 `seq 5 5 100`
+for bias in {1..5}
     do 
     hadd -f bias$bias.root *Combinebias$bias.*
     done
