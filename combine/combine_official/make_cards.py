@@ -241,7 +241,7 @@ def vh_rhalphabet(tmpdir):
     sys_arbitration = rl.NuisanceParameter('arbitration_{}'.format(year), 'lnN') #arbitration uncertainty
     
     #Bias systematics
-    # bias_sys = rl.NuisanceParameter('bias_{}'.format(year), 'lnN')
+    bias_sys = rl.NuisanceParameter('bias_{}'.format(year), 'lnN')
     
     #All derived W-tagged CR, shape systematics in all the masses.
     sys_smear = rl.NuisanceParameter('CMS_hbb_smear_{}'.format(year), 'shape')
@@ -655,8 +655,8 @@ def vh_rhalphabet(tmpdir):
                     sample.setParamEffect(sys_arbitration, sfunc_up, sfunc_down)
 
                 # #Bias systematics
-                # if sName in ['ZH', 'WH'] :
-                #     sample.setParamEffect(bias_sys, 1.07)
+                if sName in ['ZH', 'WH'] :
+                    sample.setParamEffect(bias_sys, 1.07)
 
                 #V-tagged SF
                 if sName in ['VbbVqq', 'VqqVqq','WH','ZH']:                                                 
