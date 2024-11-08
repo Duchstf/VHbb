@@ -10,14 +10,28 @@ import math
 import matplotlib.pyplot as plt
 import mplhep as hep
 import sys
+import uproot
+hep.style.use("CMS")  # Optional if you want to use CMS style from mplhep
 
+
+ptbins = np.array([450, 1200])
+msdbins = np.linspace(40, 201, 24)
+n_ptbins = ptbins.shape[0] - 1
+ptpts, msdpts = np.meshgrid(ptbins[:-1] + 0.3 * np.diff(ptbins), msdbins[:-1] + 0.5 * np.diff(msdbins), indexing="ij")
+rhopts = 2 * np.log(msdpts / ptpts)
+ptscaled = (ptpts - 450.0) / (1200.0 - 450.0)
+rhoscaled = (rhopts - (-6)) / ((-2.1) - (-6))
+
+TF_res_values={
+    "2018": np.asarray([[0.65979, 2.0764]])
+}
 
 # Benstein polynomial calculation
 def bern_elem(x, v, n):
     # Bernstein element calculation
     normalization = 1.0 * math.factorial(n) / (math.factorial(v) * math.factorial(n - v))
     Bvn = normalization * (x**v) * (1 - x) ** (n - v)
-    return float(Bvn)
+    return Bvn
 
 
 def TF(pT, rho, par_map=np.ones((1, 1)), n_rho=0, n_pT=0):
@@ -29,6 +43,29 @@ def TF(pT, rho, par_map=np.ones((1, 1)), n_rho=0, n_pT=0):
 
     return val
 
+def plot_TFres_values(year):
+
+    par_map = TF_res_values[year]
+    
+    # Calculate TF values
+    TF_array = TF(pT=ptscaled, rho=rhoscaled, par_map=par_map, n_rho=len(par_map[0]) - 1, n_pT=0)
+    
+    # Flatten the TF array to match the rhoscaled bins
+    TF_array = TF_array.flatten()
+
+    # Calculate midpoints of msdbins for plotting
+    # Calculate midpoints of msdbins
+    msd_midpoints = (msdbins[:-1] + msdbins[1:]) / 2
+
+    # Plot the TF values against rho midpoints
+    plt.figure(figsize=(8, 6))
+    plt.plot(msd_midpoints, TF_array, marker='o', linestyle='-', label=f'TF {year}')
+    plt.xlabel(r'$m_{SD}$ [GeV] ')
+    plt.ylabel(r'$TF_{res}$')
+    plt.title(r'Post-fit $TF_{res}$ ' + str(year))
+    plt.grid(True)
+    plt.savefig(f"plots/TFres_{year}.pdf",bbox_inches='tight')
+
 # Check if there are enough arguments
 if len(sys.argv) < 2:
     print("Usage: make_cards.py <year>")
@@ -37,3 +74,4 @@ if len(sys.argv) < 2:
 global year
 year = sys.argv[1]
 
+plot_TFres_values(year)
