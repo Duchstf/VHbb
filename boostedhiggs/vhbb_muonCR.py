@@ -88,16 +88,10 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
         self.make_output = lambda: {
             
             'sumw': processor.defaultdict_accumulator(float),
-
-            'cutflow': hist.Hist(
-               'Events',
-               hist.Cat('dataset', 'Dataset'),
-               hist.Cat('region', 'Region'),
-               hist.Bin('msd1', r'Jet 1 $m_{sd}$', 23, 40, 201),
-               hist.Bin('genflavor', 'Gen. jet flavor', [1, 2, 3, 4]),
-               hist.Bin('cut', 'Cut index', 15, 0, 15),
-           ),
-
+            'btagWeight': hist2.Hist(
+                hist2.axis.Regular(50, 0, 3, name='val', label='BTag correction'),
+                hist2.storage.Weight(),
+            ),
             'h': hist.Hist(
                 'Events',
                 hist.Cat('dataset', 'Dataset'),
@@ -264,6 +258,10 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
 
             if self._year in ("2016APV", "2016", "2017"): weights.add("L1Prefiring", events.L1PreFiringWeight.Nom, events.L1PreFiringWeight.Up, events.L1PreFiringWeight.Dn)
             logger.debug("Weight statistics: %r" % weights.weightStatistics)
+        
+        if shift_name is None:
+            output['btagWeight'].fill(val=self._btagSF.addBtagWeight(ak4_away, weights))
+
 
         msd1_matched = candidatejet.msdcorr * (genflavor1 > 0) + candidatejet.msdcorr * (genflavor1 == 0)
         
@@ -279,32 +277,6 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
 
         #!LIST OF THE SELECTIONS APPLIED
         regions = { 'muoncontrol': ['muontrigger','lumimask','metfilter','minjetkinmu', 'jetid', 'onemuon', 'muonkin', 'ak4btagMedium08','muonDphiAK8']}
-        
-        #Create the cutflow table
-        if shift_name is None:
-            for region, cuts in regions.items():
-                allcuts = set([])
-                cut = selection.all(*allcuts)
-
-                output['cutflow'].fill(dataset=dataset,
-                                        region=region,
-                                        msd1=normalize(msd1_matched,cut),
-                                        genflavor=normalize(genflavor1, None),
-                                        cut=0,
-                                        weight=weights.weight())
-
-                for i, cut in enumerate(cuts + ['bbpass']):
-                    allcuts.add(cut)
-                    cut = selection.all(*allcuts)
-                    output['cutflow'].fill(dataset=dataset,
-                                            region=region,
-                                            genflavor=normalize(genflavor1, cut),
-                                            msd1=normalize(msd1_matched,cut),
-                                            cut=i + 1,
-                                            weight=weights.weight()[cut])
-        
-        if shift_name is None: systematics = [None] + list(weights.variations)
-        else: systematics = [shift_name]
             
         def fill(region, systematic, wmod=None):
             
