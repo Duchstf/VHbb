@@ -275,6 +275,9 @@ class VHBB_MuonCR_Processor(processor.ProcessorABC):
         tic = time.time()
         #----------------
 
+        if shift_name is None: systematics = [None] + list(weights.variations)
+        else: systematics = [shift_name]
+
         #!LIST OF THE SELECTIONS APPLIED
         regions = { 'muoncontrol': ['muontrigger','lumimask','metfilter','minjetkinmu', 'jetid', 'onemuon', 'muonkin', 'ak4btagMedium08','muonDphiAK8']}
             

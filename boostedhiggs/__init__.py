@@ -7,6 +7,7 @@ from .vhbb_ddt_map import DDT
 from .vhbb_2D_mass import VHbbProcessor2DMass
 from .vhbb_HEM import VHbbProcessorHEM
 from .vhbb_mediumWP import VHbbProcessorMediumWP
+from .trigger_study import TriggerProcessor
 
 __all__ = [
     '__version__',

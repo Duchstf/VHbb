@@ -149,7 +149,6 @@ class BTagCorrector:
         lightweight = np.minimum(5,lightweight)
 
         weights.add('btagLightSF', lightweight)
-        print('Light = ',max(lightweight))
         bcweight = combine(
             bcEff,
             self.btagSF(bcJets, "central"),
@@ -158,7 +157,6 @@ class BTagCorrector:
         bcweight = np.minimum(5,bcweight)
 
         weights.add('btagBCSF', bcweight)
-        print('BC = ',max(bcweight))
         
         # nominal weight = btagSF (btagSFbc*btagSFlight)
         nominal = lightweight * bcweight

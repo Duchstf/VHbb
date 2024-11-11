@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 import subprocess
 import uproot
 from datetime import datetime
@@ -25,16 +26,21 @@ def run_env_extra():
     for cmd in env_extra: os.system(cmd)
 
 
-def split_sample_json(sample_json, out_dir):
+def split_sample_json(sample_json, out_dir, split_sample=True):
     """
     Parse the sample json to sub-jsons and then output them in out_dir
+
+    if split_sample = False then not do anything
     """
 
-    with open(sample_json, 'r') as file: sample_dict = json.load(file)
+    if split_sample:
+        with open(sample_json, 'r') as file: sample_dict = json.load(file)
 
-    for key, value in sample_dict.items():
-        filename=f'{out_dir}/{key}.json'
-        with open(filename, 'w') as json_file: json.dump({key:value}, json_file)
+        for key, value in sample_dict.items():
+            filename=f'{out_dir}/{key}.json'
+            with open(filename, 'w') as json_file: json.dump({key:value}, json_file)
+    else:
+        shutil.copy(sample_json, out_dir)
 
     return 
 
@@ -85,7 +91,7 @@ def submit_sample(output_sample_dir, client, p):
         print(datetime.now())
 
 
-def submit_processor(year, tag, processor, memory, ignore_list=None, target_list=None):
+def submit_processor(year, tag, processor, memory, split_sample = True, ignore_list=None, target_list=None):
 
     cluster = init_cluster(memory)
     run_env_extra()
@@ -123,10 +129,7 @@ def submit_processor(year, tag, processor, memory, ignore_list=None, target_list
                 os.system(f'mkdir -p {output_sample_dir}')
 
                 #Create sub-json files that belongs to the samples
-                split_sample_json(sample_json, output_sample_dir)
-
-                #Create the processor
-                p = processor
+                split_sample_json(sample_json, output_sample_dir, split_sample)
 
                 #Submit the sample
                 submit_sample(output_sample_dir, client, processor)
