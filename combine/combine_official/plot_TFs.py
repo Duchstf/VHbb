@@ -23,6 +23,9 @@ ptscaled = (ptpts - 450.0) / (1200.0 - 450.0)
 rhoscaled = (rhopts - (-6)) / ((-2.1) - (-6))
 
 TF_res_values={
+    "2016": np.asarray([[9.8567e-01]]),
+    "2016APV": np.asarray([[8.8771e-01, 1.5779]]),
+    "2017": np.asarray([[1.1449]]),
     "2018": np.asarray([[0.65979, 2.0764]])
 }
 
@@ -59,10 +62,10 @@ def plot_TFres_values(year):
 
     # Plot the TF values against rho midpoints
     plt.figure(figsize=(8, 6))
-    plt.plot(msd_midpoints, TF_array, marker='o', linestyle='-', label=f'TF {year}')
+    plt.plot(msd_midpoints, TF_array, marker='o', linestyle='-', label=r'$\rho$ order: {}'.format(len(par_map[0]) - 1))
     plt.xlabel(r'$m_{SD}$ [GeV] ')
-    plt.ylabel(r'$TF_{res}$')
-    plt.title(r'Post-fit $TF_{res}$ ' + str(year))
+    plt.ylabel(r'Post-fit $TF_{res}$ ' + f"({year})")
+    plt.legend()
     plt.grid(True)
     plt.savefig(f"plots/TFres_{year}.pdf",bbox_inches='tight')
 
