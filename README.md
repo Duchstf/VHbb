@@ -155,6 +155,17 @@ Example of  `datasets_all.txt`:
 /WplusH_HToBB_WToLNu_M-125_TuneCP5_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODAPVv9-106X_mcRun2_asymptotic_preVFP_v11-v1/NANOAODSIM
 ```
 
+To check what site a dataset is on:
+
+```
+dasgoclient -query="site file=<your-file>"
+```
+
+```
+dasgoclient -query="site file=/store/data/Run2018D/SingleMuon/NANOAOD/UL2018_MiniAODv2_NanoAODv9-v1/280000/BDAFAB90-144A-154F-8476-6F314036373F.root"
+```
+
+
 
 
 
