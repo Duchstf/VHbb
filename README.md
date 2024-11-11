@@ -130,21 +130,21 @@ for bias in 0 1 `seq 5 5 100`
 
 ## Extending Dataset rules
 
-1. Make a text file of all the datasets you'd like to hold at FNAL (something like `cooldatasets.txt`).
+1. Make a text file of all the datasets you'd like to hold at FNAL (something like `datasets_all.txt`).
 2. Then:
 
 ```
 voms-proxy-init --voms cms --valid 192:00
 source /cvmfs/cms.cern.ch/rucio/setup-py3.sh
 export RUCIO_ACCOUNT=dhoang
-cut -f 1 cool_datasets.txt | while read file; do rucio add-rule cms:$file 1 T1_US_FNAL_Disk --lifetime 2600000 --activity 'User AutoApprove' --ask-approval
+cut -f 1 datasets_all.txt | while read file; do rucio add-rule cms:$file 1 T1_US_FNAL_Disk --lifetime 2600000 --activity 'User AutoApprove' --ask-approval
 ```
 
 This will make one rule per dataset using the auto-approval scheme, placing them on the Fermilab T1 for a period of about 6 months (most of them should already be there, so these rules be basically just be further protecting them and extending their lifetime).
 
 You can check the status of these rules on the command line using `rucio rule-info <rule hash>` after doing the setup above, or you can use the webui found [here](https://cms-rucio-webui.cern.ch/) 
 
-Example of  `cooldatasets.txt`:
+Example of  `datasets_all.txt`:
 
 ```
 /GluGluHToBB_Pt-200ToInf_M-125_TuneCP5_MINLO_13TeV-powheg-pythia8/RunIISummer20UL16NanoAODAPVv9-106X_mcRun2_asymptotic_preVFP_v11-v1/NANOAODSIM
