@@ -144,6 +144,8 @@ This will make one rule per dataset using the auto-approval scheme, placing them
 
 You can check the status of these rules on the command line using `rucio rule-info <rule hash>` after doing the setup above, or you can use the webui found [here](https://cms-rucio-webui.cern.ch/) 
 
+Note that the auto-approval limit is 50 TB of data, but if you're only transferring nano that probably won't be a factor
+
 Example of  `datasets_all.txt`:
 
 ```
