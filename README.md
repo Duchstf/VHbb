@@ -165,6 +165,11 @@ dasgoclient -query="site file=<your-file>"
 dasgoclient -query="site file=/store/data/Run2018D/SingleMuon/NANOAOD/UL2018_MiniAODv2_NanoAODv9-v1/280000/BDAFAB90-144A-154F-8476-6F314036373F.root"
 ```
 
+## Check eos information
+
+```
+eos root://cmseos.fnal.gov/ fileinfo /store/...
+```
 
 
 
