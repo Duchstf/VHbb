@@ -171,6 +171,21 @@ dasgoclient -query="site file=/store/data/Run2018D/SingleMuon/NANOAOD/UL2018_Min
 eos root://cmseos.fnal.gov/ fileinfo /store/...
 ```
 
+## How to get GEN information
+
+1. Go here: https://cms-pdmv.cern.ch/mcm/
+2. Search by dataset, 6th action is view chains, scroll all the way to the right to see the chain, the first link to the generator level info, then click "Get setup" action. Then look at the fragment that looks something like this:
+
+```
+curl -s -k https://cms-pdmv-prod.web.cern.ch/mcm/public/restapi/requests/get_fragment/SUS-RunIISummer20UL18wmLHEGEN-00027 --retry 3 --create-dirs -o Configuration/GenProduction/python/SUS-RunIISummer20UL18wmLHEGEN-00027-fragment.py
+```
+
+Then open that link, then look at LHEproducer, `args = cms.vstring('/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.6.5/QCD_HT_LO_MLM_remove_comments/QCD_HT1000to1500_slc6_amd64_gcc630_CMSSW_9_3_16_tarball.tar.xz')`. 
+
+Copy the tar and look at the cards: `cat process/madevent/Cards/proc_card_mg5.dat` this will contains the info. 
+
+
+
 
 
 
