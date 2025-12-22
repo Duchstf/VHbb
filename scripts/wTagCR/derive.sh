@@ -44,7 +44,7 @@ conda run -n combine --no-capture-output python sf.py --fit single -t templates/
 
 cd templates/${year}/${year}_FitSingle
 conda run -n combine --no-capture-output . build.sh
-conda run -n combine --no-capture-output combine -M FitDiagnostics --expectSignal 1 -d model_combined.root --cminDefaultMinimizerStrategy 0 --robustFit=1 --saveShapes --saveWithUncertainties --rMin 0.5 --rMax 1.5
+conda run -n combine --no-capture-output combine -M FitDiagnostics --expectSignal 1 -d model_combined.root --cminDefaultMinimizerStrategy 0 --robustFit=1 --saveShapes --saveWithUncertainties --rMin 0.5 --rMax 1.5 --plots
 
 cd ../../../
 #Plot results

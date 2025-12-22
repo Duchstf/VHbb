@@ -17,9 +17,9 @@ import utils, sys
 sys.path.append('/srv')
 
 from boostedhiggs import TriggerProcessor as vhbb_processor
-tag = "trigger"
+tag = "trigger_withbb"
 year = sys.argv[1]
 target_list = ["trigger"]
 
 processor = vhbb_processor(year=year)
-utils.submit_processor(year, tag, processor, '6GB', split_sample=True, target_list=target_list)
+utils.submit_processor(year, tag, processor, '6GB', split_sample=False, target_list=target_list)

@@ -206,6 +206,9 @@ def vh_rhalphabet(tmpdir):
     sys_muveto = rl.NuisanceParameter('CMS_hbb_mu_veto_{}'.format(year), 'lnN')  
     sys_tauveto = rl.NuisanceParameter('CMS_hbb_tau_veto_{}'.format(year), 'lnN')
 
+    #Trigger unc
+    btag_trigger = rl.NuisanceParameter('CMS_btag_trigger_{}'.format(year), 'lnN')
+
     sys_dict = {}
     yearstr = year
     if 'APV' in year: yearstr = '2016preVFP'
@@ -301,10 +304,15 @@ def vh_rhalphabet(tmpdir):
     n_ptbins = ptbins.shape[0] - 1
 
     ptpts, msdpts = np.meshgrid(ptbins[:-1] + 0.3 * np.diff(ptbins), msdbins[:-1] + 0.5 * np.diff(msdbins), indexing="ij")
+    print(ptpts, msdpts)
     rhopts = 2 * np.log(msdpts / ptpts)
+
+    print(rhopts)
 
     ptscaled = (ptpts - 450.0) / (1200.0 - 450.0)
     rhoscaled = (rhopts - (-6)) / ((-2.1) - (-6))
+
+    print(rhoscaled)
 
     validbins = (rhoscaled >= 0) & (rhoscaled <= 1)
     rhoscaled[~validbins] = 1
@@ -431,7 +439,7 @@ def vh_rhalphabet(tmpdir):
                                     coefficient_transform=None)
 
     tf_dataResidual_params = tf_dataResidual(ptscaled, rhoscaled)
-    tf_params = qcdeff * tf_MCtempl_params_final * tf_dataResidual_params
+    tf_params = qcdeff * tf_dataResidual_params
     
     # Build actual fit model which would go into the workspace.
     model = rl.Model('testModel_{}'.format(year))
@@ -664,6 +672,8 @@ def vh_rhalphabet(tmpdir):
                     if do_systematics:
                         effect = 1.0 + SF[year]['eff_SF_ERR'] / SF[year]['eff_SF']
                         sample.setParamEffect(sys_PNetVqq, effect)
+
+                if sName in ['Zjets', 'Zjetsbb', 'ZH', 'WH']: sample.setParamEffect(btag_trigger, 1.01)
 
                 #V-taggeed SF for V+jets
                 if sName in ['Zjets', 'Zjetsbb', 'WjetsQQ']:                                                 

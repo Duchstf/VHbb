@@ -431,7 +431,7 @@ def vh_rhalphabet(tmpdir):
                                     coefficient_transform=None)
 
     tf_dataResidual_params = tf_dataResidual(ptscaled, rhoscaled)
-    tf_params = qcdeff * tf_MCtempl_params_final * tf_dataResidual_params
+    tf_params = qcdeff * tf_dataResidual_params
     
     # Build actual fit model which would go into the workspace.
     model = rl.Model('testModel_{}'.format(year))

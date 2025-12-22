@@ -2,6 +2,8 @@ from imports import *
 from hist import Hist
 import copy
 import sys
+from matplotlib.offsetbox import AnchoredText
+
 
 WPs = {
     
@@ -91,6 +93,28 @@ def plot_h(h, labels, name, year):
     
     # Add horizontal line at 1
     ax2.axhline(1, color='black', linestyle='--', linewidth=1)
+
+    # Calculate chi-squared
+    sigma_squared = data_errors**2 + total_mc_errors**2
+    valid_bins = sigma_squared > 0.1  # Avoid division by zero
+    chi_squared_terms = (data_values[valid_bins] - total_mc_values[valid_bins])**2 / sigma_squared[valid_bins]
+    chi_squared = np.sum(chi_squared_terms)
+    ndf = np.sum(valid_bins) - 0  # Subtract the number of fitted parameters if any
+    chi_squared_per_ndf = chi_squared / ndf if ndf > 0 else float('nan')
+
+    # Use AnchoredText to add chi-squared value
+    at = AnchoredText(
+        r"$\chi^2$ = " + f"{chi_squared:.2f}",
+        loc="upper right",
+        prop=dict(size="small"),
+        frameon=False,
+    )
+    ax2.add_artist(at)
+
+    # Print chi-squared information
+    # print(f"Chi-squared for {name} ({year}): {chi_squared:.2f}")
+    # print(f"Degrees of freedom: {ndf}")
+    # print(f"Chi-squared per degree of freedom: {chi_squared_per_ndf:.2f}")
     
     plt.savefig(f'plots/{year}_muCR_{name}.pdf', bbox_inches='tight')
     # plt.savefig(f'plots/{year}_muCR_{name}.png', bbox_inches='tight')

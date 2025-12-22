@@ -64,9 +64,9 @@ fi
 
 
 if [[ "$2" == "unblind" || "$2" == "unblind_sideband" ]]; then
-    conda run -n plot --no-capture-output combine_postfits -i fitDiagnosticsTest.root -o plots/test_plot --data --style ../files/style_D.yml --onto qcd --sigs VH --bkgs QCD,qcd,top,WjetsQQ,Zjets,Zjetsbb,H,VqqVqq,VbbVqq,WLNu --rmap 'VH:rVH' --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p 
+    conda run -n plot --no-capture-output combine_postfits -i fitDiagnosticsTest.root -o plots/test_plot --data --style ../files/style_D.yml --onto qcd --sigs VH --bkgs QCD,qcd,top,WjetsQQ,Zjets,Zjetsbb,H,VqqVqq,VV,WLNu --rmap 'VH:rVH' --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p 
 else
-    conda run -n plot --no-capture-output combine_postfits -i fitDiagnosticsTest.root -o plots/test_plot --MC --style ../files/style_D.yml --onto qcd --sigs VH --bkgs QCD,qcd,top,WjetsQQ,Zjets,Zjetsbb,VqqVqq,VbbVqq,H,WLNu  --rmap 'VH:rVH' --project-signals 1 --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p 
+    conda run -n plot --no-capture-output combine_postfits -i fitDiagnosticsTest.root -o plots/test_plot --MC --style ../files/style_D.yml --onto qcd --sigs VH --bkgs QCD,qcd,top,WjetsQQ,Zjets,Zjetsbb,VqqVqq,VV,H,WLNu  --rmap 'VH:rVH' --project-signals 1 --xlabel 'Jet 1 $m_{SD}$ [GeV]' -p 
 fi
 
 cd ../
